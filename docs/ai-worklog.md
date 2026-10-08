@@ -40,3 +40,29 @@ ad angles "Fees in CZK" + "Blocked trade" · Vercel Hobby.
    grid. No such prompt was run. Rewritten as a labelled thought experiment.
 5. The agent did not invent "verbatim customer quotes" for the context doc's Customer Language section, even
    though the skill template asks for them. They are marked as a Phase 2 research task.
+
+---
+
+## 2026-10-08 — `/ponytail-audit` of the Phase 0 plan, fixes folded into decisions.md
+
+**Asked (Matěj):** `/ponytail:ponytail-audit`, then "ok fix those issues in our decisions".
+
+**What came back:** There is no code yet, so the audit reviewed the *planned* design. It reported 7 findings:
+(1) the hidden form fields and `/plan` URL params could be abused to send phishing content from our sender;
+(2) no rate limit, so a script could burn the free daily e-mail cap; (3) a returning visitor's "contact already
+exists" could surface as an error; (4) a honeypot that phone autofill fills drops real leads; (5) CLAUDE.md said
+"required consent" while decisions.md said optional; (6) unknown `utm_content` values had no defined variant;
+(7) a browser-only `lead_submitted` undercounts conversions.
+
+**What changed:** decisions.md §4 (unknown variant), §5 (honeypot spec), new §6a (rules for `/api/lead`: allow-list
+input, server-side e-mail validation, 24 h dedupe via a Brevo attribute, existing contact = success, per-IP rate
+limit, honeypot handling), §6 (`/plan` uses the same allow-list and `textContent`), §7 (`ad_variant` mapping),
+§11, §12 (Brevo is the source of truth for conversions). CLAUDE.md Phase 0 item 5 now says optional consent.
+
+**How it was checked:** each finding had to name a concrete failure case, and each fix was traced to the
+section it changes.
+
+**Mistake caught (agent's own audit):** finding 2 said the per-IP rate limit was "a few lines, no new service". That is
+wrong on Vercel: every serverless instance has its own memory, so an in-process counter misses requests that
+hit other instances. Corrected in §6a: per-address dedupe uses Brevo as the shared store, and per-IP limiting needs
+either a Vercel Firewall rule (if Hobby allows it, to verify) or a free Upstash counter (new account, needs approval).

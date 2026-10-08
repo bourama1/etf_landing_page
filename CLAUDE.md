@@ -61,7 +61,8 @@ If a claim cannot be verified from a primary or reputable source, it does not go
    the page shows a meaningful partial result, the full/personalised version is behind the e-mail.
 3. **The moment we ask for the contact** (e.g. after the visitor sees their calculated result, not on load).
 4. Interactive elements (comparison, fee calculator, portfolio builder) — pick at most 1–2; each must end in the CTA.
-5. Form fields: aim for **e-mail only** + required consent. Justify any extra field.
+5. Form fields: aim for **e-mail only** + an optional, unticked marketing-consent checkbox (a required one would not
+   be freely given, GDPR art. 7(4); see `docs/decisions.md` §5). Justify any extra field.
 6. What happens after submit: on-page thank-you state with immediate value + e-mail delivery.
 7. Two ad concepts with different angles (so the A/B test is meaningful), platform (Meta/IG feed or stories,
    TikTok, Google Discovery…), and how the page's first screen mirrors each ad's promise (message match via

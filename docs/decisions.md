@@ -1,6 +1,6 @@
 # Phase 0 — Decisions
 
-Status: **draft for review (✋)** · 2026-10-08
+Status: **draft for review (✋)** · 2026-10-08 · revised the same day after `/ponytail-audit` (§4, §5, §6a, §7, §11, §12)
 Inputs: `CLAUDE.md` (brief), `.agents/product-marketing.md` (positioning context), skills `product-marketing`,
 `lead-magnets`, `offers`, `frontend-design`. Decisions marked **[user]** were made by Matěj in the Phase 0
 brainstorm. Everything else is my default proposal and can be vetoed at this review.
@@ -121,7 +121,8 @@ Result  shortlist + fee number  ->  inline e-mail ask
 
 - **Message match by ad:** `utm_content=ad_a_*` opens on Step A (as above). `utm_content=ad_b_*` opens on Step B
   with a VOO-equivalent preselected, so the first thing the visitor sees is the fee calculator the ad promised.
-  No UTM opens on Step A.
+  No UTM, or any other value (Meta preview, typo, a future ad), opens on Step A with `ad_variant=unknown`. The raw
+  `utm_content` is still stored, so those visits can be attributed later.
 - **The quiz is reduced to two neutral filters.** A quiz that outputs "your ETF" reads as a personal recommendation
   (investment-advice risk under MiFID II, **VERIFY** wording in Phase 3). Filters plus a shortlist, with "Toto není
   doporučení" next to the result, stays on the information side.
@@ -144,6 +145,9 @@ Result  shortlist + fee number  ->  inline e-mail ask
   including Czech law 480/2004 Sb. on commercial communications.
 - Text under the button: "Jeden e-mail s plánem. Odhlásíte se jedním klikem. Zásady ochrany osobních údajů."
 - **Hidden:** the selections (tickers, amount, horizon, filters), UTM params, `ad_variant`, and a honeypot field.
+- **Honeypot that autofill won't touch:** a meaningless field name (not `name`/`phone`/`email2`), `autocomplete="off"`,
+  `tabindex="-1"`, `aria-hidden="true"`, and visually hidden. If it is filled, the server returns the normal success
+  response (so bots learn nothing), sends nothing, and logs the drop so false positives can be counted.
 - **No name field.** Personalisation comes from the selections, not the name, and every extra field costs
   conversions. No phone. No CAPTCHA unless spam shows up.
 
@@ -152,7 +156,7 @@ Result  shortlist + fee number  ->  inline e-mail ask
 ## 6. After submit
 
 1. **Server confirms** (validates the e-mail, stores the contact with its attributes, sends the e-mail). Only then
-   does `lead_submitted` fire.
+   does `lead_submitted` fire. The rules for `/api/lead` are in §6a.
 2. **On-page thank-you state replaces the form block:**
    - "Hotovo. Plán je na cestě na *vas@email.cz*." Plus a hint to check Promotions/Spam.
    - Unlocks on the page right away: the full comparison table, including ISINs and fee numbers for all picks.
@@ -160,7 +164,34 @@ Result  shortlist + fee number  ->  inline e-mail ask
      receive the e-mail.
    - Next step: "Pošlete to kamarádovi, který taky chtěl VOO" (pre-filled share link, no personal data).
 3. **E-mail:** a short HTML e-mail with the plan inline, plus a "Otevřít plán online" link to `/plan?…`, which
-   renders the plan from URL parameters (no database lookup). Loading that page fires `magnet_opened`.
+   renders the plan from URL parameters (no database lookup). Loading that page fires `magnet_opened`. `/plan`
+   follows the same input rule as the server (§6a, rule 1): unknown tickers are dropped and numbers clamped. It
+   writes values with `textContent`, never `innerHTML`, so a crafted link can't inject content on our domain.
+
+### 6a. Rules for `/api/lead`
+
+This is the only part of the site that accepts input from the internet and sends e-mail in our name, so it gets
+explicit rules. They come from `/ponytail-audit` findings 1–4 (see `docs/ai-worklog.md`).
+
+1. **Never trust the hidden fields.** Tickers must exist in `data/etfs.json` and unknown ones are dropped. Amount,
+   horizon and return are clamped to fixed ranges (the same ranges as the sliders). Filters must be one of their
+   allowed values. Nothing from the request is put into the e-mail except these checked values. UTM values are
+   stored as contact attributes (trimmed, length-capped) and **never** rendered in the e-mail. The e-mail template
+   escapes everything it inserts. Without this rule, anyone could post `tickers=<a href="…">Váš účet je
+   zablokován</a>` with a stranger's address and our sender would deliver a phishing mail.
+2. **Validate the e-mail server-side:** syntax check plus a length cap. The client check is only for UX.
+3. **One plan per address per 24 h.** The contact in Brevo stores `PLAN_SENT_AT`. If it is less than 24 h old, the
+   attributes are updated but no new e-mail goes out. This needs no extra service because Brevo is the shared
+   store, so it works across serverless instances.
+4. **An existing contact is a success, not an error.** A second submit (inline form, then the sticky bar, or a
+   return visit tomorrow) updates the contact and returns 2xx, so the visitor sees the thank-you state and
+   `lead_submitted` fires. Combined with rule 3, they don't get spammed with copies.
+5. **Per-IP rate limit** against a script with random addresses burning the free daily send limit. On Vercel each
+   serverless instance has its own memory, so an in-process counter is not reliable. Options in order of
+   preference: (a) a Vercel Firewall rate-limit rule on `/api/lead`, if the Hobby plan allows it (**VERIFY**);
+   (b) a free Upstash Redis counter (**VERIFY** free tier, and it is a new account, so it needs Matěj's OK).
+   Starting limit: a few submits per IP per hour, tuned after launch.
+6. **Honeypot hit:** fake success, no contact stored, no e-mail sent, logged (see §5).
 
 ---
 
@@ -179,8 +210,8 @@ possible later test. **VERIFY Meta's financial-services ad policy before launch*
 | `utm_content` | `ad_a_blocked` | `ad_b_fees` |
 
 UTM scheme: `utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_content=ad_a_blocked`
-(or `ad_b_fees`). The page derives `ad_variant` from `utm_content`. It is stored with the lead and sent with every
-analytics event.
+(or `ad_b_fees`). The page derives `ad_variant` from `utm_content` (`ad_a_*` → `a`, `ad_b_*` → `b`, anything
+else → `unknown`). It is stored with the lead and sent with every analytics event.
 
 Why these two make a meaningful A/B test: different persona, different emotional driver (blocked access vs.
 money), and a different opening step on the page. The result tells us which problem the market cares about more.
@@ -259,7 +290,7 @@ headword with its translation. All the boldness goes there. Everything else stay
 |---|---|---|
 | Site | **Astro** (static output) + small vanilla TS island for the tool | JS budget < 60 kB gz. The tool is a few kB. |
 | Hosting **[user]** | **Vercel Hobby** | The Hobby plan is non-commercial. The README states that a real launch moves to Vercel Pro or Cloudflare Pages. **VERIFY** current terms. |
-| Form backend | One Vercel serverless function `/api/lead` → **Brevo** (create contact with attributes incl. UTMs + send transactional e-mail) | One vendor for list + e-mail. **VERIFY** free-tier limits. Server-side validation + honeypot. |
+| Form backend | One Vercel serverless function `/api/lead` → **Brevo** (create contact with attributes incl. UTMs + send transactional e-mail) | One vendor for list + e-mail. **VERIFY** free-tier limits (incl. the daily send cap). Input, dedupe and rate-limit rules in §6a. |
 | Analytics | **Umami Cloud** (cookieless, tiny script, custom events, funnel report) as first choice. PostHog EU (cookieless `persistence: memory`) as fallback. | Cookieless → no consent banner over the first screen. **VERIFY** before creating accounts: free-tier limits, funnel availability on the free plan, EU data location. PostHog's JS bundle size has to be measured against the budget. |
 | Secrets | env vars only, `.env.example` committed | |
 
@@ -285,6 +316,12 @@ No accounts get created until you approve them, as CLAUDE.md requires.
 | `magnet_opened` | `/plan` page load from the e-mail link | `utm_source=email` |
 
 `step_complete` is an addition to CLAUDE.md's list, needed because the tool now has three steps.
+
+**Source of truth for conversions:** Brevo contacts per `ad_variant`, not Umami. `lead_submitted` is a browser event,
+so it is lost when the visitor closes the tab right after submitting or an ad blocker blocks the analytics script.
+The lead still exists in Brevo. Umami measures the funnel *up to* the form. The A/B result and the README's
+conversion figure use Brevo lead counts divided by Umami `page_view` per variant, and the gap between Brevo leads
+and Umami `lead_submitted` is reported as a measurement-loss check.
 
 ---
 
