@@ -169,8 +169,9 @@ Read straight from the PRIIPs KIDs (sdělení klíčových informací). Machine-
 | Česká spořitelna / Erste AM (e.g. Top Stocks CZ0008472404, Sporotrend CZ0008472289) | — | — | — | — | — | — | **not retrieved**: Erste's KID links load via JavaScript (see NOTES.md). Secondary only: porovnejfondy.cz quotes TER ≈ 1,88–1,92 % and entry 1–3 %. Not for the page. |
 
 The ČSOB KID also states the total effect: "Dopad ročních nákladů … 3,4% každý rok" over the 8-year recommended holding
-period. The KB fund invests in equity *index* funds and still charges 1,75 % p.a. That makes it a fair comparison
-with a 0,03–0,07 % UCITS ETF on the same kind of exposure.
+period. Despite its name, the KB fund is **not** an index fund. Its KID says it invests in a "diverzifikovaného
+portfolia investičních fondů" (Amundi group funds only), "Fond nesleduje žádný specifický index", and it is actively
+managed. Its aim is to beat "indexů zaměřených na globální akciové trhy". The page must not call it an index fund.
 
 **Page/ad wording rule:** entry fees are maxima, so write "vstupní poplatek až 3–5 %", never "3–5 %". Ongoing
 costs are "1,75–2,59 % ročně", with fund names and KID dates in the source line. Per decisions.md §4, no bank name
