@@ -193,7 +193,7 @@ Events (names are a suggestion; keep them consistent and documented in README):
   concept. Otherwise pick a sensible default and note it in `docs/decisions.md`.
 - Remind me at the end of each session to run `/export ai-log/YYYY-MM-DD-<phase>.md` (it exports the whole
   conversation, not a delta; re-export overwrites). Prefer one session per phase.
-- Env: Windows; no Python; Node is not on PATH yet (a hook fails, and Astro needs it). Use Git Bash/PowerShell.
+- Env: Windows; no Python; Node v26 is installed. Use Git Bash/PowerShell.
 - README language: Czech (the reviewer writes Slovak; Czech is fine). Code, comments and commit messages: English.
 
 ## Repo layout (target)
