@@ -1,0 +1,550 @@
+{
+  "snapshot": {
+    "retrieved_at": "2026-10-09",
+    "how_to_refresh": "See data/NOTES.md#refresh",
+    "units": {
+      "ter_pct": "annual total expense ratio / ongoing charges, in percent (0.07 = 0.07 %)",
+      "assets_musd": "net assets in millions of USD at sources[...].as_of",
+      "distribution": "acc = income reinvested, dist = income paid out"
+    },
+    "conventions": [
+      "Every figure comes from sources.default unless field_sources maps that field to another source key.",
+      "as_of is the date the source states for its figures (null if the source gives none); retrieved_at is when we read it.",
+      "US ISINs marked isin_derived were computed from the issuer-published CUSIP (ISO 6166 check digit, data/validate.mjs).",
+      "twins = UCITS funds tracking the same index. similar = a different but related index, shown only with that label."
+    ]
+  },
+  "indexes": {
+    "sp500": "S&P 500 Index",
+    "nasdaq100": "Nasdaq-100 Index",
+    "ftse_gac": "FTSE Global All Cap Index (large, mid and small cap, developed + emerging)",
+    "ftse_aw": "FTSE All-World Index (large and mid cap only, developed + emerging)",
+    "ms_us_tm": "Morningstar US Total Market Index (named CRSP US Total Market Index until July 2026)",
+    "dj_div100": "Dow Jones U.S. Dividend 100 Index"
+  },
+  "us_etfs": [
+    {
+      "ticker": "VOO",
+      "name": "Vanguard S&P 500 ETF",
+      "issuer": "Vanguard",
+      "isin": "US9229083632",
+      "isin_derived": true,
+      "cusip": "922908363",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "US",
+      "ter_pct": 0.03,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [{ "exchange": "NYSE Arca", "ticker": "VOO", "currency": "USD" }],
+      "share_class_assets_musd": 978960,
+      "fund_assets_musd": 1675038,
+      "inception": "2010-09-07",
+      "twins": ["IE00BFMXXD54", "IE00B3XXRP09", "IE00B5BMR087", "IE0031442068", "IE000XZSV718", "IE00B6YX5C33"],
+      "similar": [],
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/F0968.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-06-30" }
+      }
+    },
+    {
+      "ticker": "SPY",
+      "name": "State Street SPDR S&P 500 ETF Trust",
+      "issuer": "State Street (SPDR)",
+      "isin": "US78462F1030",
+      "isin_derived": false,
+      "cusip": "78462F103",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "US",
+      "ter_pct": 0.0945,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [{ "exchange": "NYSE Arca", "ticker": "SPY", "currency": "USD" }],
+      "share_class_assets_musd": null,
+      "fund_assets_musd": 817200.17,
+      "inception": "1993-01-22",
+      "twins": ["IE000XZSV718", "IE00B6YX5C33", "IE00BFMXXD54", "IE00B3XXRP09", "IE00B5BMR087", "IE0031442068"],
+      "similar": [],
+      "sources": {
+        "default": { "url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-sp-500-etf-trust-spy", "retrieved_at": "2026-10-09", "as_of": "2026-10-08" },
+        "factsheet": { "url": "https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-spy.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-06-30" }
+      },
+      "field_sources": { "ter_pct": "factsheet", "inception": "factsheet", "cusip": "factsheet" }
+    },
+    {
+      "ticker": "IVV",
+      "name": "iShares Core S&P 500 ETF",
+      "issuer": "iShares (BlackRock)",
+      "isin": "US4642872000",
+      "isin_derived": true,
+      "cusip": "464287200",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "US",
+      "ter_pct": 0.03,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [{ "exchange": "NYSE Arca", "ticker": "IVV", "currency": "USD" }],
+      "share_class_assets_musd": null,
+      "fund_assets_musd": 891817.083153,
+      "inception": "2000-05-15",
+      "twins": ["IE00B5BMR087", "IE0031442068", "IE00BFMXXD54", "IE00B3XXRP09", "IE000XZSV718", "IE00B6YX5C33"],
+      "similar": [],
+      "sources": {
+        "default": { "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf", "retrieved_at": "2026-10-09", "as_of": "2026-10-08" }
+      }
+    },
+    {
+      "ticker": "VTI",
+      "name": "Vanguard Morningstar Total Stock Market ETF",
+      "former_name": "Vanguard Total Stock Market ETF",
+      "issuer": "Vanguard",
+      "isin": "US9229087690",
+      "isin_derived": true,
+      "cusip": "922908769",
+      "index_key": "ms_us_tm",
+      "index": "Morningstar US Total Market Index",
+      "domicile": "US",
+      "ter_pct": 0.03,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [{ "exchange": "NYSE Arca", "ticker": "VTI", "currency": "USD" }],
+      "share_class_assets_musd": 663488,
+      "fund_assets_musd": 2298312,
+      "inception": "2001-05-24",
+      "twins": [],
+      "twin_note": "No UCITS ETF tracking this index was found (Vanguard's UCITS range has no total-US-market fund). See NOTES.md.",
+      "similar": [],
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/F0970.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-06-30" },
+        "rename_fund": { "url": "https://investor.vanguard.com/investment-products/etfs/profile/vti", "retrieved_at": "2026-10-09", "as_of": null },
+        "rename_index": { "url": "https://newsroom.morningstar.com/news/news-details/2026/Morningstar-Reaches-New-Milestone-in-the-CRSP-Acquisition-Rebranding-CRSP-Market-Indexes-to-Morningstar-Indexes/default.aspx", "retrieved_at": "2026-10-09", "as_of": "2026-04-29" }
+      },
+      "field_sources": { "name": "rename_fund", "index": "rename_index" }
+    },
+    {
+      "ticker": "QQQ",
+      "name": "Invesco QQQ Trust, Series 1",
+      "issuer": "Invesco",
+      "isin": null,
+      "isin_note": "Invesco's pages give no labelled CUSIP/ISIN; not derived (see NOTES.md).",
+      "cusip": null,
+      "index_key": "nasdaq100",
+      "index": "Nasdaq-100 Index",
+      "domicile": "US",
+      "ter_pct": 0.18,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [{ "exchange": "Nasdaq (The Nasdaq Stock Market LLC)", "ticker": "QQQ", "currency": "USD" }],
+      "share_class_assets_musd": null,
+      "fund_assets_musd": 371121.437386,
+      "inception": "1999-03-10",
+      "twins": ["IE00BFZXGZ54", "IE0032077012", "IE00B53SZB19"],
+      "similar": [],
+      "sources": {
+        "default": { "url": "https://www.invesco.com/qqq-etf/en/home.html", "retrieved_at": "2026-10-09", "as_of": "2026-06-30" },
+        "sec_ncsrs": { "url": "https://www.sec.gov/Archives/edgar/data/0001067839/000119312526250483/8deb6f921189c0e.htm", "retrieved_at": "2026-10-09", "as_of": "2026-03-31" }
+      },
+      "field_sources": { "fund_assets_musd": "sec_ncsrs", "listings": "sec_ncsrs", "distribution_frequency": "sec_ncsrs" }
+    },
+    {
+      "ticker": "VT",
+      "name": "Vanguard Total World Stock ETF",
+      "issuer": "Vanguard",
+      "isin": "US9220427424",
+      "isin_derived": true,
+      "cusip": "922042742",
+      "index_key": "ftse_gac",
+      "index": "FTSE Global All Cap Index",
+      "domicile": "US",
+      "ter_pct": 0.06,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [{ "exchange": "NYSE Arca", "ticker": "VT", "currency": "USD" }],
+      "share_class_assets_musd": 77627,
+      "fund_assets_musd": 96997,
+      "inception": "2008-06-24",
+      "twins": ["IE000VAHT5T0", "IE000CVUM3N6"],
+      "similar": ["IE00BK5BQT80", "IE00B3RBWM25"],
+      "similar_note": "FTSE All-World leaves out small caps; FTSE Global All Cap (VT's index) includes them.",
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/F3141.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-06-30" }
+      }
+    },
+    {
+      "ticker": "SCHD",
+      "name": "Schwab U.S. Dividend Equity ETF",
+      "issuer": "Schwab Asset Management",
+      "isin": "US8085247976",
+      "isin_derived": true,
+      "cusip": "808524797",
+      "index_key": "dj_div100",
+      "index": "Dow Jones U.S. Dividend 100 Index",
+      "domicile": "US",
+      "ter_pct": 0.06,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [{ "exchange": "NYSE Arca", "ticker": "SCHD", "currency": "USD" }],
+      "share_class_assets_musd": null,
+      "fund_assets_musd": 95734.068153,
+      "inception": "2011-10-20",
+      "twins": [],
+      "twin_note": "No UCITS ETF tracking the Dow Jones U.S. Dividend 100 Index was found. See NOTES.md.",
+      "similar": [],
+      "sources": {
+        "default": { "url": "https://bynder.schwab.com/m/3fc90e8c7dd8c3f7", "retrieved_at": "2026-10-09", "as_of": "2026-06-30" }
+      }
+    }
+  ],
+  "ucits_etfs": [
+    {
+      "ticker": "VUAA",
+      "name": "Vanguard S&P 500 UCITS ETF (USD) Accumulating",
+      "issuer": "Vanguard",
+      "isin": "IE00BFMXXD54",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "IE",
+      "ter_pct": 0.07,
+      "distribution": "acc",
+      "distribution_frequency": null,
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "VUAA", "currency": "EUR" },
+        { "exchange": "Borsa Italiana", "ticker": "VUAA", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "VUAA", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "VUAG", "currency": "GBP" }
+      ],
+      "share_class_assets_musd": 35852,
+      "fund_assets_musd": 89226,
+      "inception": "2019-05-14",
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/SandP_500_UCITS_ETF_USD_Accumulating_9694_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
+      }
+    },
+    {
+      "ticker": "VUSA",
+      "name": "Vanguard S&P 500 UCITS ETF (USD) Distributing",
+      "issuer": "Vanguard",
+      "isin": "IE00B3XXRP09",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "IE",
+      "ter_pct": 0.07,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "VUSA", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "VUSA", "currency": "EUR" },
+        { "exchange": "Borsa Italiana", "ticker": "VUSA", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "VUSD", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "VUSA", "currency": "GBP" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "VUSA", "currency": "CHF" }
+      ],
+      "share_class_assets_musd": 53374,
+      "fund_assets_musd": 89226,
+      "inception": "2012-05-22",
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/SandP_500_UCITS_ETF_USD_Distributing_9503_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
+      }
+    },
+    {
+      "ticker": "CSPX",
+      "name": "iShares Core S&P 500 UCITS ETF USD (Acc)",
+      "issuer": "iShares (BlackRock)",
+      "isin": "IE00B5BMR087",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "IE",
+      "ter_pct": 0.07,
+      "distribution": "acc",
+      "distribution_frequency": null,
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "SXR8", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "CSPX", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "CSPX", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "CSP1", "currency": "GBP" }
+      ],
+      "share_class_assets_musd": 154477.00,
+      "fund_assets_musd": 157627.72,
+      "inception": "2010-05-19",
+      "sources": {
+        "default": { "url": "https://www.blackrock.com/uk/individual/literature/fact-sheet/cspx-ishares-core-s-p-500-ucits-etf-fund-fact-sheet-en-gb.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" },
+        "factsheet_de": { "url": "https://www.ishares.com/gls-download/literature/fact-sheet/cspx-ishares-core-s-p-500-ucits-etf-fund-fact-sheet-en-de.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" }
+      },
+      "field_sources": { "listings": "factsheet_de" }
+    },
+    {
+      "ticker": "IUSA",
+      "name": "iShares Core S&P 500 UCITS ETF USD (Dist)",
+      "issuer": "iShares (BlackRock)",
+      "isin": "IE0031442068",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "IE",
+      "ter_pct": 0.07,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "IUSA", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "IUSA", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "IDUS", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "IUSA", "currency": "GBP" }
+      ],
+      "share_class_assets_musd": 22874.43,
+      "fund_assets_musd": 22874.43,
+      "inception": "2002-03-15",
+      "sources": {
+        "default": { "url": "https://www.blackrock.com/uk/individual/literature/fact-sheet/iusa-ishares-core-s-p-500-ucits-etf-usd-dist-fund-fact-sheet-en-gb.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" },
+        "xetra": { "url": "https://live.deutsche-boerse.com/en/etf/ishares-core-s-p-500-ucits-etf-usd-dist", "retrieved_at": "2026-10-09", "as_of": null }
+      },
+      "field_sources": { "listings[Xetra]": "xetra" }
+    },
+    {
+      "ticker": "SPYL",
+      "name": "State Street SPDR S&P 500 UCITS ETF (Acc)",
+      "issuer": "State Street (SPDR)",
+      "isin": "IE000XZSV718",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "IE",
+      "ter_pct": 0.03,
+      "distribution": "acc",
+      "distribution_frequency": null,
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "SPYL", "currency": "EUR", "primary": true },
+        { "exchange": "Borsa Italiana", "ticker": "SP5A", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "SPYL", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "SPYL", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "SPXL", "currency": "GBP" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "SPYL", "currency": "USD" }
+      ],
+      "share_class_assets_musd": 19178.77,
+      "fund_assets_musd": 43773.94,
+      "inception": "2023-10-31",
+      "sources": {
+        "default": { "url": "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-spyl-gy.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" }
+      }
+    },
+    {
+      "ticker": "SPY5",
+      "name": "State Street SPDR S&P 500 UCITS ETF (Dist)",
+      "issuer": "State Street (SPDR)",
+      "isin": "IE00B6YX5C33",
+      "index_key": "sp500",
+      "index": "S&P 500 Index",
+      "domicile": "IE",
+      "ter_pct": 0.03,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "SPY5", "currency": "EUR", "primary": true },
+        { "exchange": "Borsa Italiana", "ticker": "SPY5", "currency": "EUR" },
+        { "exchange": "Euronext Paris", "ticker": "SPY5", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "SPY5", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "SPX5", "currency": "GBP" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "SPY5", "currency": "CHF" }
+      ],
+      "share_class_assets_musd": 21095.55,
+      "fund_assets_musd": 43773.94,
+      "inception": "2012-03-19",
+      "sources": {
+        "default": { "url": "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-spy5-gy.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" }
+      }
+    },
+    {
+      "ticker": "EQAC",
+      "name": "Invesco EQQQ NASDAQ-100 UCITS ETF Acc",
+      "issuer": "Invesco",
+      "isin": "IE00BFZXGZ54",
+      "index_key": "nasdaq100",
+      "index": "Nasdaq-100 Index",
+      "domicile": "IE",
+      "ter_pct": 0.30,
+      "distribution": "acc",
+      "distribution_frequency": null,
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "EQQB", "currency": "EUR" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "EQAC", "currency": null }
+      ],
+      "share_class_assets_musd": null,
+      "fund_assets_musd": 20595.39,
+      "inception": "2018-09-24",
+      "sources": {
+        "default": { "url": "https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/factsheet/IE00BFZXGZ54_factsheet_en.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "xetra": { "url": "https://live.deutsche-boerse.com/en/etf/invesco-eqqq-nasdaq-100-ucits-etf-acc", "retrieved_at": "2026-10-09", "as_of": null }
+      },
+      "field_sources": { "listings[Xetra]": "xetra" }
+    },
+    {
+      "ticker": "EQQQ",
+      "name": "Invesco EQQQ NASDAQ-100 UCITS ETF Dist",
+      "issuer": "Invesco",
+      "isin": "IE0032077012",
+      "index_key": "nasdaq100",
+      "index": "Nasdaq-100 Index",
+      "domicile": "IE",
+      "ter_pct": 0.30,
+      "distribution": "dist",
+      "distribution_frequency": null,
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "EQQQ", "currency": "EUR" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "EQQQ", "currency": null }
+      ],
+      "share_class_assets_musd": null,
+      "fund_assets_musd": 20595.39,
+      "inception": "2002-12-02",
+      "sources": {
+        "default": { "url": "https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/factsheet/IE0032077012_factsheet_en.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "xetra": { "url": "https://live.deutsche-boerse.com/en/etf/invesco-eqqq-nasdaq-100-ucits-etf-dist", "retrieved_at": "2026-10-09", "as_of": null }
+      },
+      "field_sources": { "listings[Xetra]": "xetra" }
+    },
+    {
+      "ticker": "CNDX",
+      "name": "iShares NASDAQ 100 UCITS ETF USD (Acc)",
+      "issuer": "iShares (BlackRock)",
+      "isin": "IE00B53SZB19",
+      "index_key": "nasdaq100",
+      "index": "Nasdaq-100 Index",
+      "domicile": "IE",
+      "ter_pct": 0.30,
+      "distribution": "acc",
+      "distribution_frequency": null,
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "SXRV", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "CNDX", "currency": "EUR" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "CSNDX", "currency": "USD" }
+      ],
+      "share_class_assets_musd": 29243.11,
+      "fund_assets_musd": 31254.35,
+      "inception": "2010-01-26",
+      "sources": {
+        "default": { "url": "https://www.blackrock.com/uk/individual/literature/fact-sheet/csndx-ishares-nasdaq-100-ucits-etf-fund-fact-sheet-en-gb.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" },
+        "factsheet_de": { "url": "https://www.ishares.com/gls-download/literature/fact-sheet/csndx-ishares-nasdaq-100-ucits-etf-fund-fact-sheet-en-de.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" }
+      },
+      "field_sources": { "listings": "factsheet_de" }
+    },
+    {
+      "ticker": "VGLA",
+      "name": "Vanguard FTSE Global All-Cap UCITS ETF (USD) Accumulating",
+      "issuer": "Vanguard",
+      "isin": "IE000VAHT5T0",
+      "index_key": "ftse_gac",
+      "index": "FTSE Global All Cap Index",
+      "domicile": "IE",
+      "ter_pct": 0.07,
+      "distribution": "acc",
+      "distribution_frequency": null,
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "VGLA", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "VALL", "currency": "EUR" },
+        { "exchange": "Borsa Italiana", "ticker": "VALL", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "VALU", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "VALL", "currency": "GBP" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "VALL", "currency": "USD" }
+      ],
+      "share_class_assets_musd": 645,
+      "fund_assets_musd": 660,
+      "inception": "2026-08-18",
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/FTSE_Global_All-Cap_UCITS_ETF_USD_Acc_E161_EU_INT_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
+      }
+    },
+    {
+      "ticker": "VGLD",
+      "name": "Vanguard FTSE Global All-Cap UCITS ETF (USD) Distributing",
+      "issuer": "Vanguard",
+      "isin": "IE000CVUM3N6",
+      "index_key": "ftse_gac",
+      "index": "FTSE Global All Cap Index",
+      "domicile": "IE",
+      "ter_pct": 0.07,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "VGLD", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "VALLD", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "VACD", "currency": "USD" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "VALLD", "currency": "USD" }
+      ],
+      "share_class_assets_musd": 15,
+      "fund_assets_musd": 660,
+      "inception": "2026-08-18",
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/FTSE_Global_All-Cap_UCITS_ETF_USD_Dist_E162_EU_INT_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
+      }
+    },
+    {
+      "ticker": "VWCE",
+      "name": "Vanguard FTSE All-World UCITS ETF (USD) Accumulating",
+      "issuer": "Vanguard",
+      "isin": "IE00BK5BQT80",
+      "index_key": "ftse_aw",
+      "index": "FTSE All-World Index",
+      "domicile": "IE",
+      "ter_pct": 0.14,
+      "distribution": "acc",
+      "distribution_frequency": null,
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "VWCE", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "VWCE", "currency": "EUR" },
+        { "exchange": "Borsa Italiana", "ticker": "VWCE", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "VWRA", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "VWRP", "currency": "GBP" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "VWRA", "currency": "CHF" }
+      ],
+      "share_class_assets_musd": 58049,
+      "fund_assets_musd": 85317,
+      "inception": "2019-07-23",
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
+      }
+    },
+    {
+      "ticker": "VWRL",
+      "name": "Vanguard FTSE All-World UCITS ETF (USD) Distributing",
+      "issuer": "Vanguard",
+      "isin": "IE00B3RBWM25",
+      "index_key": "ftse_aw",
+      "index": "FTSE All-World Index",
+      "domicile": "IE",
+      "ter_pct": 0.14,
+      "distribution": "dist",
+      "distribution_frequency": "quarterly",
+      "fund_currency": "USD",
+      "listings": [
+        { "exchange": "Deutsche Börse (Xetra)", "ticker": "VGWL", "currency": "EUR" },
+        { "exchange": "Euronext Amsterdam", "ticker": "VWRL", "currency": "EUR" },
+        { "exchange": "Borsa Italiana", "ticker": "VWRL", "currency": "EUR" },
+        { "exchange": "London Stock Exchange", "ticker": "VWRD", "currency": "USD" },
+        { "exchange": "London Stock Exchange", "ticker": "VWRL", "currency": "GBP" },
+        { "exchange": "SIX Swiss Exchange", "ticker": "VWRL", "currency": "CHF" }
+      ],
+      "share_class_assets_musd": 27268,
+      "fund_assets_musd": 85317,
+      "inception": "2012-05-22",
+      "sources": {
+        "default": { "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Distributing_9505_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
+      }
+    }
+  ]
+}
