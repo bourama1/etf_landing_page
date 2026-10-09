@@ -66,3 +66,5 @@ section it changes.
 wrong on Vercel: every serverless instance has its own memory, so an in-process counter misses requests that
 hit other instances. Corrected in §6a: per-address dedupe uses Brevo as the shared store, and per-IP limiting needs
 either a Vercel Firewall rule (if Hobby allows it, to verify) or a free Upstash counter (new account, needs approval).
+
+- 2026-10-08 — `claude-md-management:revise-claude-md`: folded 4 session learnings into CLAUDE.md (Fio/UCITS-fee finding, unsourced skill tables, `/api/lead` §6a pointer, export + env notes). Approved by Matěj.

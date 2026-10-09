@@ -37,6 +37,10 @@ Under the EU PRIIPs regulation, a product sold to retail clients needs a Key Inf
 issuers do not publish one, so EU brokers block these orders for retail clients. Professional clients (MiFID II)
 are an exception.
 
+**Phase 0 finding (2026-10-08):** Fio reportedly still lets retail clients trade US ETFs (citing a ČNB position;
+unverified, secondhand). Copy says "u většiny brokerů", never "z Česka nekoupíte". Don't claim UCITS twins are
+cheaper than the US originals; the fee story is bank fund vs. index ETF. See `docs/decisions.md` §0.
+
 This is not a footnote — it is the best hook for the page. The visitor saw "VOO / S&P 500 ETF" in an ad or on a
 forum, tries to buy it, and hits a wall. The page can deliver real value by **comparing popular NYSE ETFs with
 their UCITS equivalents listed in Europe** (same index, different domicile, fees, accumulating vs distributing,
@@ -106,6 +110,7 @@ Overrides (these win over plugin defaults):
 - **Marketing skills must not add** fake social proof, fake counters, fake scarcity/urgency, or performance promises,
   even if a framework suggests them (finance + honesty rules below).
 - Every skill used and every subagent prompt gets a line in `docs/ai-worklog.md`.
+- Skill reference tables (e.g. `lead-magnets/references/benchmarks.md`) are unsourced: never cite them as evidence.
 
 ## Data rules (non-negotiable)
 
@@ -169,6 +174,8 @@ Events (names are a suggestion; keep them consistent and documented in README):
 - Hosting: Vercel or Cloudflare Pages. Note that Vercel's Hobby plan is limited to non-commercial use — mention
   this in README and say what a real launch would use.
 - Secrets only in env vars; provide `.env.example`; never commit keys.
+- `/api/lead` must follow `docs/decisions.md` §6a (allow-list input, 24 h dedupe via Brevo, per-IP limit needs
+  shared state: serverless instances don't share memory).
 
 ## How to work with me (the human)
 
@@ -184,7 +191,9 @@ Events (names are a suggestion; keep them consistent and documented in README):
   `data: add iShares CSPX factsheet figures`). One logical change per commit.
 - Ask me before: choosing paid services, creating accounts, deploying, or making a decision that changes the
   concept. Otherwise pick a sensible default and note it in `docs/decisions.md`.
-- Remind me at the end of each session to run `/export` and save it into `ai-log/`.
+- Remind me at the end of each session to run `/export ai-log/YYYY-MM-DD-<phase>.md` (it exports the whole
+  conversation, not a delta; re-export overwrites). Prefer one session per phase.
+- Env: Windows; no Python; Node is not on PATH yet (a hook fails, and Astro needs it). Use Git Bash/PowerShell.
 - README language: Czech (the reviewer writes Slovak; Czech is fine). Code, comments and commit messages: English.
 
 ## Repo layout (target)
