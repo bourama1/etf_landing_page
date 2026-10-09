@@ -1,0 +1,32 @@
+{
+  "retrieved_at": "2026-10-09",
+  "note": "Costs from PRIIPs KIDs. entry_max_pct is a maximum; ongoing_pct = 'Poplatky za vedení/správu a jiné správní nebo provozní náklady'. See data/sources.md §5.",
+  "funds": [
+    {
+      "name": "ČSOB Akciový",
+      "manager": "ČSOB Asset Management, a.s., investiční společnost",
+      "isin": "770000001170",
+      "entry_max_pct": 3.0,
+      "ongoing_pct": 2.59,
+      "ongoing_is_estimate": true,
+      "transaction_pct": 0.39,
+      "exit_pct": 0,
+      "recommended_holding_years": 8,
+      "kid_date": "2026-06-01",
+      "source_url": "https://multimediafiles.kbcgroup.eu/ng/feed/am/funds/KID/KID_770000001170_CS.PDF"
+    },
+    {
+      "name": "KB Portfolio – Akciových indexů – Exclusive",
+      "manager": "Amundi Czech Republic, investiční společnost, a.s.",
+      "isin": "CZ0008478492",
+      "entry_max_pct": 5.0,
+      "ongoing_pct": 1.75,
+      "ongoing_is_estimate": false,
+      "transaction_pct": 0.09,
+      "exit_pct": 0,
+      "recommended_holding_years": 6,
+      "kid_date": "2026-04-24",
+      "source_url": "https://www.amundi-kb.cz/storage/app/media/KIID/KIID_CZ0008478492.pdf"
+    }
+  ]
+}

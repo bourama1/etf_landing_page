@@ -155,3 +155,41 @@ https://financnisprava.gov.cz/cs/financni-sprava/media-a-verejnost/tiskove-zprav
 
 Statute and Finanční správa agree. The cap removed in 2026 had applied only in 2025 (secondary:
 [TPA](https://www.tpa-group.cz/news/zruseni-limitu-pro-osvobozeni-prijmu-z-prodeje-obchodnich-podilu-a-cennych-papiru/)).
+
+---
+
+## 5. Czech bank equity funds: entry fee and ongoing costs (ad B): **verified, 2 of 3 big banks**
+
+Read straight from the PRIIPs KIDs (sdělení klíčových informací). Machine-readable copy: `bank-funds.json`.
+
+| Fund (manager, bank) | ISIN | KID date | Entry (max) | Ongoing costs p.a. | Transaction costs p.a. | Exit | Source |
+|---|---|---|---|---|---|---|---|
+| ČSOB Akciový (ČSOB Asset Management, ČSOB) | 770000001170 | 1. června 2026 | **3,00 %** ("Max. 3,00% z částky, kterou zaplatíte při vstupu") | **2,59 %** ("Jedná se o odhad, protože za uplynulý rok zatím nejsou k dispozici žádné skutečné údaje.") | 0,39 % | 0 | https://multimediafiles.kbcgroup.eu/ng/feed/am/funds/KID/KID_770000001170_CS.PDF |
+| KB Portfolio – Akciových indexů – Exclusive (Amundi Czech Republic IS, KB) | CZ0008478492 | 24/04/2026 | **5,00 %** ("distribuční náklady ve výši 5,00 % investované částky. Jedná se o maximální částku") | **1,75 %** ("založena na skutečných nákladech za minulý rok") | 0,09 % | 0 (but "osoba, která vám produkt prodává, jej může účtovat") | https://www.amundi-kb.cz/storage/app/media/KIID/KIID_CZ0008478492.pdf |
+| Česká spořitelna / Erste AM (e.g. Top Stocks CZ0008472404, Sporotrend CZ0008472289) | — | — | — | — | — | — | **not retrieved**: Erste's KID links load via JavaScript (see NOTES.md). Secondary only: porovnejfondy.cz quotes TER ≈ 1,88–1,92 % and entry 1–3 %. Not for the page. |
+
+The ČSOB KID also states the total effect: "Dopad ročních nákladů … 3,4% každý rok" over the 8-year recommended holding
+period. The KB fund invests in equity *index* funds and still charges 1,75 % p.a. That makes it a fair comparison
+with a 0,03–0,07 % UCITS ETF on the same kind of exposure.
+
+**Page/ad wording rule:** entry fees are maxima, so write "vstupní poplatek až 3–5 %", never "3–5 %". Ongoing
+costs are "1,75–2,59 % ročně", with fund names and KID dates in the source line. Per decisions.md §4, no bank name
+goes in the headline.
+
+## 6. Default return assumption for the calculator: **verified source, value needs Matěj's decision**
+
+UBS *Global Investment Returns Yearbook 2026, public summary edition* (Dimson, Marsh, Staunton; DMS Database 2026),
+published 2026-03-03. https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf
+- Figure 12, USA 1900–2025: nominal "Equities 9.8% per year … Inflation 2.9% per year"; real "Equities 6.6% per year
+  Bonds 1.6% per year Bills 0.5% per year".
+- Section 4: "the annualized return from investing in EM over the period was 6.9% compared with 8.5% from DM"
+  (1900–2025).
+
+Candidates (decision in NOTES.md, open question 3):
+- **5 % p.a. (proposed default):** deliberately below every long-run figure above, labelled "předpoklad, ne
+  předpověď", adjustable 0–10 %. The page would cite the UBS numbers as context, not as a forecast.
+- 6,6 % (US real, 1900–2025) or 8,5 % (DM nominal, USD): sourced, but they come from the best-performing market or
+  currency and would read as a promise.
+
+The fee comparison (bank fund vs ETF) is what ad B sells. Its CZK gap grows with the return assumption, so a lower
+default understates our own argument. That is the honest direction to err in.
