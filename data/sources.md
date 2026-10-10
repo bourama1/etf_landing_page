@@ -158,7 +158,7 @@ Statute and Finanční správa agree. The cap removed in 2026 had applied only i
 
 ---
 
-## 5. Czech bank equity funds: entry fee and ongoing costs (ad B): **verified, 2 of 3 big banks**
+## 5. Czech bank equity funds: entry fee and ongoing costs (ad B): **entry fees verified for 3 of 3 big banks, ongoing costs for 2**
 
 Read straight from the PRIIPs KIDs (sdělení klíčových informací). Machine-readable copy: `bank-funds.json`.
 
@@ -166,7 +166,7 @@ Read straight from the PRIIPs KIDs (sdělení klíčových informací). Machine-
 |---|---|---|---|---|---|---|---|
 | ČSOB Akciový (ČSOB Asset Management, ČSOB) | 770000001170 | 1. června 2026 | **3,00 %** ("Max. 3,00% z částky, kterou zaplatíte při vstupu") | **2,59 %** ("Jedná se o odhad, protože za uplynulý rok zatím nejsou k dispozici žádné skutečné údaje.") | 0,39 % | 0 | https://multimediafiles.kbcgroup.eu/ng/feed/am/funds/KID/KID_770000001170_CS.PDF |
 | KB Portfolio – Akciových indexů – Exclusive (Amundi Czech Republic IS, KB) | CZ0008478492 | 24/04/2026 | **5,00 %** ("distribuční náklady ve výši 5,00 % investované částky. Jedná se o maximální částku") | **1,75 %** ("založena na skutečných nákladech za minulý rok") | 0,09 % | 0 (but "osoba, která vám produkt prodává, jej může účtovat") | https://www.amundi-kb.cz/storage/app/media/KIID/KIID_CZ0008478492.pdf |
-| Česká spořitelna / Erste AM (e.g. Top Stocks CZ0008472404, Sporotrend CZ0008472289) | — | — | — | — | — | — | **not retrieved**: Erste's KID links load via JavaScript (see NOTES.md). Secondary only: porovnejfondy.cz quotes TER ≈ 1,88–1,92 % and entry 1–3 %. Not for the page. |
+| Česká spořitelna – akciové fondy skupiny Erste (price-list category) | — | price list effective 01. 02. 2026 | **3,00 %** ("Cena za obstarání nákupu podílových listů fondů skupiny Erste … Akciové fondy 3,00 %"); third-party equity funds 4,00 % | **not in price list** (needs a fund KID) | — | "stanovena vždy statutem" | *Ceník investování a investování PLUS*, https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE |
 
 The ČSOB KID also states the total effect: "Dopad ročních nákladů … 3,4% každý rok" over the 8-year recommended holding
 period. Despite its name, the KB fund is **not** an index fund. Its KID says it invests in a "diverzifikovaného
@@ -197,7 +197,7 @@ default understates our own argument. That is the honest direction to err in.
 
 ---
 
-## 7. Broker costs for the ETF side of the fee comparison: **verified for 3 brokers** (retrieved 2026-10-10)
+## 7. Broker costs for the ETF side of the fee comparison: **verified for 4 brokers** (retrieved 2026-10-10)
 
 Scenario: buying a EUR-listed UCITS ETF on Xetra from a CZK account. Machine-readable copy: `brokers.json`.
 Listed for cost realism in the calculator, not as a recommendation (decisions.md §2: no ranking, no affiliate links).
@@ -207,6 +207,8 @@ Listed for cost realism in the calculator, not as a recommendation (decisions.md
 | **XTB** | "0%, minimálně 0 EUR" until 100 000 EUR monthly turnover, then "0.2%, minimálně 10 EUR" | **0,5 %**: "Všechny měnové konverze související s obchodováním … podléhají 0,5% přirážce" | 0,02 % p.a. only above 250 000 EUR | *Tabulka poplatků a provizí XTB ze dne 29. dubna 2026*, https://www.xtb.com/cz/soubory/tabulka-poplatku-a-provizi.pdf |
 | **Trading 212** | "Trading commission: Free" | **0,15 %**: "spot rate + 0.15% FX fee" when the instrument's currency differs from the account's | "Custody Fee: Free" | Help centre (pages undated): [fees](https://helpcentre.trading212.com/hc/en-us/articles/11471996799517-What-are-the-fees-in-the-Invest-ISAs-and-SIPP), [FX fee](https://helpcentre.trading212.com/hc/en-us/articles/360018909758-What-is-the-FX-fee-Invest-Stocks-ISA) |
 | **Fio e-Broker** | Xetra: **3,95 EUR** per trade up to 1 400 EUR; 4,95 EUR up to 3 000 EUR; above that 0,15 %, min. 6,95 EUR. On a DIP account, 1,98 EUR up to 500 EUR | **not published**: "Měnová konverze probíhá vždy za devizové kurzy, které naleznete přímo v aplikaci e-Broker." | "IN uložené na sběrném účtu pro obchodování na DB XETRA zdarma" | *Ceník základních služeb*, effective 1. 7. 2026, https://www.fio.cz/docs/cz/C_zaklad.pdf · https://www.fio.cz/akcie-investice/dalsi-sluzby-fio/devizove-konverze |
+
+| **Česká spořitelna** | Xetra/Tradegate: **0,35 %, minimálně 4 EUR**; regular fractional orders via internet banking 0,35 % without minimum | not stated in the price list | **0,08 % ročně** ("Zahraniční kotované akcie … 0,08 % ročně"; ETFs are priced "stejné ceny … ETF") | *Ceník investování a investování PLUS*, effective 01. 02. 2026, https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE |
 
 **Worked example** (computed with `brokers.json`): a monthly purchase of 125 EUR at Fio costs 3,95 EUR, i.e.
 **3,16 %** of the purchase (1,58 % on a DIP account), before currency conversion. At small monthly amounts a fixed

@@ -6,7 +6,7 @@
       "name": "ČSOB Akciový",
       "manager": "ČSOB Asset Management, a.s., investiční společnost",
       "isin": "770000001170",
-      "entry_max_pct": 3.0,
+      "entry_max_pct": 3,
       "ongoing_pct": 2.59,
       "ongoing_is_estimate": true,
       "transaction_pct": 0.39,
@@ -19,7 +19,7 @@
       "name": "KB Portfolio – Akciových indexů – Exclusive",
       "manager": "Amundi Czech Republic, investiční společnost, a.s.",
       "isin": "CZ0008478492",
-      "entry_max_pct": 5.0,
+      "entry_max_pct": 5,
       "ongoing_pct": 1.75,
       "ongoing_is_estimate": false,
       "transaction_pct": 0.09,
@@ -27,6 +27,21 @@
       "recommended_holding_years": 6,
       "kid_date": "2026-04-24",
       "source_url": "https://www.amundi-kb.cz/storage/app/media/KIID/KIID_CZ0008478492.pdf"
+    },
+    {
+      "name": "Česká spořitelna – akciové fondy skupiny Erste (category, not a single fund)",
+      "manager": "Erste Asset Management (distributed by Česká spořitelna)",
+      "isin": null,
+      "entry_max_pct": 3,
+      "entry_note": "Price-list rate for \"Akciové fondy\" of the Erste group; third-party equity funds 4,00 %. Regular monthly investing (min. 1 000 Kč): 25 % off from the 13th, 50 % off from the 37th investment.",
+      "ongoing_pct": null,
+      "ongoing_note": "Not in the price list; needs the fund KID (not retrieved).",
+      "transaction_pct": null,
+      "exit_pct": null,
+      "recommended_holding_years": null,
+      "kid_date": null,
+      "price_list_effective": "2026-02-01",
+      "source_url": "https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE"
     }
   ]
 }

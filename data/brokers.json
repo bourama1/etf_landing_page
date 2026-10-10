@@ -4,7 +4,11 @@
   "brokers": [
     {
       "name": "XTB",
-      "commission": { "pct": 0, "min_eur": 0, "condition": "up to 100 000 EUR monthly turnover; above it 0.2 %, min 10 EUR" },
+      "commission": {
+        "pct": 0,
+        "min_eur": 0,
+        "condition": "up to 100 000 EUR monthly turnover; above it 0.2 %, min 10 EUR"
+      },
       "fx_pct": 0.5,
       "fx_note": "Applies to every trading-related conversion (buy and sell).",
       "custody": "0.02 % p.a. only if average portfolio value exceeds 250 000 EUR",
@@ -13,7 +17,11 @@
     },
     {
       "name": "Trading 212",
-      "commission": { "pct": 0, "min_eur": 0, "condition": null },
+      "commission": {
+        "pct": 0,
+        "min_eur": 0,
+        "condition": null
+      },
       "fx_pct": 0.15,
       "fx_note": "Spot rate + 0.15 % when the instrument's currency differs from the account currency (buy and sell); not on dividends.",
       "custody": "free",
@@ -25,9 +33,19 @@
       "name": "Fio banka (e-Broker)",
       "commission": {
         "tiers_eur": [
-          { "up_to_eur": 1400, "fee_eur": 3.95 },
-          { "up_to_eur": 3000, "fee_eur": 4.95 },
-          { "up_to_eur": null, "fee_pct": 0.15, "min_eur": 6.95 }
+          {
+            "up_to_eur": 1400,
+            "fee_eur": 3.95
+          },
+          {
+            "up_to_eur": 3000,
+            "fee_eur": 4.95
+          },
+          {
+            "up_to_eur": null,
+            "fee_pct": 0.15,
+            "min_eur": 6.95
+          }
         ],
         "dip_account_up_to_500_eur": 1.98
       },
@@ -37,6 +55,19 @@
       "source_url": "https://www.fio.cz/docs/cz/C_zaklad.pdf",
       "source_url_fx": "https://www.fio.cz/akcie-investice/dalsi-sluzby-fio/devizove-konverze",
       "as_of": "2026-07-01"
+    },
+    {
+      "name": "Česká spořitelna",
+      "commission": {
+        "pct": 0.35,
+        "min_eur": 4,
+        "condition": "Xetra Germany / Tradegate; fractional regular orders via internet banking 0,35 % with no minimum"
+      },
+      "fx_pct": null,
+      "fx_note": "Not stated in the price list.",
+      "custody": "0,08 % p.a. (\"Zahraniční kotované akcie … 0,08 % ročně\"; ETFs priced as akcie), billed quarterly",
+      "source_url": "https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE",
+      "as_of": "2026-02-01"
     }
   ]
 }

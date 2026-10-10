@@ -182,3 +182,13 @@ field-count rules have no primary source. The e-mail rates roughly match Mailchi
 3. LocaliQ's page contradicts itself ("highest CPCs" $0.73–$1.08 vs. a $1.80 average). Noted; only averages used.
 4. A search summary attributed figures to "Mailchimp 2026". Mailchimp's own page says its data was last updated in
    December 2023. Dated accordingly.
+
+## 2026-10-10 — Česká spořitelna price list (supplied by Matěj)
+
+Matěj downloaded `RR_SK.INV..xml,pdf_IE.pdf` manually, because the agent's fetches couldn't reach ČS documents.
+The agent found that the file is **not a KID** but the *Ceník investování a investování PLUS* (effective 01. 02. 2026).
+It confirmed with `cmp` that the file is byte-identical to the live official URL. Extracted in `pdftotext -raw` mode
+(layout mode misaligned the fee column again): equity-fund entry fee 3,00 % (Erste group; third-party 4,00 %), ETF
+trading 0,35 % min. 4 EUR on Xetra, custody 0,08 % p.a. Added to `bank-funds.json`, `brokers.json`, sources.md §5/§7.
+**Still missing:** ČS fund ongoing costs (KID). **Conflict noted:** newstream.cz reports an 18. 5. 2026 price change
+that the live document does not show.

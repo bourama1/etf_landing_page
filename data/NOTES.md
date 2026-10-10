@@ -33,9 +33,11 @@ Snapshot retrieved 2026-10-09. Files: `etfs.json` (fund data), `bank-funds.json`
 
 ## Not verified / gaps (must not go on the page as fact)
 
-- **Česká spořitelna equity-fund KID:** not retrieved (JS-only document links on erste-am.cz/investicnicentrum.cz).
-  The ad B fee range rests on ČSOB + KB only. Fix: download a KID manually from the ČS site, or say "dvě největší
-  banky" honestly.
+- **Česká spořitelna:** the price list (supplied by Matěj, byte-identical to the live csas.cz URL on 2026-10-10)
+  gives the equity-fund entry fee (3,00 %), ETF trading (0,35 %, min. 4 EUR on Xetra) and custody (0,08 % p.a.). It
+  does **not** give the funds' ongoing costs, so the page's ongoing-cost range (1,75–2,59 %) still rests on ČSOB + KB.
+  **Conflict:** newstream.cz reports a ČS price change from 18. 5. 2026 (removing the 90 Kč minimum on one-off share/ETF
+  purchases), but the live price list is still the 01. 02. 2026 edition. The live document is used.
 - **QQQ CUSIP/ISIN:** Invesco shows `46090E103` only as an unlabelled `fid=` link parameter. Left `null`.
 - **Invesco UCITS non-Xetra tickers/currencies:** Invesco's listing tables load via JS. Only the Xetra symbols
   (Deutsche Börse pages) and the SIX Bloomberg tickers (factsheets) are recorded; the SIX trading currency is `null`.
