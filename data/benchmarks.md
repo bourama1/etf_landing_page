@@ -37,8 +37,8 @@ Funnel definition: **lead_submitted ÷ page_view**, per ad variant (decisions.md
 - Pushes up: the offer is free and email-only. Value shows before the form. Mobile finance traffic converts better
   than desktop (UB +27.8 %). The interactive step means visitors who reach the form are already engaged.
 - Pushes down: cold paid-social traffic from an in-app browser with a few seconds of attention (UB mixes all
-  traffic sources; LQ shows finance has below-average CTR on traffic campaigns, 1.46 % vs. the all-industry
-  figure). A new brand has no track record (decisions.md §2 value equation).
+  traffic sources; LQ traffic campaigns: Finance & Insurance CTR 1.46 % vs. "1.93%" across all
+  industries). A new brand has no track record (decisions.md §2 value equation).
 - **Planning estimate: 4–6 % of page views, 5 % as the point estimate. Below 3 % after ~1 000 visits per variant
   means rework. 8 % or more would match the financial-services median (UB 8.3 %).** This is our judgement anchored
   on UB, and the README must present it that way.
