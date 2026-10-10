@@ -192,3 +192,7 @@ It confirmed with `cmp` that the file is byte-identical to the live official URL
 trading 0,35 % min. 4 EUR on Xetra, custody 0,08 % p.a. Added to `bank-funds.json`, `brokers.json`, sources.md §5/§7.
 **Still missing:** ČS fund ongoing costs (KID). **Conflict noted:** newstream.cz reports an 18. 5. 2026 price change
 that the live document does not show.
+- 2026-10-10 — Second ČS file from Matěj (`zakladni_informace_o_poskytovani_is.pdf`): a MiFID client-information
+  document, not a KID. No fund ongoing costs or FX fees. It does disclose distribution inducements ČS receives from
+  fund managers (equity funds of EAM ČR/REICO 0–1,65 % p.a.). Recorded in sources.md §5 and bank-funds.json, with an
+  explicit note not to derive a TER from it. The live URL was confirmed byte-identical with `cmp`.

@@ -173,6 +173,14 @@ period. Despite its name, the KB fund is **not** an index fund. Its KID says it 
 portfolia investičních fondů" (Amundi group funds only), "Fond nesleduje žádný specifický index", and it is actively
 managed. Its aim is to beat "indexů zaměřených na globální akciové trhy". The page must not call it an index fund.
 
+**Distribution inducements at ČS** (*Základní informace o poskytování investičních služeb Českou spořitelnou*,
+undated, https://www.csas.cz/banka/content/inet/internet/cs/zakladni_informace_o_poskytovani_is.pdf, byte-identical to the copy Matěj downloaded): "Pobídky od správců fondů kolektivního investování
+mají zpravidla podobu poplatku z objemu obhospodařovaného majetku ve fondu (jako naše odměna za distribuci těchto
+produktů)": Fondy EAM ČR a REICO, akciové fondy **0 až 1,65 %**; Fondy EAM, akciové fondy 0 až 1,17 %; fondy
+třetích stran 0 až 1,25 %. This is part of what the fund charges each year, paid on to the distributing bank. It
+is **not** the fund's total ongoing cost, and no TER may be derived from it. Usable in the plan e-mail as context ("z
+ročního poplatku fondu může banka dostávat provizi až …"), with the source.
+
 **Page/ad wording rule:** entry fees are maxima, so write "vstupní poplatek až 3–5 %", never "3–5 %". Ongoing
 costs are "1,75–2,59 % ročně", with fund names and KID dates in the source line. Per decisions.md §4, no bank name
 goes in the headline.

@@ -41,7 +41,23 @@
       "recommended_holding_years": null,
       "kid_date": null,
       "price_list_effective": "2026-02-01",
-      "source_url": "https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE"
+      "source_url": "https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE",
+      "inducements": {
+        "equity_eam_cr_pct_range": [
+          0,
+          1.65
+        ],
+        "equity_eam_pct_range": [
+          0,
+          1.17
+        ],
+        "third_party_pct_range": [
+          0,
+          1.25
+        ],
+        "note": "Paid to ČS by fund managers out of fund assets, p.a.; not the fund ongoing cost (TER). Undated document.",
+        "source_url": "https://www.csas.cz/banka/content/inet/internet/cs/zakladni_informace_o_poskytovani_is.pdf"
+      }
     }
   ]
 }
