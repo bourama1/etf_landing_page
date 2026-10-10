@@ -131,3 +131,8 @@ Never write numbers from memory. Stop before changing the concept if a finding b
 
 **Not done / gaps:** Česká spořitelna equity-fund KID (JS-only links), QQQ ISIN, Invesco non-Xetra listings. All
 listed in NOTES.md.
+
+- 2026-10-10 — `marketing-skills:lead-magnets` (invoked by Matěj, no arguments): re-checked the decisions.md §2 magnet
+  against the Phase 1 findings. Output is a proposal in chat; decisions.md is not changed until approved. Ignored the
+  skill's "Downloaded by 5,000+" social-proof advice (CLAUDE.md bans fake counters) and its unsourced benchmark numbers
+  (incl. "every extra field reduces conversion by 5-10%").
