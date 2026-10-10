@@ -161,3 +161,24 @@ broker commissions and FX to be researched for the fee comparison, and chose a g
    used.
 
 **Gaps:** Fio FX cost, DEGIRO (no official CZ schedule reachable, conflicting secondary sources), IBKR, Revolut.
+
+## 2026-10-10 — Sourcing the lead-magnets skill benchmarks
+
+**Asked (Matěj):** "can we turn lead-magnets again with citing sources? So we could use its benchmarks?"
+
+**What the agent did:** read the skill's `references/benchmarks.md` and kept only the claims relevant to this
+project (landing-page conversion, finance, mobile, paid social CPL, form fields, e-mail rates). For each it looked
+for a primary publisher of benchmark data (Unbounce, LocaliQ/WordStream, Mailchimp). Every quote was verified in the
+raw HTML with curl/grep, and the result was written to `data/benchmarks.md`.
+
+**Findings:** the skill's "Finance 10–20 %" is not supported. Unbounce gives 8.3 % for financial services and
+**3.9 % for investing pages**. The skill's Meta CPL "$3–15" understates LocaliQ's $27.39 average. The format and
+field-count rules have no primary source. The e-mail rates roughly match Mailchimp (2023 data).
+
+**Mistakes / traps caught**
+1. Secondary roundups quote the Unbounce finance median as **8.4 %**. Unbounce's own page says **8.3 %**. Used 8.3 %.
+2. LocaliQ's lead "conversion rate" (8.54 %) is for Meta Lead Ads (in-app form), not landing pages. Labelled as
+   such and not used as our landing-page benchmark.
+3. LocaliQ's page contradicts itself ("highest CPCs" $0.73–$1.08 vs. a $1.80 average). Noted; only averages used.
+4. A search summary attributed figures to "Mailchimp 2026". Mailchimp's own page says its data was last updated in
+   December 2023. Dated accordingly.
