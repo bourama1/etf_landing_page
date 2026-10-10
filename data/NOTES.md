@@ -5,12 +5,8 @@ Snapshot retrieved 2026-10-09. Files: `etfs.json` (fund data), `bank-funds.json`
 
 ## Open questions for Matěj (findings that touch Phase 0 decisions)
 
-1. **The UCITS tax argument is weaker than decisions.md §0 assumed** (sources.md §2.5). A Czech resident with a
-   W-8BEN pays 15 % US withholding on a US ETF, and an Irish UCITS fund also pays 15 % at fund level. "Irish ETFs
-   halve dividend tax" is false for CZ. What survives: (a) accumulating classes, so no payouts to declare, (b) no US
-   estate-tax exposure above $60k (sources.md §3), (c) the KID / broker-access point. An Irish *distributing*
-   class is actually the worst of the three for a Czech resident. Leg 2 needs rewording, not deleting: "proč spíš
-   akumulační UCITS" rather than "UCITS = nižší daně". **Concept change, so it is not applied yet.**
+1. ~~The UCITS tax argument is weaker than decisions.md §0 assumed~~ **Resolved 2026-10-10:** Matěj approved
+   the reframing to "acc + estate tax, not lower withholding" (decisions.md §0 leg 2, §2 v2).
 2. **Fio is now confirmed from first-party sources** (sources.md §1.2–1.3): Fio's own page says "U nás můžete
    obchodovat i s americkými ETF", and ČNB RS2018-12 B.2 says execution-only access is outside PRIIPs Art. 13(1).
    The "u většiny brokerů" wording in decisions.md §0 still holds. The FAQ item "Fio mi VOO koupit dovolí — co teď?"
@@ -52,6 +48,10 @@ Snapshot retrieved 2026-10-09. Files: `etfs.json` (fund data), `bank-funds.json`
   absence of any provision taxing undistributed fund income (§ 8 and § 20b tax distributions, § 10 / § 4 tax sales).
   That is my reading of the statute, not a quoted rule. Wording on the page: "u akumulačního fondu nedostáváte
   dividendy, takže je nedaníte každý rok". Consider confirming with a tax adviser before launch.
+
+- **Fio currency conversion cost:** not published outside the e-Broker app (sources.md §7). The calculator must
+  show Fio's commission without FX, labelled as such, or leave Fio out.
+- **DEGIRO, Interactive Brokers, Revolut fees:** not researched/verified (sources.md §7).
 
 ## Data choices
 

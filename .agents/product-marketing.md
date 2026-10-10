@@ -1,18 +1,18 @@
 # Product Marketing Context
 
-**Document version:** v2
-**Last updated:** 2026-10-08
+**Document version:** v3
+**Last updated:** 2026-10-10
 
 > Auto-drafted from `CLAUDE.md` (the only file in the repo at the time). There is no customer research behind it
 > yet. Anything marked *(hypothesis)* is an assumption to validate, not a finding. Tax and regulatory claims are
-> **unverified** until Phase 1 sources them in `data/`.
+> sourced in `data/sources.md` (Phase 1). Use them only as worded there.
 
 ## Product Overview
 **One-liner:** A free tool that tells a Czech investor which European (UCITS) ETF to buy instead of the US ETF they
 heard about (VOO, SPY, QQQ, VTI), and what that choice costs over 20 years.
 **What it does:** The visitor picks the NYSE ETFs they wanted. The page shows the UCITS equivalent that tracks the
 same index (ticker, TER, accumulating/distributing, currency, exchange) and a fee comparison. The full,
-personalised summary (all their picks, fee impact, CZ tax checklist, where to buy it from CZ) is sent by e-mail.
+personalised summary (all their picks with ISINs, acc vs. dist for a Czech resident, fee impact incl. broker costs, the 2026 CZ tax checklist, generic buying steps) is sent by e-mail.
 **Product category:** Investment education / ETF comparison tool (shelf: "jaké ETF koupit", "VOO z Česka",
 "S&P 500 ETF Česko").
 **Product type:** Lead-magnet landing page (content plus an interactive comparison).
@@ -38,8 +38,9 @@ B2C, so this is a single decision-maker. The personas are defined in `docs/decis
 
 ## Problems & Pain Points
 **Core problem:** The advice is American but the investor is Czech. At most brokers the ETF everyone names is not
-available to EU retail clients because it has no PRIIPs KID (Fio may be an exception; to verify). Even where a broker allows it, it may not be the best choice for
-a Czech tax resident. *(both parts to verify in Phase 1)*
+available to EU retail clients because it has no PRIIPs KID (Fio is the verified exception: execution-only, backed by ČNB). Even where a broker allows it, an accumulating
+UCITS twin is simpler for a Czech tax resident: no payouts to declare, no US estate-tax exposure. It does NOT
+lower dividend withholding (15 % either way with W-8BEN; `data/sources.md` §2.5).
 **Why alternatives fall short:**
 - US content (Reddit, YouTube) assumes a US account and US taxes.
 - Broker apps show the error but don't suggest the equivalent.
@@ -111,7 +112,8 @@ recommendation ("doporučujeme koupit").
 | "Tohle si koupit můžete" | PRIIPs text + broker help pages (Phase 1) |
 | "Stejný index, evropská verze" | Issuer factsheets (Phase 1). Do NOT claim UCITS is cheaper than the US original |
 | "Poplatky v korunách" | Bank-fund KIDs vs. index ETF TER (Phase 1) |
-| "Daně v Česku jasně" | financnisprava.cz (Phase 1) |
+| "Daně v Česku jasně" | ZDP § 4/1/t, § 4/1/u, § 38g + Finanční správa 5. 1. 2026 (`data/sources.md` §4) |
+| "Akumulační = žádné papírování" | Treaties + ZDP § 20b (`data/sources.md` §2.5); never claim lower tax |
 
 ## Goals
 **Business goal:** Collect qualified e-mail leads from paid mobile traffic at a cost that would justify running the
@@ -121,6 +123,8 @@ ads (the reviewer's question: "could we run ads tomorrow?").
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v3 (2026-10-10) — Phase 1 facts: Fio exception verified; UCITS case reframed from tax to acc/estate tax; lead
+  magnet v2 (tax checklist promoted, fees incl. broker costs, generic buying steps).
 - v2 (2026-10-08) — Phase 0: operator = independent brand "ETF Dvojče"; softened the access claim (Fio exception);
   dropped the "UCITS is cheaper" value theme as unsupported; added the CZK-fees theme for ad B.
 - v1 (2026-10-08) — Initial context, auto-drafted from CLAUDE.md. Operator and customer language still open.

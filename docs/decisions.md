@@ -21,14 +21,18 @@ mostly confirms it, with one exception that changes the wording:
 - **Exception found:** [Finhacker](https://www.finhacker.cz/jak-obejit-znemozneni-obchodovani-americkych-etfek-1-cast)
   quotes Fio saying ČNB took a "relatively accommodating" position, so Fio clients can still trade US ETFs
   execution-only (no advice, no active offering). The quote is secondhand and undated. Fio's current page only says
-  it "does not offer ETFs, it provides market access". **VERIFY in Phase 1** (Fio help page plus ČNB, ideally both).
+  it "does not offer ETFs, it provides market access". **Verified in Phase 1:** Fio's page says "U nás můžete
+  obchodovat i s americkými ETF", and ČNB RS2018-12 B.2 backs execution-only access (`data/sources.md` §1).
 
 **Decision:** the page never says "z Česka VOO nekoupíte". The wording is **"U většiny brokerů vám VOO jako
 drobnému investorovi neprodají."** The concept rests on two legs, so it survives if Fio is confirmed:
 1. *Access:* most brokers block it, and the UCITS twin is what you can actually buy.
-2. *Suitability:* even where the US version is available, the UCITS twin may suit a Czech resident better (dividend
-   withholding, US estate-tax exposure, accumulating share classes). **VERIFY every part of this in Phase 1.** If
-   the tax case turns out weak, leg 2 is dropped and the copy says so honestly.
+2. *Suitability:* even where the US version is available, an **accumulating** UCITS twin may suit a Czech resident
+   better: no payouts to declare each year, and no US estate-tax exposure.
+   **Phase 1 update (2026-10-10, approved by Matěj):** the dividend-withholding argument was dropped. With a W-8BEN, a
+   Czech resident pays 15 % on a US ETF, and an Irish fund pays the same 15 % at fund level. An Irish
+   *distributing* class is actually the least tax-efficient option. Sources: `data/sources.md` §2–3. Fio confirmed
+   that it sells US ETFs execution-only (`sources.md` §1.2–1.3), so leg 2 is what the page tells Fio users.
 
 **Second correction:** while drafting the positioning I wrote "same index, lower fees". That is not safe. The US
 originals have very low TERs and the UCITS twins are not reliably cheaper. The fee story is therefore framed as
@@ -71,9 +75,11 @@ predictions.
 
 | Offer component | Decision |
 |---|---|
-| Core deliverable | For every US ETF the visitor picked: the UCITS twin(s) with ISIN, ticker, exchange, TER, acc/dist and fund currency. Fee impact over their horizon at their monthly amount. All sourced and dated. |
-| Bonus 1 (e-mail only) | **CZ tax checklist** for ETF investors: time test, exemption limit, what to keep for the tax return. **VERIFY** current rules on financnisprava.cz. Numbers must not come from memory, because the rules changed recently. |
-| Bonus 2 (e-mail only) | **"Jak ho koupit"**: neutral step-by-step for finding the ISIN at 3–4 brokers available in CZ. No affiliate links, no ranking. |
+| 1. Twins | For every US ETF the visitor picked: the UCITS twin(s) with ISIN, Xetra ticker, TER, acc/dist and fund currency, with "zdroj, stav k …" (`data/etfs.json`). No same-index twin (VTI, SCHD) is said plainly (wording: open item). |
+| 2. Akumulační, nebo distribuční? | A 3-row table for a Czech resident: US ETF / Irish acc / Irish dist. It covers the 15 % US tax, Czech tax on payouts, yearly paperwork and US estate tax. It answers the Fio user who *can* buy VOO. Source: `data/sources.md` §2.5, §3. |
+| 3. Fees in CZK | Bank equity fund (entry "až 3–5 %", ongoing 1,75–2,59 %; KIDs in `data/bank-funds.json`) vs. index ETF (TER **plus** broker commission and FX: `data/brokers.json`), at their monthly amount, horizon and an adjustable return. Year-by-year in the e-mail. |
+| 4. Daně z ETF v Česku 2026 (main part, not a bonus) | 3-year test per purchase (§ 4/1/u) · 100 000 Kč yearly limit on *sale proceeds*, all-or-nothing (§ 4/1/t) · no cap since 1. 1. 2026 · when foreign dividends go in the tax return (§ 38g(2)) · keep purchase confirmations · US estate tax above $60k for US ETFs. Every rule cites `data/sources.md` §2–4. Marked "informativní, nejde o daňové poradenství". |
+| 5. Jak ho koupit | **Generic** (Matěj, 2026-10-10): "zadejte ISIN do vyhledávání u svého brokera", check acc/dist and exchange. No broker list, no ranking, no availability claims. |
 | Guarantee | Exactly one e-mail with the plan. Newsletter only with a separate opt-in. One-click unsubscribe. "Nejsme broker, nic neprodáváme." |
 | Scarcity/urgency | **None, on purpose.** The only time element is the honest "data k [datum]". No countdowns, no fake counters. |
 | Price | An e-mail address. |
@@ -85,9 +91,14 @@ predictions.
 - *Time delay:* partial answer within ~10 s of the first tap, full plan in the inbox within a minute.
 - *Effort:* 2–3 taps, then an e-mail address.
 
-**Useful before the form:** the twin ticker and key facts (TER, acc/dist) appear immediately for every pick, so the
-visitor leaves with an answer even without converting. The plan adds what the page holds back: ISINs,
-personalised fee numbers in CZK across the horizon, the tax checklist and the broker steps.
+**Useful before the form:** the twin ticker and key facts (TER, acc/dist), a one-line verdict for every pick and the
+total CZK fee difference appear immediately, so the visitor leaves with an answer even without converting. The
+plan adds what the page holds back: ISINs and exchange tickers, the acc/dist tax table, the year-by-year fee
+breakdown, the tax checklist and the buying steps.
+
+*v2, 2026-10-10:* reworked after Phase 1 via the `lead-magnets` skill and approved by Matěj. The tax checklist
+went from bonus to a main part because it is the best-sourced and most CZ-specific content. Section 2 replaces the
+"UCITS = lower tax" idea. The fee comparison now includes broker costs, because without them it would flatter the ETF.
 
 ---
 

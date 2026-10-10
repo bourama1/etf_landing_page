@@ -136,3 +136,28 @@ listed in NOTES.md.
   against the Phase 1 findings. Output is a proposal in chat; decisions.md is not changed until approved. Ignored the
   skill's "Downloaded by 5,000+" social-proof advice (CLAUDE.md bans fake counters) and its unsourced benchmark numbers
   (incl. "every extra field reduces conversion by 5-10%").
+
+## 2026-10-10 — Lead magnet v2 folded in + broker-cost research pass
+
+**Asked (Matěj):** "1. Approved 2. Research pass 3. I think generic is good enough". He approved magnet v2, asked for
+broker commissions and FX to be researched for the fee comparison, and chose a generic "how to buy" section.
+
+**What the agent did**
+1. Broker research: discovery by WebSearch; values only from official documents: XTB *Tabulka poplatků a provizí*
+   (29. 4. 2026), Trading 212 help-centre fee pages, Fio *Ceník základních služeb* (effective 1. 7. 2026). Wrote
+   `data/brokers.json` and `sources.md` §7. The worked example (Fio 3,95 EUR on a 125 EUR buy = 3,16 %) was computed
+   from `brokers.json` by script, not by hand.
+2. Updated decisions.md §0 (leg 2, Fio verified) and §2 (v2 table), product-marketing.md (v3) and NOTES.md.
+
+**Mistakes / traps caught**
+1. **Stale official document:** the first XTB PDF from xtb.com/cz was dated 13. dubna 2021 even though it sat at the
+   current URL. Caught by reading the document date. The 29. 4. 2026 version was found and used.
+2. **Ambiguous table not used:** Fio's FX page shows EUR 23,65157 / 25,08943 under a heading that calls them ČNB
+   rates, but ČNB publishes a single rate, and the page says conversions use rates shown only inside e-Broker.
+   Recorded as "not published" instead of deriving a ±2,95 % spread from it.
+3. **Secondary vs. primary:** a search summary said Fio charges no custody fee (banky.cz). Before using it, it was
+   confirmed in Fio's own price list ("IN uložené na sběrném účtu pro obchodování na DB XETRA zdarma").
+4. A Trading 212 community post claimed "no FX fees" and another "0.015 %". The official help-centre page (0.15 %) was
+   used.
+
+**Gaps:** Fio FX cost, DEGIRO (no official CZ schedule reachable, conflicting secondary sources), IBKR, Revolut.
