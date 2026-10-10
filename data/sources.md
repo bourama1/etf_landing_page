@@ -194,3 +194,28 @@ Candidates (decision in NOTES.md, open question 3):
 
 The fee comparison (bank fund vs ETF) is what ad B sells. Its CZK gap grows with the return assumption, so a lower
 default understates our own argument. That is the honest direction to err in.
+
+---
+
+## 7. Broker costs for the ETF side of the fee comparison: **verified for 3 brokers** (retrieved 2026-10-10)
+
+Scenario: buying a EUR-listed UCITS ETF on Xetra from a CZK account. Machine-readable copy: `brokers.json`.
+Listed for cost realism in the calculator, not as a recommendation (decisions.md §2: no ranking, no affiliate links).
+
+| Broker | Commission | Currency conversion | Custody | Source |
+|---|---|---|---|---|
+| **XTB** | "0%, minimálně 0 EUR" until 100 000 EUR monthly turnover, then "0.2%, minimálně 10 EUR" | **0,5 %**: "Všechny měnové konverze související s obchodováním … podléhají 0,5% přirážce" | 0,02 % p.a. only above 250 000 EUR | *Tabulka poplatků a provizí XTB ze dne 29. dubna 2026*, https://www.xtb.com/cz/soubory/tabulka-poplatku-a-provizi.pdf |
+| **Trading 212** | "Trading commission: Free" | **0,15 %**: "spot rate + 0.15% FX fee" when the instrument's currency differs from the account's | "Custody Fee: Free" | Help centre (pages undated): [fees](https://helpcentre.trading212.com/hc/en-us/articles/11471996799517-What-are-the-fees-in-the-Invest-ISAs-and-SIPP), [FX fee](https://helpcentre.trading212.com/hc/en-us/articles/360018909758-What-is-the-FX-fee-Invest-Stocks-ISA) |
+| **Fio e-Broker** | Xetra: **3,95 EUR** per trade up to 1 400 EUR; 4,95 EUR up to 3 000 EUR; above that 0,15 %, min. 6,95 EUR. On a DIP account, 1,98 EUR up to 500 EUR | **not published**: "Měnová konverze probíhá vždy za devizové kurzy, které naleznete přímo v aplikaci e-Broker." | "IN uložené na sběrném účtu pro obchodování na DB XETRA zdarma" | *Ceník základních služeb*, effective 1. 7. 2026, https://www.fio.cz/docs/cz/C_zaklad.pdf · https://www.fio.cz/akcie-investice/dalsi-sluzby-fio/devizove-konverze |
+
+**Worked example** (computed with `brokers.json`): a monthly purchase of 125 EUR at Fio costs 3,95 EUR, i.e.
+**3,16 %** of the purchase (1,58 % on a DIP account), before currency conversion. At small monthly amounts a fixed
+fee can cost more than a bank fund's entry fee. The calculator must show this honestly and not assume 0 %.
+
+**Not covered:** DEGIRO. No official Czech fee schedule could be fetched, and secondary sources disagree on Core
+Selection limits and the connectivity fee. Also not covered: Interactive Brokers and Revolut. Spreads on the
+exchange itself (bid/ask) are not included for any broker.
+
+**Not used:** a Fio table on the devizové konverze page shows EUR at 23,65157 / 25,08943 CZK. The page labels the
+table "aktuální devizové kurzy ČNB", but ČNB publishes a single rate, so it is unclear which rate this is. It is not
+cited as Fio's conversion spread.

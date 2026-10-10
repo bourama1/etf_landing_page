@@ -1,0 +1,42 @@
+{
+  "retrieved_at": "2026-10-10",
+  "note": "Costs of buying a EUR-listed UCITS ETF on Xetra from a CZK account. See data/sources.md §7. Not a ranking or recommendation.",
+  "brokers": [
+    {
+      "name": "XTB",
+      "commission": { "pct": 0, "min_eur": 0, "condition": "up to 100 000 EUR monthly turnover; above it 0.2 %, min 10 EUR" },
+      "fx_pct": 0.5,
+      "fx_note": "Applies to every trading-related conversion (buy and sell).",
+      "custody": "0.02 % p.a. only if average portfolio value exceeds 250 000 EUR",
+      "source_url": "https://www.xtb.com/cz/soubory/tabulka-poplatku-a-provizi.pdf",
+      "as_of": "2026-04-29"
+    },
+    {
+      "name": "Trading 212",
+      "commission": { "pct": 0, "min_eur": 0, "condition": null },
+      "fx_pct": 0.15,
+      "fx_note": "Spot rate + 0.15 % when the instrument's currency differs from the account currency (buy and sell); not on dividends.",
+      "custody": "free",
+      "source_url": "https://helpcentre.trading212.com/hc/en-us/articles/11471996799517-What-are-the-fees-in-the-Invest-ISAs-and-SIPP",
+      "source_url_fx": "https://helpcentre.trading212.com/hc/en-us/articles/360018909758-What-is-the-FX-fee-Invest-Stocks-ISA",
+      "as_of": null
+    },
+    {
+      "name": "Fio banka (e-Broker)",
+      "commission": {
+        "tiers_eur": [
+          { "up_to_eur": 1400, "fee_eur": 3.95 },
+          { "up_to_eur": 3000, "fee_eur": 4.95 },
+          { "up_to_eur": null, "fee_pct": 0.15, "min_eur": 6.95 }
+        ],
+        "dip_account_up_to_500_eur": 1.98
+      },
+      "fx_pct": null,
+      "fx_note": "Not published: 'Měnová konverze probíhá vždy za devizové kurzy, které naleznete přímo v aplikaci e-Broker.'",
+      "custody": "free: 'IN uložené na sběrném účtu pro obchodování na DB XETRA zdarma'",
+      "source_url": "https://www.fio.cz/docs/cz/C_zaklad.pdf",
+      "source_url_fx": "https://www.fio.cz/akcie-investice/dalsi-sluzby-fio/devizove-konverze",
+      "as_of": "2026-07-01"
+    }
+  ]
+}
