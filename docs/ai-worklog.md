@@ -196,3 +196,6 @@ that the live document does not show.
   document, not a KID. No fund ongoing costs or FX fees. It does disclose distribution inducements ČS receives from
   fund managers (equity funds of EAM ČR/REICO 0–1,65 % p.a.). Recorded in sources.md §5 and bank-funds.json, with an
   explicit note not to derive a TER from it. The live URL was confirmed byte-identical with `cmp`.
+- 2026-10-10 — Third ČS file from Matěj (`poskytovani-investicnich-sluzeb-osobam-s-vazbami-na-usa-v-ceske-sporitelne-as.pdf`):
+  ČS restrictions for clients with US ties (US persons / green-card holders). Not relevant to the persona (Czech
+  residents) and contains no costs. Reviewed; nothing added to `data/`.
