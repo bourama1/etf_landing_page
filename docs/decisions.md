@@ -123,6 +123,7 @@ is a **deviation, resolved as one flow with three steps** rather than three sepa
 ```
 Step A  Které ETF jste chtěli koupit?     chips: VOO · SPY · IVV · VTI · QQQ · VT · SCHD · "jiné"
         -> each tapped chip shows its UCITS twin(s) instantly (ticker, TER, acc/dist)
+        -> VTI: S&P 500 twins labelled "nejbližší dostupné, jiný index"; SCHD: "nemá evropské dvojče" (§14)
 Step B  Kolik měsíčně a na jak dlouho?     amount slider (CZK) + horizon (years) + adjustable return
         -> fee line in CZK: bank fund vs. index ETF (ad B story) + spread within the twin shortlist
 Step C  Dvě upřesnění (filters)            "Dividendy: vyplácet / reinvestovat" · "Měna fondu: USD / EUR / nevím"
@@ -138,10 +139,13 @@ Result  shortlist + fee number  ->  inline e-mail ask
   (investment-advice risk under MiFID II, **VERIFY** wording in Phase 3). Filters plus a shortlist, with "Toto není
   doporučení" next to the result, stays on the information side.
 - **Bank-fund fee comparison:** use actual TER and entry-fee ranges from KIDs of real Czech bank equity funds,
-  cited. Do not name a bank in the headline. **VERIFY/source in Phase 1.**
+  cited. Do not name a bank in the headline. **Sourced in Phase 1:** entry fees ČS/ČSOB/KB 3–5 % (max), ongoing
+  1,75–2,59 % (ČSOB, KB KIDs). See `data/bank-funds.json`, `data/sources.md` §5. The ETF side includes broker
+  commission + FX (`data/brokers.json`).
 - **Return assumption:** a user-adjustable slider with a visible label ("předpoklad, ne předpověď") and a default
   that is justified and sourced (e.g. a long-run historical figure with a citation) or kept deliberately
-  conservative. Phase 1 decides.
+  conservative. **Decided (§14): default 5 % p.a.**, slider 0–10 %, with the UBS 1900–2025 figures as context
+  (`data/sources.md` §6).
 - **No-JS:** the static page still states the core message and shows a static VOO/SPY/QQQ→twin table. The
   interactive layer enhances it.
 
@@ -239,7 +243,7 @@ money), and a different opening step on the page. The result tells us which prob
 4. **What's in the plan**: a real preview of the e-mail plan (a screenshot of the actual template, not a mock
    book cover).
 5. **Who's behind this / where the data comes from**: operator, method in one sentence, data date.
-6. **FAQ**: free? spam? is it advice? "Fio mi VOO koupit dovolí — co teď?" Taxes?
+6. **FAQ**: free? spam? is it advice? "Fio mi VOO koupit dovolí — co teď?" (answer direction in §14) Taxes?
 7. **Final e-mail form + footer** (disclaimer, past-performance warning, operator, privacy).
 
 Logic: on a 5-second visit, the only thing that earns more seconds is an answer to the question the ad raised, so
@@ -338,13 +342,27 @@ and Umami `lead_submitted` is reported as a measurement-loss check.
 
 ## 13. Open items, and what feeds the README
 
-- **Expected conversion rate:** deferred to the README, where it must rest on **cited** benchmarks. The
-  `lead-magnets` skill ships benchmark tables (e.g. "Finance 10–20 %") **with no sources**, so they are not used as
-  evidence. Logged in `docs/ai-worklog.md`.
+- **Expected conversion rate:** planning estimate **4–6 % of page views (5 % point estimate)**, anchored on
+  Unbounce's 3,9 % median for investing landing pages (`data/benchmarks.md`). The `lead-magnets` skill's own
+  tables (e.g. "Finance 10–20 %") are unsourced and not used. Final wording goes in the README.
 - **A/B hypotheses (draft ranking, to refine):**
   1. Ad angle + matching entry step (A blocked vs. B fees). Largest: it changes audience, promise and first screen.
   2. Gate depth: show all twins before the form vs. show one twin, with the rest behind the e-mail.
   3. Ask framing: "Poslat plán" vs. "Poslat daňový checklist" as the headline benefit.
-- **Phase 1 verification list:** PRIIPs text plus ≥2 broker pages (incl. Fio's current stance), US WHT for CZ
-  residents and Irish-fund structure, US estate-tax exposure, CZ time test / exemption threshold / cap, bank-fund
-  TER/fee ranges from real KIDs, all ETF figures from issuer pages.
+- **Phase 1 verification list:** done. See `data/sources.md` §1–7, `data/etfs.json`, `data/NOTES.md` (gaps).
+
+---
+
+## 14. Phase 1 decisions (Matěj, 2026-10-11)
+
+Taken on the agent's recommendations in `data/NOTES.md`.
+
+| # | Question | Decision |
+|---|---|---|
+| 1 | UCITS tax argument | Reframed to "accumulating class + no US estate tax". Never "lower dividend tax" (§0 leg 2, approved 2026-10-10). |
+| 2 | Fio sells US ETFs | FAQ answer direction: **"Koupit VOO u Fio můžete, ale akumulační dvojče je pro rezidenta ČR jednodušší"**: no payouts to declare yearly, no US estate-tax exposure. No claim of lower tax. |
+| 3 | Calculator default return | **5 % p.a.**, adjustable 0–10 %, labelled "předpoklad, ne předpověď". Deliberately below the UBS 1900–2025 figures (US real 6,6 %, DM nominal 8,5 %). |
+| 4 | VTI, SCHD (no same-index UCITS twin) | **SCHD:** "nemá evropské dvojče". **VTI:** show the S&P 500 twins, labelled "nejbližší dostupné, jiný index (jen velké firmy)". |
+| 5 | QQQ is on Nasdaq, not NYSE | **Keep QQQ.** Page copy says "americká ETF", never "ETF z NYSE". README notes the deviation from the brief. |
+| 6 | Fio FX cost not published | Calculator shows Fio's commission labelled **"bez kurzové přirážky"**; Fio stays in the broker options. |
+| 7 | ČS fund ongoing cost (KID not found) | Ongoing-cost range cites ČSOB + KB; entry fees cite all three banks. Revisit if a ČS KID turns up. |

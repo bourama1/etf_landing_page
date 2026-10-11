@@ -7,19 +7,7 @@ Snapshot retrieved 2026-10-09. Files: `etfs.json` (fund data), `bank-funds.json`
 
 1. ~~The UCITS tax argument is weaker than decisions.md §0 assumed~~ **Resolved 2026-10-10:** Matěj approved
    the reframing to "acc + estate tax, not lower withholding" (decisions.md §0 leg 2, §2 v2).
-2. **Fio is now confirmed from first-party sources** (sources.md §1.2–1.3): Fio's own page says "U nás můžete
-   obchodovat i s americkými ETF", and ČNB RS2018-12 B.2 says execution-only access is outside PRIIPs Art. 13(1).
-   The "u většiny brokerů" wording in decisions.md §0 still holds. The FAQ item "Fio mi VOO koupit dovolí — co teď?"
-   now needs a real answer, and point 1 makes that answer about acc vs dist and estate tax, not withholding.
-3. **Return default:** proposed 5 % p.a. (sources.md §6). Needs a yes/no.
-4. **VTI and SCHD have no same-index UCITS twin.** Options: (a) show "nemá evropské dvojče" honestly and stop
-   there; (b) show the S&P 500 twins as the "nearest available" with a clear label (different index: large caps
-   only, while VTI's index covers "approximately 100% of investable companies in the U.S. equity market", per the
-   Vanguard factsheet); (c) drop VTI/SCHD from the chips. I'd pick (a) for SCHD and (b)
-   for VTI, but it is your call.
-5. **QQQ is listed on Nasdaq, not NYSE** (SEC N-CSRS: "QQQ | The Nasdaq Stock Market LLC"). The brief says
-   "ETF obchodované na NYSE". Keep QQQ? If kept, the page should say "americká
-   ETF", not "ETF z NYSE". VOO, SPY, IVV, VTI, VT and SCHD are on NYSE Arca.
+2.–5. **Resolved 2026-10-11:** all decided on the recommended options. See `docs/decisions.md` §14.
 
 ## Source disagreements
 
