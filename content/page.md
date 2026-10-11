@@ -37,7 +37,7 @@ headline ≤ 3 lines, sub ≤ 2 lines, then the interactive element, then the tr
 **Interactive (= primary action):** label **Které ETF jste chtěli koupit?**, then the chips
 `VOO` `SPY` `IVV` `VTI` `QQQ` `VT` `SCHD` `Jiné`
 
-**Trust line:** Nejsme broker a nic neprodáváme. U každého čísla najdete zdroj a datum.
+**Trust line:** Nejsme broker ani banka a nic neprodáváme. U každého čísla najdete zdroj a datum.
 
 Alternatives considered:
 - *Chtěli jste VOO, ale nejde koupit? Má evropské dvojče.* Uses the commenters' "nejde" (VoC theme 1). Keep as an
@@ -99,8 +99,8 @@ with VOO preselected (Step A is then shown collapsed above as "Vybráno: VOO · 
 - Twin row: **{SXR8}** · {iShares Core S&P 500 UCITS ETF} · TER {0,07 %} ročně · {Akumulační} · Zdroj: {iShares},
   stav k {30. 9. 2026}
   - Akumulační = dividendy reinvestuje. Distribuční = dividendy vyplácí.
-- Under the list: Stejný fond má na každé burze jiný ticker: {SXR8} na Xetře je v Londýně {CSPX}. Jistotu dává jen
-  ISIN, ten najdete v plánu.
+- Under the list: Na každé burze má fond jiný ticker. {SXR8} z Xetry je v Londýně {CSPX}. Jistotu dává jen ISIN,
+  ten najdete v plánu.
 - Line under the list (all chips): Pořadí není doporučení.
 
 **VTI** (no same-index twin, decisions.md §14 #4):
@@ -111,8 +111,8 @@ Nejbližší dostupné jsou fondy na S&P 500: *jiný index, jen velké firmy.* {
 SCHD nemá evropské dvojče. ETF se stejným indexem (Dow Jones U.S. Dividend 100) jsme v Evropě nenašli.
 
 **Jiné:**
-Zatím porovnáváme {7} amerických ETF, na která se lidé ptají nejčastěji. U jiného fondu zjistěte, jaký index
-sleduje (je na stránce vydavatele), a hledejte evropské ETF se stejným indexem.
+Zatím porovnáváme těchto {7} amerických ETF. U jiného fondu zjistěte na stránce vydavatele, jaký index sleduje,
+a hledejte evropské ETF se stejným indexem.
 
 **Next button:** Pokračovat na poplatky
 
@@ -130,7 +130,7 @@ sleduje (je na stránce vydavatele), a hledejte evropské ETF se stejným indexe
   - Fio: Fio nezveřejňuje kurzovou přirážku, počítáme jen poplatek za obchod.
   - Česká spořitelna: ceník neuvádí kurzovou přirážku, počítáme jen poplatek za obchod a úschovu.
   - Fio / ČS at small amounts, when the fixed fee is above {2 %} of the payment: Při {3 000 Kč} měsíčně je pevný
-    poplatek {3,95 EUR} asi {x} % z každého nákupu. Méně častý, větší nákup vyjde levněji.
+    poplatek {3,95 EUR} asi {x} % z každého nákupu. V procentech vyjde levněji méně častý a větší nákup.
     [CHYBÍ ZDROJ: kurz EUR/CZK. The CZK→EUR conversion for fixed fees needs a dated ČNB rate in `data/`.]
 
 **Live result line:** (same as hero B) **Kvůli poplatkům budete mít méně o:** Bankovní akciový fond
@@ -154,7 +154,7 @@ brokerů ({XTB 29. 4. 2026, Trading 212, Fio 1. 7. 2026, ČS 1. 2. 2026}), facts
 - Vyplácet (distribuční)
 - Nevím, ukažte obojí
 - helper: Akumulační fond dividendy nevyplácí, takže je každý rok nedaníte. Distribuční je vyplácí a daníte je.
-  *Filtr, ne doporučení.*
+  *Slouží jako filtr. Toto není doporučení.*
   *Poznámka:* wording approved in `data/NOTES.md` (it rests on reading the statute, not a quoted rule).
   Source line: Zdroj: zákon o daních z příjmů, § 20b a § 16a, znění k 1. 8. 2026. Informativní, nejde o daňové
   poradenství.
@@ -216,9 +216,9 @@ poplatky po letech a daně z ETF v Česku 2026.
    u takové služby připouští. Zdroj: fio.cz/akcie-investice/etf (staženo 9. 10. 2026); ČNB, Otázky a odpovědi k PRIIPs, RS2018-12, odpověď B.2
    (22. 10. 2018).
 
-**Closing line:** Evropská dvojčata sledují stejný index, jen sídlí v Irsku. [Najít své dvojče] (scrolls to Step A)
+**Closing line:** Evropská dvojčata sledují stejný index a sídlí v Irsku. [Najít své dvojče] (scrolls to Step A)
 
-*Poznámka:* "jen sídlí v Irsku" is true for all {13} UCITS funds in `etfs.json` (domicile IE). Re-check when funds
+*Poznámka:* "sídlí v Irsku" is true for all {13} UCITS funds in `etfs.json` (domicile IE). Re-check when funds
 are added.
 
 ---
@@ -234,7 +234,7 @@ are added.
 3. **Poplatky po letech v korunách.** Bankovní fond proti ETF, i s poplatky brokera.
 4. **Daně z ETF v Česku 2026.** Časový a hodnotový test, co se změnilo od 1. 1. 2026 a kdy dividendy patří do
    přiznání. Informativní, nejde o daňové poradenství.
-5. **Jak fond koupit.** Postup, který funguje u každého brokera.
+5. **Jak fond koupit.** Jak ho podle ISIN najdete u svého brokera a co zkontrolovat před nákupem.
 
 **CTA:** Poslat plán (scrolls to the inline form if the result is shown, otherwise to Step A)
 
@@ -244,8 +244,8 @@ are added.
 
 **Heading:** Kdo za tím stojí a odkud máme čísla
 
-ETF Dvojče provozuje [DOPLNIT: jméno provozovatele, IČO, sídlo]. Nejsme broker ani banka, neprodáváme fondy a
-nemáme od nikoho provize za odkazy.
+ETF Dvojče provozuje [DOPLNIT: jméno provozovatele, IČO, sídlo]. Nejsme broker ani banka. Za odkazy na fondy a
+brokery nedostáváme provize.
 
 Čísla o fondech bereme ze stránek a factsheetů vydavatelů (Vanguard, iShares, State Street, Invesco). Poplatky
 bankovních fondů z jejich KID, poplatky brokerů z jejich ceníků a daňová pravidla ze zákona o daních z příjmů.
@@ -258,13 +258,13 @@ Kontakt: [DOPLNIT: e-mail provozovatele]
 ## 6. FAQ
 
 **Je to zdarma?**
-Ano. Plán vám pošleme za e-mailovou adresu, nic dalšího nechceme.
+Ano. Chceme jen e-mailovou adresu, kam plán pošleme.
 
 **Budete mi posílat spam?**
 Pošleme jeden e-mail s plánem. Novinky jen tehdy, když zaškrtnete políčko. Odhlásíte se jedním klikem.
 
 **Je to investiční doporučení?**
-Ne. Ukazujeme fakta o fondech se stejným indexem a co stojí. Který fond koupíte a jestli vůbec, je na vás.
+Ne. Ukazujeme, které fondy sledují stejný index a kolik stojí. Který koupíte a jestli vůbec, je na vás.
 
 **Fio mi VOO koupit dovolí. Co teď?**
 Koupit ho tam můžete. Pro rezidenta ČR je ale akumulační dvojče jednodušší. Nevyplácí dividendy, takže je nemusíte
@@ -342,7 +342,7 @@ Below the table: Daňový checklist a postup nákupu najdete v e-mailu.
 *Poznámka:* shown when JS is off, in place of the tool. Rows generated from `etfs.json`. Order is alphabetical within
 acc/dist, not a ranking.
 
-**Heading:** Evropská dvojčata nejčastějších amerických ETF
+**Heading:** Evropská dvojčata VOO, SPY, IVV a QQQ
 
 | Americké ETF | Ticker na Xetře | Fond | TER ročně | Dividendy | Zdroj, stav k |
 |---|---|---|---|---|---|
