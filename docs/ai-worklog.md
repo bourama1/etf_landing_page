@@ -201,3 +201,71 @@ that the live document does not show.
   residents) and contains no costs. Reviewed; nothing added to `data/`.
 - 2026-10-11 — `claude-md-management:revise-claude-md`: folded Phase 1 learnings into CLAUDE.md (verified domain findings, fetch workflow + gotchas, validator, sourced benchmarks, data/ layout). Approved by Matěj.
 - 2026-10-11 — `claude-md-management:claude-md-improver`: audit scored CLAUDE.md 71/100 (stale Phase 0 "defaults/decide" wording). Applied 5 updates (Phase 0/1 marked done, stack/tracking/voice/visuals as decided, QQQ wording). Approved by Matěj.
+
+---
+
+## 2026-10-11 — Phase 2: copy (Claude Code, Opus 5.5)
+
+**Asked (Matěj):** start Phase 2. Write `content/page.md` (all sections in §8 order, both heroes, tool microcopy,
+asks, FAQ incl. Fio, footer), `content/email.md` (plan e-mail), `content/ads.md` (Meta A + B with UTMs), and first
+collect real customer phrasing into `content/voice-of-customer.md`. Every number from `data/`, unsourced facts
+marked `[CHYBÍ ZDROJ]`, no fake proof/urgency, no AI tells. Log skills and mistakes. Stop for review.
+
+**Skills, in order, and what each produced**
+
+| Skill | Used for | What came back / what was changed |
+|---|---|---|
+| `customer-research` (Mode 2) | VoC quote bank | Framework only (themes, confidence levels, bias checks). Quotes were gathered by the agent from raw comment feeds. |
+| `copywriting` | `page.md` first draft | Hero/section structure, CTA rules, AI-tell self-check. Its "Social Proof" section (logos, testimonials, stats) was **not used** (CLAUDE.md bans fake proof; we have none). |
+| `copy-editing` | sweep of `page.md` | Seven sweeps + AI-tell scan (grep for dashes, "ne …", unsourced superlatives). Fixes listed below. Its "Prove It" sweep suggests adding testimonials and customer logos; ignored for the same reason. |
+| `ads` | campaign notes in `ads.md` | Statics, broad CZ targeting, headline mirroring (ad headline = page H1). Its unsourced effect sizes ("15–20 % lift", "Andromeda") were not copied anywhere. |
+| `ad-creative` (Mode 1) | the two ads | Angle → copy → spec check. Lengths measured by script (primary text 102/104 visible, headlines 26/29, descriptions 30/23). Its urgency angle ("Limited time…") was not used. |
+| `emails` | `email.md` | Subject/preheader rules, one-CTA structure, AI-tell list. Its sequence templates (5–7 e-mails, "Direct offer" e-mail) were **not used**: decisions.md §2 promises exactly one e-mail. |
+
+No subagents were spawned in this phase.
+
+**How the voice-of-customer was collected**
+- Reddit could not be read: reddit.com returned 403 to curl and WebFetch refuses the domain; the pullpush.io mirror
+  returned 429. `site:reddit.com` searches returned no Reddit pages. **No Reddit quote is used.**
+- Finex's S&P 500 article has an empty discussion (comment feed: 0 items).
+- Used: the WordPress comment feeds (`/feed/`) of 3 Finhacker articles (44 comments, 2021–2024), one banky.cz reader
+  question (2019) and one Mustachian Post thread (2024).
+- **Check:** a script compared every quoted fragment in `voice-of-customer.md` against the decoded raw feeds:
+  15/15 fragments found verbatim.
+
+**How the copy was checked**
+- Numbers came only from `data/` via scripts: the static twin table and FAQ ranges from `etfs.json`; the fee
+  example from `content/calc-examples.mjs`, which reads `bank-funds.json`, `brokers.json` and `etfs.json`.
+  Sanity check: the no-fee value (1 222 000 Kč for 3 000 Kč × 240 months at 5 %) matches the annuity formula, and
+  the Fio 3,16 % reproduces sources.md §7.
+- Claim checks by script: 13/13 UCITS funds domiciled in IE (for "sídlí v Irsku"), S&P 500 twin TER range 0,03–0,07 %
+  vs VOO 0,03 % (FAQ "Je evropská verze dražší?").
+- AI-tell scan (grep for em dashes, "ne X, Y" shapes, "nejčastěj…", "každého", banned phrases), then a read-through.
+
+**Mistakes caught (agent's own drafts)**
+1. **Unsourced popularity claims** crept in three times: "{7} amerických ETF, na která se lidé ptají nejčastěji",
+   the heading "Evropská dvojčata nejčastějších amerických ETF", and "postup, který funguje u každého brokera".
+   We have no data on what people ask most, and no check of every broker. Rewritten neutrally. It's the same kind of
+   mistake as Phase 1's "the second most-asked US ETF".
+2. **Misquoting Fio:** the draft said Fio "prodává" US ETFs. Fio's own page says it "nenabízí žádné ETF" and only
+   gives market access. Rewritten to "Americká ETF u něj koupit jde. Fio k nim neradí a jen provede nákup na váš
+   pokyn".
+3. **Generalising one broker's rule:** "Co už máte, smíte dál držet i prodat" and "Brokeři blokují jen nové nákupy"
+   rest only on LYNX's page. Now attributed to LYNX ("třeba LYNX výslovně píše…").
+4. **Wrong party for the estate-tax filing:** the draft said the "pozůstalí" must file. The IRS text puts it on the
+   executor. Rewritten impersonally ("může vzniknout povinnost podat v USA přiznání k dědictví").
+5. **A decision that would have shipped a dead filter:** decisions.md §4 planned "Měna fondu: USD / EUR". Every
+   twin in `etfs.json` has fund currency USD, so it filters nothing. Raised as `[ROZHODNUTÍ]` in page.md; the VoC
+   shows that the real confusion is trading currency.
+6. **Claim without a source in data/:** "evropské dvojče má KID" is not recorded per fund in `etfs.json`. Marked
+   `[CHYBÍ ZDROJ]`, not silently kept.
+7. **Unverified "30 sekund"** in the decisions.md §7 ad promise. Dropped (time promise never measured).
+8. AI tells removed in editing: a negation list in "Kdo za tím stojí", "Filtr, ne doporučení" and "jen sídlí v
+   Irsku" (contrast reveals; the second also understated the differences between funds), a false causal link in
+   the e-mail ("nemáme provizi, proto nedoporučujeme").
+9. **Tooling slip:** the first comment-feed parser printed blank lines because a JS template literal swallowed the
+   `\s` escapes. Caught because the output was empty, then rewritten.
+
+**Open items handed to Matěj:** `[CHYBÍ ZDROJ]` KID per UCITS twin; EUR/CZK rate for fixed broker fees.
+`[OVĚŘIT]` in the e-mail: do foreign dividends count toward the § 38g(2) 20 000 Kč limit; S&P 500 coverage wording;
+the "kurzové riziko" line. `[ROZHODNUTÍ]` on the currency filter and on naming the bank fund in ad B.
