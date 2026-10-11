@@ -41,38 +41,22 @@ are an exception.
 "u většiny brokerů", never "z Česka nekoupíte". With a W-8BEN a CZ resident pays 15 % US dividend tax on a US ETF *and*
 inside an Irish fund. **Never claim UCITS = lower tax.** The UCITS case is: accumulating class (nothing to declare
 yearly) + no US estate tax (>$60k). Irish *distributing* is the worst option for a Czech resident. Don't claim twins are
-cheaper; the fee story is bank fund vs. index ETF. Phase 1 decisions: `docs/decisions.md` §14.
+cheaper; the fee story is bank fund vs. index ETF. QQQ trades on Nasdaq, so copy says "americká ETF", not "ETF z NYSE".
+Phase 1 decisions: `docs/decisions.md` §14. Re-verify `data/sources.md` before launch if the snapshot is months old.
 
 This is not a footnote — it is the best hook for the page. The visitor saw "VOO / S&P 500 ETF" in an ad or on a
 forum, tries to buy it, and hits a wall. The page can deliver real value by **comparing popular NYSE ETFs with
 their UCITS equivalents listed in Europe** (same index, different domicile, fees, accumulating vs distributing,
 currency, where to buy them from CZ).
 
-These claims are verified with quotes in `data/sources.md` §1–4 (PRIIPs, withholding, estate tax, CZ 2026 sale-tax
-rules). Use them only as worded there. Re-verify before launch if the snapshot is older than a few months.
-
 If a claim cannot be verified from a primary or reputable source, it does not go on the page.
 
 ## Phase plan (stop for my review at each ✋)
 
-**Phase 0 — Decisions (no code).** Write `docs/decisions.md` covering:
-1. Persona(s): age, income, investing experience, device, what the ad promised them, what they fear (fees,
-   choosing wrong, taxes, "is it legal for me to buy this?").
-2. The lead magnet: what exactly is delivered (e.g. a personalised PDF/e-mail "your UCITS alternatives to the
-   ETFs you wanted + fee impact over 20 years + tax checklist for CZ"). Must be **useful before the form** —
-   the page shows a meaningful partial result, the full/personalised version is behind the e-mail.
-3. **The moment we ask for the contact** (e.g. after the visitor sees their calculated result, not on load).
-4. Interactive elements (comparison, fee calculator, portfolio builder) — pick at most 1–2; each must end in the CTA.
-5. Form fields: aim for **e-mail only** + an optional, unticked marketing-consent checkbox (a required one would not
-   be freely given, GDPR art. 7(4); see `docs/decisions.md` §5). Justify any extra field.
-6. What happens after submit: on-page thank-you state with immediate value + e-mail delivery.
-7. Two ad concepts with different angles (so the A/B test is meaningful), platform (Meta/IG feed or stories,
-   TikTok, Google Discovery…), and how the page's first screen mirrors each ad's promise (message match via
-   `utm_content`).
-8. Hosting/analytics/form-backend choice (see Stack).
-✋ Stop and show me the decisions.
+**Phase 0 — Decisions.** ✅ Done: `docs/decisions.md` §1–13 (personas, magnet v2, ask moment, 3-step tool, form,
+thank-you, ads, section order, brand, visuals, stack, tracking).
 
-**Phase 1 — Data.** Collect real ETF data into `data/etfs.json` (see Data rules). ✋ Show me the table + sources.
+**Phase 1 — Data.** ✅ Done: `data/` (see Data rules), decisions in `docs/decisions.md` §14.
 
 **Phase 2 — Copy.** Write all Czech page copy and both ads into `content/` before building UI. ✋ Review.
 
@@ -136,13 +120,13 @@ Overrides (these win over plugin defaults):
 ## Copy & design rules
 
 - **All page and ad copy in Czech**, natural and spoken — written for someone reading on a phone for 5 seconds.
-  Short sentences, concrete numbers, "vy" form (decide formal vs informal in Phase 0 and keep it consistent).
+  Short sentences, concrete numbers. Vykání with lowercase "vy/vám", relaxed tone; brand **ETF Dvojče** (decisions §9).
 - The first screen (no scrolling on a ~390×844 viewport) must contain: a headline that matches the ad promise,
   one line of what they get, and a visible primary action. No hero stock photo taking half the screen.
 - **Must not look like a default Claude/AI output.** Avoid: purple/blue gradients, generic glassmorphism cards,
   emoji bullet lists, "Odemkněte svůj potenciál", "v dnešní uspěchané době", three identical feature cards,
-  Inter-everything with no typographic character. Load the `frontend-design` skill guidance if available and
-  commit to a deliberate visual direction (write it down in `docs/decisions.md`).
+  Inter-everything with no typographic character. Visual direction is decided: decisions §10 ("pocket dictionary"
+  ticker pair, Archivo, semantic colour tokens). Load `frontend-design` when building.
 - Trust signals that are honest: data sources, dates, "nejsme broker, nic neprodáváme" (if true), no fake
   testimonials, no fake counters ("1 248 lidí si stáhlo…"), no fake urgency.
 - Accessibility basics: contrast AA, tap targets ≥ 44 px, labels on inputs, works without JS for the core message.
@@ -168,18 +152,17 @@ Events (names are a suggestion; keep them consistent and documented in README):
 
 - Store the UTM/ad variant with the lead record so conversion can be attributed per ad.
 - Build a funnel/report view in the analytics tool and screenshot it into `docs/` for the README.
-- Note: **Vercel Web Analytics custom events are not available on the free Hobby plan** (Pro/Enterprise only), so
-  use another tool for events — e.g. PostHog (EU cloud, has funnels), Umami, or Plausible-style alternatives.
-  Verify the free-tier terms before choosing.
+- Decided (decisions §11–12): **Umami Cloud**, cookieless (PostHog EU as fallback). Verify free-tier limits before
+  creating the account. Extra event `step_complete` (per tool step). **Conversions = Brevo leads per `ad_variant`**;
+  Umami covers the funnel up to the form. (Vercel Web Analytics custom events need Pro, so they're not used.)
 
-## Stack (defaults — confirm in Phase 0)
+## Stack (decided: `docs/decisions.md` §11)
 
-- Lightweight static-first site for mobile speed: Astro (or Vite + vanilla/Preact). Performance budget:
+- **Astro** static output + a small vanilla-TS island for the tool. Performance budget:
   LCP < 2.0 s on throttled 4G, total JS on first load < ~60 kB gzipped, no layout shift from fonts.
-- Form backend: one serverless function → store lead (e.g. Supabase / Brevo contact list) and send the magnet
-  e-mail (e.g. Brevo / Resend). Validate e-mail server-side, add a honeypot field, no CAPTCHA unless needed.
-- Hosting: Vercel or Cloudflare Pages. Note that Vercel's Hobby plan is limited to non-commercial use — mention
-  this in README and say what a real launch would use.
+- Form backend: one Vercel function `/api/lead` → **Brevo** (contact + attributes incl. UTMs, and the magnet e-mail).
+  Validate e-mail server-side, honeypot, no CAPTCHA unless needed. Verify Brevo free-tier limits before the account.
+- Hosting: **Vercel Hobby** (non-commercial only: README says a real launch moves to Vercel Pro or Cloudflare Pages).
 - Secrets only in env vars; provide `.env.example`; never commit keys.
 - `/api/lead` must follow `docs/decisions.md` §6a (allow-list input, 24 h dedupe via Brevo, per-IP limit needs
   shared state: serverless instances don't share memory).

@@ -200,3 +200,4 @@ that the live document does not show.
   ČS restrictions for clients with US ties (US persons / green-card holders). Not relevant to the persona (Czech
   residents) and contains no costs. Reviewed; nothing added to `data/`.
 - 2026-10-11 — `claude-md-management:revise-claude-md`: folded Phase 1 learnings into CLAUDE.md (verified domain findings, fetch workflow + gotchas, validator, sourced benchmarks, data/ layout). Approved by Matěj.
+- 2026-10-11 — `claude-md-management:claude-md-improver`: audit scored CLAUDE.md 71/100 (stale Phase 0 "defaults/decide" wording). Applied 5 updates (Phase 0/1 marked done, stack/tracking/voice/visuals as decided, QQQ wording). Approved by Matěj.
