@@ -37,21 +37,19 @@ Under the EU PRIIPs regulation, a product sold to retail clients needs a Key Inf
 issuers do not publish one, so EU brokers block these orders for retail clients. Professional clients (MiFID II)
 are an exception.
 
-**Phase 0 finding (2026-10-08):** Fio reportedly still lets retail clients trade US ETFs (citing a ČNB position;
-unverified, secondhand). Copy says "u většiny brokerů", never "z Česka nekoupíte". Don't claim UCITS twins are
-cheaper than the US originals; the fee story is bank fund vs. index ETF. See `docs/decisions.md` §0.
+**Phase 1 findings (verified, `data/sources.md`):** Fio sells US ETFs execution-only (ČNB RS2018-12 B.2), so copy says
+"u většiny brokerů", never "z Česka nekoupíte". With a W-8BEN a CZ resident pays 15 % US dividend tax on a US ETF *and*
+inside an Irish fund. **Never claim UCITS = lower tax.** The UCITS case is: accumulating class (nothing to declare
+yearly) + no US estate tax (>$60k). Irish *distributing* is the worst option for a Czech resident. Don't claim twins are
+cheaper; the fee story is bank fund vs. index ETF. Phase 1 decisions: `docs/decisions.md` §14.
 
 This is not a footnote — it is the best hook for the page. The visitor saw "VOO / S&P 500 ETF" in an ad or on a
 forum, tries to buy it, and hits a wall. The page can deliver real value by **comparing popular NYSE ETFs with
 their UCITS equivalents listed in Europe** (same index, different domicile, fees, accumulating vs distributing,
 currency, where to buy them from CZ).
 
-Before relying on it, **verify and cite** (with retrieval date) each of these in `data/`:
-- PRIIPs/KID restriction still applies to retail in 2026 (regulation text + at least one broker's help page)
-- US dividend withholding tax for CZ residents (treaty rate with W-8BEN) and how Irish-domiciled UCITS ETFs differ
-- US estate tax exposure for non-US holders of US-domiciled assets
-- Czech personal income tax rules for selling securities (time test, annual exemption threshold, any cap) — these
-  changed recently, so do **not** use remembered numbers
+These claims are verified with quotes in `data/sources.md` §1–4 (PRIIPs, withholding, estate tax, CZ 2026 sale-tax
+rules). Use them only as worded there. Re-verify before launch if the snapshot is older than a few months.
 
 If a claim cannot be verified from a primary or reputable source, it does not go on the page.
 
@@ -111,6 +109,7 @@ Overrides (these win over plugin defaults):
   even if a framework suggests them (finance + honesty rules below).
 - Every skill used and every subagent prompt gets a line in `docs/ai-worklog.md`.
 - Skill reference tables (e.g. `lead-magnets/references/benchmarks.md`) are unsourced: never cite them as evidence.
+  Use `data/benchmarks.md` (Unbounce/LocaliQ/Mailchimp, verified) instead.
 
 ## Data rules (non-negotiable)
 
@@ -125,6 +124,14 @@ Overrides (these win over plugin defaults):
 - If sources disagree, note it in `data/NOTES.md` and use the issuer's figure.
 - Returns: only historical, clearly labelled, with the "minulá výkonnost není zárukou…" warning. No projections
   presented as expected returns — calculators use a user-adjustable assumption and say so.
+- Fetch workflow: WebSearch/WebFetch only to *find* documents; read values from the raw file (`curl` + `pdftotext -raw`
+  in Git Bash, or grep the HTML). **Never `pdftotext -layout` for tables**: it shifts columns (SPDR/Vanguard listings).
+- Check the date printed *inside* every official document (XTB's current URL served a 2021 table) and check every
+  factsheet/page against the expected ISIN (a guessed Vanguard page ID opened a different fund).
+- Blocked to automated fetches: EUR-Lex (use a mirror, cite EUR-Lex), iShares UK (use blackrock.com factsheet PDFs),
+  IBKR, Schwab pages, trading212.com (use helpcentre.trading212.com), ČS/Erste KIDs (ask Matěj to download).
+- After editing `data/etfs.json` run `node data/validate.mjs`; it must print `OK`. `--isin <cusip>` derives a US ISIN.
+- Third-party PDFs Matěj downloads into the repo root are not committed; cite their public URL (verify with `cmp`).
 
 ## Copy & design rules
 
@@ -201,7 +208,7 @@ Events (names are a suggestion; keep them consistent and documented in README):
 ```
 /                 README.md, CLAUDE.md, .env.example
 /src              page source
-/data             etfs.json, sources, NOTES.md
+/data             etfs.json (+validate.mjs), bank-funds.json, brokers.json, sources.md, benchmarks.md, NOTES.md
 /content          Czech copy (page + e-mail + thank-you)
 /ads              ad-a/, ad-b/ (image + copy.md + target URL with UTMs)
 /docs             decisions.md, ai-worklog.md, funnel screenshots, Lighthouse report

@@ -199,3 +199,4 @@ that the live document does not show.
 - 2026-10-10 — Third ČS file from Matěj (`poskytovani-investicnich-sluzeb-osobam-s-vazbami-na-usa-v-ceske-sporitelne-as.pdf`):
   ČS restrictions for clients with US ties (US persons / green-card holders). Not relevant to the persona (Czech
   residents) and contains no costs. Reviewed; nothing added to `data/`.
+- 2026-10-11 — `claude-md-management:revise-claude-md`: folded Phase 1 learnings into CLAUDE.md (verified domain findings, fetch workflow + gotchas, validator, sourced benchmarks, data/ layout). Approved by Matěj.
