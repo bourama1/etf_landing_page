@@ -321,3 +321,32 @@ should confirm them before launch (listed in the README).
 
 **Consequence for the build:** the form does not change (e-mail + optional unticked newsletter checkbox + privacy
 link). The plan e-mail footer needs **one added line** for art. 21(4) (point 2). The privacy notice covers art. 13.
+
+## 10. Cookieless analytics (Umami) and § 89(3) ZEK: **verified (statute + EDPB text); ÚOOÚ position only secondhand; decision open** (retrieved 2026-10-15)
+
+Not legal advice. Quotes verbatim; conclusions are my reading.
+
+### 10.1 Sources
+
+| Source | Quote (verbatim, trimmed) |
+|---|---|
+| Zákon č. 127/2005 Sb., o elektronických komunikacích, § 89 odst. 3, https://www.zakonyprolidi.cz/cs/2005-127 (page shows "verze 52") | "Každý, kdo hodlá používat nebo používá sítě elektronických komunikací k ukládání údajů nebo k získávání přístupu k údajům uloženým v koncových zařízeních účastníků nebo uživatelů, získá od těchto účastníků nebo uživatelů předem prokazatelný souhlas s rozsahem a účelem jejich zpracování. Tato povinnost neplatí pro technické ukládání nebo přístup výhradně pro potřeby přenosu zprávy … nebo je-li to nezbytné pro potřeby poskytování služby informační společnosti, která je výslovně vyžádána účastníkem nebo uživatelem." |
+| EDPB Guidelines 2/2023 on Technical Scope of Art. 5(3) of ePrivacy Directive, version 2.0, adopted 7 October 2024, https://www.edpb.europa.eu/system/files/2024-10/edpb_guidelines_202302_technical_scope_art_53_eprivacydirective_v2_en_0.pdf | para. 33: "Additional examples would include JavaScript code, where the accessing entity instructs the browser of the user to send asynchronous requests with the targeted information. Such access clearly falls within the scope of Article 5(3) ePD"; para. 43: context data "such as HTTP header including 'accept' field or user agent" used "in the context of fingerprinting … can lead to the application of Article 5(3) ePD"; para. 56: "the applicability of this article does not systematically mean that consent needs to be collected … it would have to be assessed if a consent is needed or whether an exemption … could apply" |
+| ÚOOÚ, J. Kuba, M. Šnajdr: *Praxe ÚOOÚ v oblasti cookies*, seminar 12 June 2024, https://uoou.gov.cz/media/seminare-uoou/prezentace/2024-06-12-p04-praxe-uoou-v-oblasti-cookies.pdf | cookies "ke sběru informací o uživatelích pro statistické, analytické, marketingové či jiné účely = netechnické cookies"; "Potřeba získat … výslovný souhlas … na základě tzv. principu opt-in"; "Výjimku představují pouze tzv. technické cookies"; "Od roku 2023 vedení správních řízení a udělování pokut"; "Pravomocné pokuty činí již zhruba 2 miliony Kč" |
+| eLegal (law firm), *Analytické cookies a podobné technologie v roce 2025*, 7 July 2025, https://elegal.cz/analyticke-cookies-bez-souhlasu (**secondary**: reports ÚOOÚ's written answer to the firm's query; ÚOOÚ's text itself not published) | ÚOOÚ "výslovně potvrdil, že: i cookie-less sledovací nástroje, které vytvářejí jedinečný hash návštěvnického identifikátoru (např. ze zařízení, IP adresy a nastavení prohlížeče), spadají pod tzv. „podobné technologie", a tedy i na ně se vztahuje povinnost získat souhlas …, pokud nespadnou do „nezbytné" kategorie." "Nezbytné" if they: "slouží výhradně k měření návštěvnosti webu, neumožňují celkové sledování navigace osoby, slouží pouze k produkci anonymních statistických dat, jimi shromážděné osobní údaje nejsou spojovány s jinými zpracovávanými údaji, nezpřístupňují data třetím stranám." |
+| Umami docs: session = "hash generated from the visitor's IP address, user agent, and website ID" (https://docs.umami.is/docs/sessions); the tracker sends screen size and language (https://docs.umami.is/docs/metric-definitions) | — |
+
+### 10.2 What follows for ETF Dvojče (my reading)
+
+1. The Umami script is JavaScript that instructs the browser to send screen size, language and the page URL to Umami
+   (EDPB para. 33). § 89(3) therefore applies, cookie or not.
+2. The § 89(3) exemption for a service "výslovně vyžádána" does not cover analytics on its own: the visitor asked for
+   the page and the plan, not for measurement.
+3. Against ÚOOÚ's five "nezbytné" conditions (as eLegal reports them): (4) not combined with other data, met (Umami
+   events are not linked to the Brevo contact); (3) anonymous aggregate statistics, met in the reports; (1) "výhradně
+   měření návštěvnosti" and (2) "neumožňují celkové sledování navigace osoby" are **doubtful**: the funnel follows one
+   visitor's steps through the page within a session (that is its purpose); (5) third parties: Umami acts as a
+   processor under a DPA, which I read as not a third party, but its US subprocessors make this arguable.
+4. Conclusion: under the EDPB/ÚOOÚ reading, the funnel set-up **probably needs consent**; a pageview-only set-up
+   (no per-visitor funnel events) is closer to the exemption but still not clearly inside it. No court decision
+   exists (eLegal). The decision changes decisions §11 and goes to Matěj.
