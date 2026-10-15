@@ -1,5 +1,5 @@
 // Plan e-mail from content/email.md (approved copy, Top + 1-5 + Footer). One block list renders to HTML and plain text.
-import { BANKS, BROKERS, fmtCzk, fmtDate, fmtNum, fmtPct, fmtTer } from './data.ts';
+import { BANKS, BROKERS, brokerGen, fmtCzk, fmtDate, fmtNum, fmtPct, fmtTer } from './data.ts';
 import { roundK } from './fees.ts';
 import type { Plan } from './plan.ts';
 import { toParams } from './selection.ts';
@@ -68,12 +68,14 @@ function feeBlocks(plan: Plan, sel: Selection): Block[] {
   const fio = BROKERS.find((b) => b.id === 'fio')!;
   const tier = fio.commission.tiers_eur![0];
   const eg = 125; // example purchase in EUR, as in the approved copy and content/calc-examples.mjs
+  const picked = BROKERS.find((b) => b.id === sel.broker);
+  const gen = picked ? brokerGen(picked) : f.brokerName;
   const broker = sel.broker === 'unknown'
-    ? `počítáme s nejvyšší zveřejněnou přirážkou za směnu, ${fmtPct(BROKERS.reduce((m, b) => Math.max(m, b.fx_pct ?? 0), 0))}`
-    : `u ${f.brokerName} (${f.brokerAsOf ? `ceník k ${fmtDate(f.brokerAsOf)}` : 'datum ceníku nezjištěno'})`;
+    ? `: počítáme s nejvyšší zveřejněnou přirážkou za směnu, ${fmtPct(BROKERS.reduce((m, b) => Math.max(m, b.fx_pct ?? 0), 0))}`
+    : ` u ${gen} (${f.brokerAsOf ? `ceník k ${fmtDate(f.brokerAsOf)}` : 'datum ceníku nezjištěno'})`;
   const cs = BANKS.find((b) => b.inducements)?.inducements?.equity_eam_cr_pct_range[1];
   return [
-    { k: 'p', s: `Váš výpočet: **${fmtCzk(sel.monthly)} měsíčně, ${sel.years} let, výnos ${fmtPct(sel.returnPct)} ročně** (předpoklad, ne předpověď), nakupujete ${sel.broker === 'unknown' ? 'u „nevím“' : `u ${f.brokerName}`}.` },
+    { k: 'p', s: `Váš výpočet: **${fmtCzk(sel.monthly)} měsíčně, ${sel.years} let, výnos ${fmtPct(sel.returnPct)} ročně** (předpoklad, ne předpověď), nakupujete ${sel.broker === 'unknown' ? 'u „nevím“' : `u ${gen}`}.` },
     { k: 'table', head: ['Po letech', 'Vloženo', 'Bankovní akciový fond', 'Indexové ETF', 'Rozdíl'],
       rows: f.rows.map((r) => {
         const lo = roundK(r.bankMin), hi = roundK(r.bankMax), e = roundK(r.etf);
@@ -82,7 +84,7 @@ function feeBlocks(plan: Plan, sel: Selection): Block[] {
     { k: 'p', s: 'Co je v čísle:' },
     { k: 'list', mark: '•', items: [
       `**Bankovní fond:** vstupní poplatek ${pctRange(Math.min(...entry), Math.max(...entry))} z každé platby (maximum podle KID, banka může dát slevu) a průběžné náklady ${pctRange(Math.min(...ongoing), Math.max(...ongoing))} ročně. Zdroj: ${banks.map((b) => `KID ${b.name} (${fmtDate(b.kid_date!)})`).join(', ')}.`,
-      `**ETF:** TER ${fmtTer(f.terPct)} ročně, poplatek za obchod a směna měny: ${broker}.`,
+      `**ETF:** TER ${fmtTer(f.terPct)} ročně, poplatek za obchod a směna měny${broker}.`,
       ...(sel.broker === 'fio' ? ['Fio kurzovou přirážku nezveřejňuje, v čísle je jen poplatek za obchod.'] : []),
       'Nepočítáme transakční náklady fondů, rozpětí cen na burze ani daně.'] },
     { k: 'p', s: `Na co si dát pozor u malých částek: pevný poplatek za obchod může být v procentech vyšší než vstupní poplatek bankovního fondu. Třeba u Fio stojí nákup na Xetře do ${fmtNum(tier.up_to_eur!)} EUR ${fmtNum(tier.fee_eur!)} EUR, při nákupu za ${eg} EUR je to ${fmtPct((tier.fee_eur! / eg) * 100)}. Zdroj: Fio, Ceník základních služeb (od ${fmtDate(fio.as_of!)}).` },
@@ -135,7 +137,7 @@ export function blocks(plan: Plan, sel: Selection, siteUrl: string, sentOn: Date
       'Pokud fond nenajdete, napište brokerovi ISIN. Nabídka se u brokerů liší.'] },
     { k: 'p', s: 'Konkrétního brokera nedoporučujeme a od žádného nemáme provizi.' },
     { k: 'hr' },
-    { k: 'p', s: `Plán vám přišel, protože jste si ho ${pragueDate(sentOn)} vyžádali na ${new URL(siteUrl).host}. Další e-maily posíláme, jen pokud jste zaškrtli odběr novinek. [Odhlásit se]`, mail: true },
+    { k: 'p', s: `Plán vám přišel, protože jste si ho ${pragueDate(sentOn)} vyžádali na ${new URL(siteUrl).host}. Další e-maily posíláme, jen pokud jste zaškrtli odběr novinek. [DOPLNIT: odkaz pro odhlášení]`, mail: true },
     { k: 'p', s: 'Co jste v nástroji vybrali a z jaké reklamy jste přišli, si ukládáme, abychom poznali, které reklamy lidem pomáhají. Proti tomu můžete kdykoli vznést námitku: stačí odpovědět na tento e-mail.', mail: true },
     { k: 'p', s: `ETF Dvojče · [DOPLNIT: provozovatel, IČO, sídlo] · [Zásady ochrany osobních údajů](${siteUrl}/ochrana-osobnich-udaju/)`, mail: true },
     { k: 'p', s: 'Informace slouží jen ke vzdělávání. Nejde o investiční doporučení, investiční poradenství ani daňové poradenství. Minulá výkonnost není zárukou budoucích výnosů. Hodnota investice může klesat i stoupat a nemusí se vám vrátit celá vložená částka.' },

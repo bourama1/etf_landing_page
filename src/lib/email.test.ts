@@ -27,7 +27,7 @@ test('html contains ISINs, year-20 row, sources, disclaimer; no raw "<script"', 
     'Data jsou k 9. 10. 2026', 'vyžádali na example.cz', '11. 10. 2026', 'Co jste v nástroji vybrali a z jaké reklamy',
     '[DOPLNIT: provozovatel, IČO, sídlo]']) assert.ok(html.includes(s), s);
   assert.ok(!html.includes('<script'));
-  for (const s of ['IE00B5BMR087', '883 000–950 000 Kč', 'Odhlásit se']) assert.ok(text.includes(s), s);
+  for (const s of ['IE00B5BMR087', '883 000–950 000 Kč', 'odkaz pro odhlášení']) assert.ok(text.includes(s), s);
   assert.ok(!/<[a-z]/i.test(text));
 });
 
@@ -58,4 +58,23 @@ test('TER is written with two decimals (table and fee line)', () => {
   const { html } = render('t=QQQ');
   assert.ok(html.includes('TER 0,30 % ročně'));
   assert.ok(!html.includes('0,3 %'));
+});
+
+test('unsubscribe is a marked placeholder in html and text', () => {
+  const { html, text } = render('t=VOO');
+  for (const s of [html, text]) {
+    assert.ok(s.includes('[DOPLNIT: odkaz pro odhlášení]'));
+    assert.ok(!s.includes('[Odhlásit se]'));
+  }
+});
+
+test('broker names are in the genitive, ETF line has no colon (email.md)', () => {
+  const cs = render('t=VOO&b=cs').html;
+  assert.ok(cs.includes('nakupujete u České spořitelny.'));
+  assert.ok(cs.includes('poplatek za obchod a směna měny u České spořitelny (ceník k '));
+  const fio = render('t=VOO&b=fio').html;
+  assert.ok(fio.includes('nakupujete u Fio.') && fio.includes('směna měny u Fio (ceník k '));
+  assert.ok(render('t=VOO&b=t212').html.includes('nakupujete u Trading 212.'));
+  assert.ok(render('t=VOO').html.includes('nakupujete u „nevím“.'));
+  assert.ok(!fio.includes('směna měny:  u') && !fio.includes('směna měny: u'));
 });

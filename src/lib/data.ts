@@ -26,6 +26,9 @@ export const BROKERS = brokersJson.brokers as (Broker & { as_of: string | null }
 // "Nevím" uses the highest published FX surcharge, so its source line cites that broker (decisions §15 #3).
 export const FX_BROKER = BROKERS.reduce((a, b) => ((b.fx_pct ?? 0) > (a.fx_pct ?? 0) ? b : a));
 const SHORT: Record<string, string> = { xtb: 'XTB', t212: 'Trading 212', fio: 'Fio', cs: 'ČS' };
+// Genitive for "u {brokera}" in the e-mail.
+const GEN: Record<string, string> = { xtb: 'XTB', t212: 'Trading 212', fio: 'Fio', cs: 'České spořitelny' };
+export const brokerGen = (b: { id: string; name: string }) => GEN[b.id] ?? b.name;
 export const brokerShort = (b: { id: string; name: string }) => SHORT[b.id] ?? b.name;
 
 const NBSP = String.fromCharCode(160);
