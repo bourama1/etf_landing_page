@@ -29,7 +29,14 @@ const num = new Intl.NumberFormat('cs-CZ', { maximumFractionDigits: 4 });
 export const fmtNum = (n: number) => num.format(n);
 export const fmtPct = (n: number) => `${num.format(n)}${NBSP}%`;
 export const fmtCzk = (n: number) => `${num.format(Math.round(n))}${NBSP}Kč`;
-export const fmtDate = (iso: string) => {
+export const fmtPctRange = (xs: number[]) => {
+  const lo = Math.min(...xs), hi = Math.max(...xs);
+  return lo === hi ? fmtPct(hi) : `${num.format(lo)}–${fmtPct(hi)}`;
+};
+export const fmtCzkRange = (lo: number, hi: number) => `${num.format(Math.round(lo))}–${fmtCzk(hi)}`;
+// Public list of every source; the repo is the project's home.
+export const SOURCES_URL = 'https://github.com/bourama1/etf_landing_page/blob/master/data/sources.md';
+export const fmtDate =(iso: string) => {
   const [y, m, d] = iso.split('-').map(Number);
   return `${d}. ${m}. ${y}`;
 };

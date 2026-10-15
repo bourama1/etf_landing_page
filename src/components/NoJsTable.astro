@@ -1,0 +1,34 @@
+---
+// Shown instead of the tool when JS is off (page.md §9). Rows and order come from buildPlan (decisions §15 #6).
+import { US_TICKERS, FX, fmtPct, fmtDate } from '../lib/data.ts';
+import { buildPlan } from '../lib/plan.ts';
+import { parseSelection } from '../lib/selection.ts';
+
+const plan = buildPlan(parseSelection(new URLSearchParams('t=VOO,SPY,IVV,QQQ'), US_TICKERS), FX);
+const rows = plan.groups.flatMap((g) => g.twins.map((t) => ({ us: `${g.picks.join(', ')} (${g.indexName})`, t })));
+---
+
+<div class="no-js">
+  <p class="trust">Nejsme broker ani banka a nic neprodáváme. U každého čísla najdete zdroj a datum.</p>
+  <h2 id="nojs-h">Evropská dvojčata VOO, SPY, IVV a QQQ</h2>
+  <div class="table-wrap" role="region" aria-labelledby="nojs-h" tabindex="0">
+    <table>
+      <thead>
+        <tr><th scope="col">Americké ETF</th><th scope="col">Ticker na Xetře</th><th scope="col">Fond</th><th scope="col">TER ročně</th><th scope="col">Dividendy</th><th scope="col">Zdroj, stav k</th></tr>
+      </thead>
+      <tbody>
+        {rows.map(({ us, t }) => (
+          <tr>
+            <td>{us}</td>
+            <th scope="row" class="ticker">{t.xetra}</th>
+            <td>{t.name}</td>
+            <td class="num">{fmtPct(t.terPct)}</td>
+            <td>{t.distribution === 'acc' ? 'akumulační' : 'distribuční'}</td>
+            <td>{t.asOf ? `${t.issuer}, ${fmtDate(t.asOf)}` : t.issuer}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="helper">Pořadí není doporučení. Plán s poplatky v korunách a daňovým checklistem vám pošleme e-mailem.</p>
+</div>

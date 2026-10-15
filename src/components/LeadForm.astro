@@ -1,0 +1,50 @@
+---
+// The e-mail ask. Works as a plain POST without JS (303 → /dekujeme/ or /chyba-formulare/, decisions §15 #13).
+// Task 10's script fills the hidden fields from the tool and the URL, and drives the status line.
+import { RANGES } from '../lib/selection.ts';
+
+interface Props {
+  location: 'inline' | 'sticky' | 'footer';
+  heading: string;
+  body: string;
+}
+const { location, heading, body } = Astro.props;
+const id = `lead-${location}`;
+const H = location === 'inline' ? 'h3' : 'h2';
+const def = (r: readonly number[]) => String(r[3]);
+---
+
+<form class="lead-form" method="post" action="/api/lead" data-location={location} id={id} aria-labelledby={`${id}-h`}>
+  <H id={`${id}-h`} class="lead-h">{heading}</H>
+  <p>{body}</p>
+  <label class="field-label" for={`${id}-email`}>Váš e-mail</label>
+  <input
+    class="email"
+    id={`${id}-email`}
+    name="email"
+    type="email"
+    autocomplete="email"
+    inputmode="email"
+    placeholder="vas@email.cz"
+    required
+  />
+  <label class="check">
+    <input type="checkbox" name="newsletter" value="on" />
+    <span>Chci občas dostat novinky o ETF (nepovinné)</span>
+  </label>
+  <div class="hp" aria-hidden="true"><label>Nevyplňujte<input name="fld_q8" tabindex="-1" autocomplete="off"></label></div>
+  <input type="hidden" name="t" value="" />
+  <input type="hidden" name="m" value={def(RANGES.monthly)} />
+  <input type="hidden" name="y" value={def(RANGES.years)} />
+  <input type="hidden" name="r" value={def(RANGES.returnPct)} />
+  <input type="hidden" name="b" value="unknown" />
+  <input type="hidden" name="d" value="both" />
+  <input type="hidden" name="utm_source" value="" />
+  <input type="hidden" name="utm_medium" value="" />
+  <input type="hidden" name="utm_campaign" value="" />
+  <input type="hidden" name="utm_content" value="" />
+  <input type="hidden" name="utm_term" value="" />
+  <button class="btn" type="submit">Poslat plán</button>
+  <p class="src">Jeden e-mail s plánem. Odhlásíte se jedním klikem. <a href="/ochrana-osobnich-udaju/">Zásady ochrany osobních údajů</a></p>
+  <p class="status" role="status" aria-live="polite" data-status></p>
+</form>

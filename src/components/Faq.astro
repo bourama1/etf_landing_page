@@ -1,0 +1,54 @@
+---
+import { US, byIsin, fmtPct, fmtPctRange, SOURCES_URL } from '../lib/data.ts';
+
+const voo = US.find((u) => u.ticker === 'VOO')!;
+const sp500Ter = fmtPctRange(voo.twins!.map((i) => byIsin.get(i)!.ter_pct));
+---
+
+<h2>Časté otázky</h2>
+<details>
+  <summary>Je to zdarma?</summary>
+  <p>Ano. Chceme jen e-mailovou adresu, kam plán pošleme.</p>
+</details>
+<details>
+  <summary>Budete mi posílat spam?</summary>
+  <p>Pošleme jeden e-mail s plánem. Novinky jen tehdy, když zaškrtnete políčko. Odhlásíte se jedním klikem.</p>
+</details>
+<details>
+  <summary>Je to investiční doporučení?</summary>
+  <p>Ne. Ukazujeme, které fondy sledují stejný index a kolik stojí. Který koupíte a jestli vůbec, je na vás.</p>
+</details>
+<details>
+  <summary>Fio mi VOO koupit dovolí. Co teď?</summary>
+  <p>Koupit ho tam můžete. Pro rezidenta ČR je ale akumulační dvojče jednodušší. Nevyplácí dividendy, takže je nemusíte
+    každý rok uvádět v daňovém přiznání. A irského fondu se netýká americká dědická daň. U amerického ETF může po
+    vašem úmrtí vzniknout povinnost podat v USA daňové přiznání k dědictví, pokud máte v USA majetek nad 60 000 USD.
+    Na dani z dividend neušetříte. Z amerických dividend se podle smlouvy s USA platí 15 % v obou případech.</p>
+  <p class="src">Zdroj: smlouva ČR–USA o zamezení dvojímu zdanění, čl. 10; IRS, Some nonresidents with U.S. assets must
+    file estate tax returns (27. 6. 2026); zákon o daních z příjmů, § 8 odst. 4. Informativní, nejde o daňové
+    poradenství.</p>
+</details>
+<details>
+  <summary>Kdy z ETF platím daň při prodeji?</summary>
+  <p>Zisk z prodeje je osvobozený, když mezi nákupem a prodejem uplynou víc než 3 roky. Nebo když za celý rok prodáte
+    cenné papíry nejvýš za 100 000 Kč. Pozor, limit se počítá z celé částky z prodeje, ne ze zisku. Od 1. 1. 2026 už
+    3letý test nemá strop 40 milionů Kč. Podrobnosti máte v plánu.</p>
+  <p class="src">Zdroj: zákon o daních z příjmů, § 4 odst. 1 písm. t) a u), znění k 1. 8. 2026; Finanční správa, Daňové
+    novinky pro rok 2026 (5. 1. 2026). Informativní, nejde o daňové poradenství.</p>
+</details>
+<details>
+  <summary>Je evropská verze dražší než VOO?</summary>
+  <p>U S&amp;P 500 mají evropské fondy TER {sp500Ter} ročně, VOO {fmtPct(voo.ter_pct)}. U fondů se stejným indexem je
+    rozdíl malý. Víc rozhoduje, kolik zaplatíte brokerovi a za směnu měny.</p>
+</details>
+<details>
+  <summary>Co když už VOO mám?</summary>
+  <p>Obvykle ho můžete dál držet i prodat. Třeba LYNX výslovně píše, že omezené jsou jen nové nákupy. Jak to má váš
+    broker, zjistíte v jeho nápovědě.</p>
+  <p class="src">Zdroj: LYNX, Key Information Document (staženo 9. 10. 2026).</p>
+</details>
+<details>
+  <summary>Odkud máte čísla?</summary>
+  <p>Ze stránek vydavatelů fondů, z KID bankovních fondů, z ceníků brokerů a ze zákona. Každé číslo má na stránce zdroj
+    a datum. Přehled všech zdrojů: <a href={SOURCES_URL}>Zdroje</a></p>
+</details>

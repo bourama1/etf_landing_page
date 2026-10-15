@@ -1,0 +1,12 @@
+---
+// page.md §7 fallback ask: the default plan (VOO, SPY, IVV) for skimmers. Task 10 swaps heading/body after tool use.
+import LeadForm from './LeadForm.astro';
+import { fmtCzk } from '../lib/data.ts';
+import { RANGES } from '../lib/selection.ts';
+---
+
+<LeadForm
+  location="footer"
+  heading="Nechcete klikat? Pošleme vám plán pro S&P 500."
+  body={`Dostanete evropská dvojčata VOO, SPY a IVV s ISIN, poplatky v korunách pro ${fmtCzk(RANGES.monthly[3])} měsíčně na ${RANGES.years[3]} let a daně z ETF v Česku 2026.`}
+/>

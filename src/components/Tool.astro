@@ -1,0 +1,135 @@
+---
+/*
+  Static skeleton of the three-step tool (page.md §2). Hidden without JS (.needs-js); src/scripts/tool.ts (Task 10)
+  adds the behaviour. Hooks for Task 10:
+    #step-a [data-step="a"]   chips: button[data-ticker] (aria-pressed), "other" = Jiné; [data-twins] live region;
+                              button[data-next="b"]
+    #step-b [data-step="b"]   inputs #in-m #in-y #in-r (range) with output[data-out="m|y|r"];
+                              radios name="broker" (unknown|xtb|t212|fio|cs); p[data-broker-note] (empty);
+                              [data-bank-cost] [data-etf-cost] (default numbers rendered here);
+                              [data-ter-ticker] [data-ter-issuer] [data-ter-asof] [data-broker-source] in the source line;
+                              details#jak-pocitame; button[data-next="c"]
+    #step-c [data-step="c"]   radios name="dividends" (acc|dist|both)
+    #vysledek [data-result]   hidden until the result is shown; [data-result-body] (empty); form#lead-inline
+    [data-sticky]             hidden sticky bar: [data-sticky-summary] (empty), a[href="#lead-inline"]
+*/
+import LeadForm from './LeadForm.astro';
+import { US_TICKERS, FX, BANKS, BROKERS, fmtCzk, fmtCzkRange, fmtPct, fmtPctRange, fmtDate } from '../lib/data.ts';
+import { buildPlan } from '../lib/plan.ts';
+import { parseSelection, RANGES } from '../lib/selection.ts';
+import { roundK } from '../lib/fees.ts';
+
+// Default view = no picks → S&P 500 twins, broker "Nevím", slider defaults (decisions §15 #2, #3, #8).
+const plan = buildPlan(parseSelection(new URLSearchParams(''), US_TICKERS), FX);
+const c = plan.fees.compare;
+const terTwin = plan.groups[0].twins.find((t) => t.xetra === plan.fees.terTicker)!;
+const kidBanks = BANKS.filter((b) => b.ongoing_pct != null);
+const fxBroker = BROKERS.reduce((a, b) => ((b.fx_pct ?? 0) > (a.fx_pct ?? 0) ? b : a));
+const dateOr = (d: string | null) => (d ? ` ${fmtDate(d)}` : '');
+const brokerLabels: Record<string, string> = { xtb: 'XTB', t212: 'Trading 212', fio: 'Fio', cs: 'Česká spořitelna' };
+const brokerShort: Record<string, string> = { ...brokerLabels, cs: 'ČS' };
+const [mMin, mMax, mStep, mDef] = RANGES.monthly;
+const [yMin, yMax, yStep, yDef] = RANGES.years;
+const [rMin, rMax, rStep, rDef] = RANGES.returnPct;
+const chips = [...US_TICKERS];
+const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla najdete zdroj a datum.';
+---
+
+<div class="tool needs-js">
+  <div class="step" id="step-a" data-step="a">
+    <h2 id="step-a-h">1. Které ETF jste chtěli koupit?</h2>
+    <div class="chips" role="group" aria-labelledby="step-a-h">
+      {chips.map((t) => <button type="button" class="chip ticker" aria-pressed="false" data-ticker={t}>{t}</button>)}
+      <button type="button" class="chip" aria-pressed="false" data-ticker="other">Jiné</button>
+    </div>
+    <p class="helper">Můžete vybrat víc.</p>
+    <p class="trust only-a">{trust}</p>
+    <div class="twins" data-twins aria-live="polite"></div>
+    <button type="button" class="btn btn-quiet" data-next="b">Pokračovat na poplatky</button>
+  </div>
+
+  <div class="step" id="step-b" data-step="b">
+    <h2>2. Kolik měsíčně a na jak dlouho?</h2>
+    <div class="slider">
+      <label for="in-m">Měsíčně spořím</label>
+      <output for="in-m" class="num" data-out="m">{fmtCzk(mDef)}</output>
+      <input type="range" id="in-m" name="m" min={mMin} max={mMax} step={mStep} value={mDef} />
+    </div>
+    <div class="slider">
+      <label for="in-y">Jak dlouho</label>
+      <output for="in-y" class="num" data-out="y">{yDef} let</output>
+      <input type="range" id="in-y" name="y" min={yMin} max={yMax} step={yStep} value={yDef} />
+    </div>
+    <div class="slider">
+      <label for="in-r">Výnos trhu</label>
+      <output for="in-r" class="num" data-out="r">{fmtPct(rDef)} ročně</output>
+      <input type="range" id="in-r" name="r" min={rMin} max={rMax} step={rStep} value={rDef} />
+      <p class="src"><em>Předpoklad, ne předpověď.</em> Pro srovnání: americké akcie vynesly v letech 1900–2025
+        v průměru 6,6 % ročně nad inflaci. Zdroj: UBS Global Investment Returns Yearbook 2026. Minulá výkonnost není
+        zárukou budoucích výnosů.</p>
+    </div>
+
+    <fieldset class="radios">
+      <legend>Kde nakupujete?</legend>
+      {Object.entries(brokerLabels).map(([id, label]) => (
+        <label class="radio"><input type="radio" name="broker" value={id} /> {label}</label>
+      ))}
+      <label class="radio"><input type="radio" name="broker" value="unknown" checked /> Nevím</label>
+      <p class="helper">Poplatky ETF počítáme i s poplatkem brokera a směnou měny. Nejde o srovnání ani doporučení brokerů.</p>
+      <p class="helper" data-broker-note></p>
+    </fieldset>
+
+    <div class="result-line" aria-live="polite">
+      <p class="result-h">Kvůli poplatkům budete mít méně o:</p>
+      <p class="result-row">Bankovní akciový fond <mark class="num" data-bank-cost>{fmtCzkRange(roundK(c.bankCostMin), roundK(c.bankCostMax))}</mark></p>
+      <p class="result-row">Indexové ETF <strong class="num" data-etf-cost>{fmtCzk(roundK(c.etfCost))}</strong></p>
+    </div>
+    <p class="trust only-b">{trust}</p>
+    <p class="src">
+      Zdroj: KID fondů {kidBanks.map((b, i) => <>{i > 0 && ' a '}{b.name} ({fmtDate(b.kid_date!)})</>)};
+      ETF <span data-ter-ticker>{terTwin.xetra}</span>, factsheet <span data-ter-issuer>{terTwin.issuer}</span>, stav k <span data-ter-asof>{fmtDate(terTwin.asOf!)}</span>;
+      poplatky brokera: <span data-broker-source>ceník {brokerShort[fxBroker.id]}{fxBroker.as_of && `, stav k ${fmtDate(fxBroker.as_of)}`}</span>.
+      <a href="#jak-pocitame">Jak počítáme</a>
+    </p>
+    <details id="jak-pocitame" class="how">
+      <summary>Jak počítáme</summary>
+      <p>Každý měsíc vložíte stejnou částku. U bankovního fondu z ní odečteme vstupní poplatek
+        ({fmtPctRange(BANKS.map((b) => b.entry_max_pct))}, maximum podle KID) a každý rok průběžné náklady
+        ({fmtPctRange(kidBanks.map((b) => b.ongoing_pct!))}). U ETF odečteme poplatek fondu (TER), poplatek za obchod a
+        směnu měny při nákupu i prodeji. Nepočítáme transakční náklady fondů, rozpětí cen na burze ani daně. Rozdíl je to,
+        o kolik méně budete mít na konci proti investici bez poplatků.</p>
+      <p class="src">Zdroje: {kidBanks.map((b) => `KID ${b.name} (${fmtDate(b.kid_date!)})`).join(', ')}, ceníky brokerů
+        ({BROKERS.map((b) => `${brokerShort[b.id]}${dateOr(b.as_of)}`).join(', ')}), factsheet fondu
+        <span data-ter-ticker>{terTwin.xetra}</span>.</p>
+    </details>
+    <button type="button" class="btn btn-quiet" data-next="c">Ještě jedno upřesnění</button>
+  </div>
+
+  <div class="step" id="step-c" data-step="c">
+    <h2 id="step-c-h">3. Co s dividendami?</h2>
+    <fieldset class="radios" aria-labelledby="step-c-h">
+      <label class="radio"><input type="radio" name="dividends" value="acc" /> Reinvestovat (akumulační)</label>
+      <label class="radio"><input type="radio" name="dividends" value="dist" /> Vyplácet (distribuční)</label>
+      <label class="radio"><input type="radio" name="dividends" value="both" checked /> Nevím, ukažte obojí</label>
+    </fieldset>
+    <p class="helper">Akumulační fond dividendy nevyplácí, takže je každý rok nedaníte. Distribuční je vyplácí a daníte je.
+      <em>Slouží jako filtr. Toto není doporučení.</em></p>
+    <p class="src">Zdroj: zákon o daních z příjmů, § 8 odst. 4 a 8 a § 16a, znění k 1. 8. 2026. Informativní, nejde o daňové
+      poradenství.</p>
+  </div>
+
+  <div class="result" id="vysledek" data-result hidden>
+    <h2>Vaše evropská dvojčata</h2>
+    <div data-result-body></div>
+    <LeadForm
+      location="inline"
+      heading="Chcete to celé, i s daňovým checklistem?"
+      body="Pošleme vám plán e-mailem: ISIN pro vyhledání u brokera, akumulační vs. distribuční pro rezidenta ČR, poplatky po letech a daně z ETF v Česku 2026."
+    />
+  </div>
+
+  <div class="sticky" data-sticky hidden>
+    <span data-sticky-summary></span>
+    <a class="btn" href="#lead-inline">Poslat plán e-mailem</a>
+  </div>
+</div>
