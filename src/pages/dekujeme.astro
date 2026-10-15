@@ -1,0 +1,17 @@
+---
+// No-JS landing after a successful form POST (303 from /api/lead). page.md §8 without the address.
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base title="Plán je na cestě | ETF Dvojče" description="Plán vám posíláme e-mailem." noindex>
+  <main class="page">
+    <section data-section="thank_you">
+      <p class="brand">ETF Dvojče</p>
+      <h1>Hotovo. Plán je na cestě.</h1>
+      <p>Měl by dorazit do pár minut. Když ho nevidíte, podívejte se do složky s hromadnou poštou nebo do spamu.</p>
+      <p>Překlep v adrese? <a href="/#formular">Zadat znovu</a></p>
+    </section>
+  </main>
+  <Footer />
+</Base>

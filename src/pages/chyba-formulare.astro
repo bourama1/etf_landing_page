@@ -1,0 +1,17 @@
+---
+// No-JS landing after a rejected form POST (303 from /api/lead): page.md §2 "Invalid" state + the §7 form again.
+import Base from '../layouts/Base.astro';
+import FinalForm from '../components/FinalForm.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base title="Zkontrolujte e-mail | ETF Dvojče" description="Formulář se nepodařilo odeslat." noindex>
+  <main class="page">
+    <section data-section="form_error">
+      <p class="brand">ETF Dvojče</p>
+      <h1>Tenhle e-mail nevypadá úplně správně. Zkontrolujete ho?</h1>
+    </section>
+    <section data-section="final"><FinalForm /></section>
+  </main>
+  <Footer />
+</Base>
