@@ -4588,3 +4588,60 @@ articles through the Zendesk JSON API, Vercel docs as `.md`, GitHub docs article
    the client's 429 message ("za hodinu") must change with it.
 5. Plan Review Focus: a Brevo *date* attribute would truncate `PLAN_SENT_AT` to the day and break the 24 h dedupe.
    That is a guess about Brevo's behaviour, so it gets a schema test and a live check rather than a claim.
+
+---
+
+## 2026-10-15 — Phase 5 QA: execution (Claude Code, Opus 5.5, inline)
+
+**How it ran:** Matěj approved the plan and all its decisions (sender option A, he creates the Brevo account, Deploy
+Hook OK) and the inline method. Skills loaded: `superpowers:executing-plans`, `superpowers:test-driven-development`,
+`superpowers:systematic-debugging` (layout shifts), `marketing-skills:cro` (deployed page, findings only),
+`ponytail:ponytail-review` (whole repo), `superpowers:verification-before-completion`. No subagents. Ledger in
+`.superpowers/sdd/2026-10-15-phase5-qa/progress.md`.
+
+**Done and verified (fresh run before reporting):** `npm test` 82/82 · `npm run build` exit 0 · funnel check local
+and live "All expectations met" · `scripts/qa-live.mjs` 8 pages, JS on and off, "All checks passed" · Lighthouse
+mobile 3 runs/page: perf/a11y/best-practices 100 on all four pages, LCP 1.2–1.4 s, CLS 0 (`docs/qa/lighthouse.md`) ·
+`scripts/check-links.mjs` 110 URLs, 0 broken except the private-repo link · live `/api/lead` region `fra1::fra1`.
+
+**Waiting for Matěj (no account or dashboard access for the agent):** Vercel WAF rule (burst test still 12× 400),
+Deploy Hook + `VERCEL_DEPLOY_HOOK` secret, Brevo account/key/attributes/lists and the real-inbox test, making the
+GitHub repo public.
+
+**Defects found and fixed (each verified; logic with a test that failed first)**
+1. **Font fallback 33 % too large** (deferred shortcut from Phase 3): every page reflowed when Archivo arrived,
+   CLS 0.12–0.22 on throttled 4G. Measured Archivo against Arial and Roboto on the site's own text in Chromium:
+   `size-adjust` 98 % / 99.7 %, not 130.8 %. Added a Roboto face for Android.
+2. **Ad B, CLS 0.138:** Step A was collapsed by a deferred module after the first paint. Now CSS keyed on the
+   `html.js[data-variant="b"]` the head script sets before paint.
+3. **`/plan`, CLS 0.429:** the plan renders from the URL after load and pushed the footer off screen. The container
+   now holds one screen.
+4. **`td-has-header`:** plan tables (page and e-mail) had row labels in `<td>` under an empty corner header; now
+   `<th scope="row">` (e-mail test RED→GREEN).
+5. **`/favicon.ico` 404** on every page (console error in Lighthouse): SVG favicon.
+6. **`/api/lead` ran in Washington (iad1)**, Vercel's default: leads crossed the US to reach Brevo in the EU. `regions: ["fra1"]`.
+7. **Production dry-run** (`/ponytail-review` #1): without a Brevo key the live function faked success. Now 502 in
+   Production (test RED→GREEN; live: valid e-mail 502, honeypot 200).
+8. Phase 4 minors: re-consent after withdrawal, unbounded queue on a blocked script (3 tests RED→GREEN); consent bar
+   first in tab order and never over the form heading (funnel-check asserts RED→GREEN); sources §10 heading.
+9. FAQ / "Jak počítáme" rows had no open/close cue (`display:flex` removed the marker): "+"/"−" (CRO).
+
+**Mistakes caught (agent's own)**
+1. `qa-live.mjs` first ignored layout shifts flagged `hadRecentInput` and reported CLS 0 everywhere while Lighthouse
+   showed 0.138 and 0.429. Emulated Chrome flags early shifts that way with no input at all; the filter hid both real
+   bugs and the font shift. Now every shift counts.
+2. The first Lighthouse batch silently produced nothing: no system Chrome, and `--quiet >/dev/null` swallowed the
+   error. Re-run with Playwright's Chromium via `CHROME_PATH`, errors visible.
+3. Two heredoc/escape slips (CLAUDE.md warns): `<\/table>` lost its backslash in a test, and a CSS `"\2212"` became a
+   control character. Both caught by the test run and by a screenshot.
+4. The first link check flagged Invesco PDFs and a template URL as broken: Invesco refuses Node's fetch (curl gets
+   200), and `YYYY-MM-DD` is a placeholder in `data/sources.md`. Checker fixed; manual curl results in `docs/qa/links.log`.
+5. The plan's first draft ran the live funnel check against real Brevo: it would have e-mailed `test@example.com`.
+   Caught before the key exists; live mode now fills the honeypot (verified in Vercel logs: 3× honeypot, 0 sends).
+
+**Verification facts that changed the plan:** Brevo blocks API calls from unknown IPs automatically after 30 days
+without a new IP (help 5740111683858): added to the launch checklist. Vercel default region iad1 (docs): fixed.
+
+**Not fixed, on purpose:** `/plan` `noindex` (Lighthouse SEO 60) is deliberate; `/chyba-formulare` CLS 0.029 (under
+0.1); ad A showing the bank-fund result under the chips before a pick (approved structure; A/B idea);
+`scripts/screenshots.mjs` duplicates qa-live's page scan (`/ponytail-review` #3, nice-to-have).

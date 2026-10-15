@@ -206,7 +206,7 @@ explicit rules. They come from `/ponytail-audit` findings 1–4 (see `docs/ai-wo
    serverless instance has its own memory, so an in-process counter is not reliable. Options in order of
    preference: (a) a Vercel Firewall rate-limit rule on `/api/lead`, if the Hobby plan allows it (**VERIFY**);
    (b) a free Upstash Redis counter (**VERIFY** free tier, and it is a new account, so it needs Matěj's OK).
-   Starting limit: a few submits per IP per hour, tuned after launch.
+   Starting limit: a few submits per IP per hour, tuned after launch. **Decided in Phase 5 (§17 #1): Vercel WAF, 10 per 10 min** (Hobby max window).
 6. **Honeypot hit:** fake success, no contact stored, no e-mail sent, logged (see §5).
 
 ---
