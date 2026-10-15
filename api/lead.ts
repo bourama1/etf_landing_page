@@ -11,6 +11,7 @@ type Env = Record<string, string | undefined>;
 
 const MAX_BYTES = 10_000;
 const DAY_MS = 24 * 60 * 60 * 1000;
+const cause = (err: unknown) => String((err as Error)?.message ?? err).slice(0, 200);
 const listId = (v: string | undefined) => (Number.isInteger(Number(v)) && v?.trim() ? [Number(v)] : []);
 
 export async function handleLead(req: Request, deps: Deps, env: Env = {}): Promise<Response> {
@@ -64,6 +65,7 @@ export async function handleLead(req: Request, deps: Deps, env: Env = {}): Promi
   const lists = [...listId(env.BREVO_PLAN_LIST_ID), ...(ticked ? listId(env.BREVO_NEWSLETTER_LIST_ID) : [])];
 
   try {
+    // shortcut: read-then-write on Brevo; two submits within ms can both send. Acceptable at this volume; a shared lock would fix it.
     const existing = await brevo.getContact(email);
     const sentAt = Date.parse(String(existing?.attributes.PLAN_SENT_AT ?? ''));
     const recent = Number.isFinite(sentAt) && now().getTime() - sentAt < DAY_MS;
@@ -73,14 +75,14 @@ export async function handleLead(req: Request, deps: Deps, env: Env = {}): Promi
 
     const msg = renderEmail(buildPlan(sel, FX), sel, siteUrl, now());
     await brevo.sendEmail({ to: email, ...msg });
-  } catch {
-    log('brevo_error');
+  } catch (err) {
+    log('lead_failed', { error: cause(err) });
     return fail(502, 'server');
   }
   try {
     await brevo.upsertContact(email, { PLAN_SENT_AT: stamp }, lists);
-  } catch {
-    log('plan_sent_at_update_failed');
+  } catch (err) {
+    log('plan_sent_at_update_failed', { error: cause(err) });
   }
   return ok();
 }

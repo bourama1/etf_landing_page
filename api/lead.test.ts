@@ -113,3 +113,21 @@ test('rejects non-POST (405), malformed JSON (400) and bodies over 10 kB (413)',
   const bad = await handleLead(new Request('http://x/api/lead', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: '{nope' }), deps(fake()));
   assert.equal(bad.status, 400);
 });
+test('failure cause is logged without the e-mail address', async () => {
+  const f = fake();
+  const logs: string[] = [];
+  const brevo = { ...f.brevo, async upsertContact() { throw new Error('brevo 400 /contacts'); } };
+  await handleLead(json({ email: 'secret@b.cz' }), { ...deps(f), brevo, log: (m, d) => logs.push(m + JSON.stringify(d ?? {})) });
+  assert.ok(logs.join('').includes('brevo 400 /contacts'));
+  assert.ok(!logs.join('').includes('secret'));
+});
+test('list IDs: plan list always, newsletter list only when ticked and numeric', async () => {
+  const lists = async (body: object, env: Record<string, string>) => {
+    const f = fake();
+    await handleLead(json(body), deps(f), env);
+    return f.upserts[0].lists;
+  };
+  assert.deepEqual(await lists({ email: 'a@b.cz', newsletter: 'on' }, { BREVO_PLAN_LIST_ID: '3', BREVO_NEWSLETTER_LIST_ID: 'x' }), [3]);
+  assert.deepEqual(await lists({ email: 'a@b.cz', newsletter: 'on' }, { BREVO_PLAN_LIST_ID: '3', BREVO_NEWSLETTER_LIST_ID: '4' }), [3, 4]);
+  assert.deepEqual(await lists({ email: 'a@b.cz' }, { BREVO_PLAN_LIST_ID: '3', BREVO_NEWSLETTER_LIST_ID: '4' }), [3]);
+});

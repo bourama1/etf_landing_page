@@ -1,10 +1,10 @@
 // Local stand-in for the Vercel function: serves /api/lead on :8787 (astro.config.mjs proxies /api here) and starts astro dev.
 import { createServer } from 'node:http';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { POST } from '../api/lead.ts';
 
 const server = createServer(async (req, res) => {
-  const url = new URL(req.url ?? '/', 'http://127.0.0.1:8787');
+  const url = new URL(req.url ?? '/', 'http://localhost:8787');
   if (url.pathname !== '/api/lead') { res.writeHead(404).end(); return; }
   try {
     const chunks = [];
@@ -18,10 +18,11 @@ const server = createServer(async (req, res) => {
     res.writeHead(500).end();
   }
 });
-server.listen(8787, '127.0.0.1', () => console.log('api on http://127.0.0.1:8787'));
+server.listen(8787, 'localhost', () => console.log('api on http://127.0.0.1:8787'));
 
 const astro = spawn('npx astro dev', { stdio: 'inherit', shell: true });
-const stop = () => { astro.kill(); server.close(); };
+// shell:true makes astro.pid the shell, so on Windows kill the whole tree.
+const stop = () => { if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(astro.pid), '/T', '/F']); else astro.kill(); server.close(); };
 process.on('SIGINT', () => { stop(); process.exit(0); });
 process.on('exit', stop);
 astro.on('exit', (code) => process.exit(code ?? 0));
