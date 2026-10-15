@@ -4,6 +4,8 @@
 // reaches Umami. /api/lead runs
 // the real handler in Brevo dry-run. Writes docs/funnel-check.log; exits 1 on any mismatch.
 // Run: node scripts/funnel-check.mjs   (needs `npx playwright install chromium` once)
+// Live: LIVE_URL=https://….vercel.app UMAMI_WEBSITE_ID=<id> node scripts/funnel-check.mjs — no build, no interception:
+// the events really go to Umami (check them in its Realtime view) and every send must get a 2xx.
 import { createServer } from 'node:http';
 import { readFile, writeFile } from 'node:fs/promises';
 import { execSync } from 'node:child_process';
@@ -12,13 +14,15 @@ import { chromium } from 'playwright';
 import { handleLead } from '../api/lead.ts';
 import { brevoFromEnv } from '../src/lib/brevo.ts';
 
-const ID = '00000000-0000-4000-8000-000000000000';
+const LIVE = process.env.LIVE_URL?.replace(/\/+$/, '');
+const ID = LIVE ? process.env.UMAMI_WEBSITE_ID : '00000000-0000-4000-8000-000000000000';
+if (LIVE && !ID) throw new Error('LIVE_URL needs UMAMI_WEBSITE_ID');
 const OUT = '.dev/dist-funnel';
-execSync(`npx astro build --outDir ${OUT}`, { stdio: 'ignore', env: { ...process.env, PUBLIC_UMAMI_WEBSITE_ID: ID } });
+if (!LIVE) execSync(`npx astro build --outDir ${OUT}`, { stdio: 'ignore', env: { ...process.env, PUBLIC_UMAMI_WEBSITE_ID: ID } });
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.png': 'image/png', '.svg': 'image/svg+xml' };
 const deps = { brevo: brevoFromEnv({}, fetch), now: () => new Date(), log: () => {}, siteUrl: 'http://localhost:4398' };
-const server = createServer(async (req, res) => {
+const server = LIVE ? null : createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost:4398');
   if (url.pathname === '/api/lead') {
     const chunks = [];
@@ -36,7 +40,7 @@ const server = createServer(async (req, res) => {
     res.writeHead(404).end('not found');
   }
 }).listen(4398);
-const base = 'http://localhost:4398';
+const base = LIVE ?? 'http://localhost:4398';
 const umamiJs = await (await fetch('https://cloud.umami.is/script.js')).text();
 
 const UTM = 'utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=';
@@ -48,15 +52,16 @@ async function run(label, path, steps) {
   const sent = [];
   let scriptLoaded = false;
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
-  await page.route('https://cloud.umami.is/script.js', (r) => r.fulfill({ contentType: 'text/javascript', body: umamiJs }));
+  if (!LIVE) await page.route('https://cloud.umami.is/script.js', (r) => r.fulfill({ contentType: 'text/javascript', body: umamiJs }));
+  page.on('response', (res) => { if (res.url().startsWith('https://gateway.umami.is/') && !res.ok()) problems.push(`${label}: Umami answered ${res.status()}`); });
   await page.route('https://gateway.umami.is/**', (r) => {
     const body = JSON.parse(r.request().postData() ?? '{}');
     sent.push(body);
     const p = body.payload ?? {};
     lines.push(`[${label}] ${(p.name ?? 'page_view (pageview)').padEnd(22)} tag=${p.tag ?? '-'} ${p.name ? JSON.stringify(p.data ?? {}) : `url=${p.url}`}`);
-    return r.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    return LIVE ? r.continue() : r.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
-  page.on('request', (r) => { const h = new URL(r.url()).host; if (!/^(localhost|cloud\.umami\.is|gateway\.umami\.is)/.test(h)) problems.push(`${label}: unexpected request ${r.url()}`); });
+  page.on('request', (r) => { const h = new URL(r.url()).host; if (h !== (LIVE && new URL(LIVE).host) && !/^(localhost|cloud\.umami\.is|gateway\.umami\.is)/.test(h)) problems.push(`${label}: unexpected request ${r.url()}`); });
   page.on('request', (r) => { if (r.url().startsWith('https://cloud.umami.is/')) scriptLoaded = true; });
   page.on('pageerror', (e) => problems.push(`${label}: pageerror ${e.message}`));
   lines.push(`--- ${label}: ${path}`);
@@ -214,8 +219,8 @@ const x = await run('ad A refused', `/?${UTM}ad_a_blocked`, async (page, loaded)
 if (x.length || refusedLoaded) problems.push(`ad A refused: ${x.length} sends, script loaded: ${refusedLoaded}`);
 
 await browser.close();
-server.close();
+server?.close();
 lines.push('', problems.length ? `PROBLEMS:\n${problems.join('\n')}` : 'All expectations met.');
-await writeFile('docs/funnel-check.log', `# node scripts/funnel-check.mjs — ${new Date().toISOString()}\n${lines.join('\n')}\n`);
+await writeFile(LIVE ? 'docs/funnel-check-live.log' : 'docs/funnel-check.log', `# node scripts/funnel-check.mjs — ${new Date().toISOString()}\n${lines.join('\n')}\n`);
 console.log(lines.join('\n'));
 process.exit(problems.length ? 1 : 0);
