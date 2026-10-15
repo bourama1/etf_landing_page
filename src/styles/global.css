@@ -126,6 +126,32 @@ mark { background: var(--marker); color: var(--ink); padding: 0 0.2em; font-weig
 details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 650; }
 details.how { margin: 0.5rem 0 1rem; }
 
+/* Tool island (src/scripts/tool.ts): ad B collapses Step A; the ticker pair is the one animated moment (§10). */
+.step.collapsed > :not(h2, .expand) { display: none; }
+.expand {
+  min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 650;
+  text-decoration: underline; text-underline-offset: 0.15em; cursor: pointer;
+}
+.pair { margin: 1.25rem 0; }
+.pair .us { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.5rem; margin-bottom: 0.25rem; }
+.pair .us del { font-size: 1.75rem; }
+.pair del, .result del {
+  color: var(--blocked); text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 55% / 100% 3px;
+}
+.blocked { color: var(--blocked); font-weight: 600; font-size: 0.9375rem; }
+.twin-h { font-weight: 700; }
+.twin-list { list-style: none; padding: 0; margin: 0 0 0.75rem; }
+.twin { padding: 0.5rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); font-size: 0.9375rem; }
+.twin .ticker { font-size: 1.125rem; }
+.enter del { animation: strike 240ms ease-out both; }
+.enter .twin { animation: rise 220ms ease-out both; animation-delay: calc(240ms + var(--i) * 40ms); }
+@keyframes strike { from { background-size: 0 3px; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+/* The global reduced-motion rule shortens durations but not delays, so switch the animation off entirely. */
+@media (prefers-reduced-motion: reduce) { .enter del, .enter .twin { animation: none; } }
+@media (forced-colors: active) { .pair del, .result del { text-decoration: line-through; } }
+
 .result { border: 2px solid var(--ink); border-radius: 0; padding: 1rem; margin-top: 2.5rem; }
 /* Legal call-out (art. 21 objection shown separately). */
 .box { border: 2px solid var(--ink); padding: 1rem; margin: 1.5rem 0; }

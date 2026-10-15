@@ -3,7 +3,7 @@
   Static skeleton of the three-step tool (page.md §2). Hidden without JS (.needs-js); src/scripts/tool.ts (Task 10)
   adds the behaviour. Hooks for Task 10:
     #step-a [data-step="a"]   chips: button[data-ticker] (aria-pressed), "other" = Jiné; [data-twins] live region;
-                              button[data-next="b"]
+                              button[data-next="b"]; button[data-expand] (ad B: collapsed Step A, "Vybráno: VOO · změnit")
     #step-b [data-step="b"]   inputs #in-m #in-y #in-r (range) with output[data-out="m|y|r"];
                               radios name="broker" (unknown|xtb|t212|fio|cs); p[data-broker-note] (empty);
                               [data-bank-cost] [data-etf-cost] (default numbers rendered here);
@@ -14,7 +14,7 @@
     [data-sticky]             hidden sticky bar: [data-sticky-summary] (empty), a[href="#lead-inline"]
 */
 import LeadForm from './LeadForm.astro';
-import { US_TICKERS, FX, BANKS, BROKERS, fmtCzk, fmtCzkRange, fmtPct, fmtPctRange, fmtDate } from '../lib/data.ts';
+import { US_TICKERS, FX, BANKS, BROKERS, FX_BROKER, brokerShort, fmtCzk, fmtCzkRange, fmtPct, fmtPctRange, fmtDate } from '../lib/data.ts';
 import { buildPlan } from '../lib/plan.ts';
 import { parseSelection, RANGES } from '../lib/selection.ts';
 import { roundK } from '../lib/fees.ts';
@@ -25,11 +25,8 @@ const plan = buildPlan(parseSelection(new URLSearchParams(''), US_TICKERS), FX);
 const c = plan.fees.compare;
 const terTwin = plan.groups[0].twins.find((t) => t.xetra === plan.fees.terTicker)!;
 const kidBanks = BANKS.filter((b) => b.ongoing_pct != null);
-const fxBroker = BROKERS.reduce((a, b) => ((b.fx_pct ?? 0) > (a.fx_pct ?? 0) ? b : a));
 const dateOr = (d: string | null) => (d ? ` ${fmtDate(d)}` : '');
 const brokerLabels: Record<string, string> = { xtb: 'XTB', t212: 'Trading 212', fio: 'Fio', cs: 'Česká spořitelna' };
-const brokerShort: Record<string, string> = { ...brokerLabels, cs: 'ČS' };
-const short = (b: { id: string; name: string }) => brokerShort[b.id] ?? b.name;
 const [mMin, mMax, mStep, mDef] = RANGES.monthly;
 const [yMin, yMax, yStep, yDef] = RANGES.years;
 const [rMin, rMax, rStep, rDef] = RANGES.returnPct;
@@ -40,6 +37,7 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
 <div class="tool needs-js">
   <div class="step" id="step-a" data-step="a">
     <h2 id="step-a-h">1. Které ETF jste chtěli koupit?</h2>
+    <button type="button" class="expand" data-expand hidden></button>
     <div class="chips" role="group" aria-labelledby="step-a-h">
       {chips.map((t) => <button type="button" class="chip ticker" aria-pressed="false" data-ticker={t}>{t}</button>)}
       <button type="button" class="chip" aria-pressed="false" data-ticker="other">Jiné</button>
@@ -51,7 +49,7 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
   </div>
 
   <div class="step" id="step-b" data-step="b">
-    <h2>2. Kolik měsíčně a na jak dlouho?</h2>
+    <h2 id="step-b-h" tabindex="-1">2. Kolik měsíčně a na jak dlouho?</h2>
     <div class="slider">
       <label for="in-m">Měsíčně spořím</label>
       <output for="in-m" class="num" data-out="m">{fmtCzk(mDef)}</output>
@@ -90,7 +88,7 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
     <p class="src">
       Zdroj: KID fondů {kidBanks.map((b, i) => <>{i > 0 && ' a '}{b.name} ({fmtDate(b.kid_date!)})</>)};
       ETF <span data-ter-ticker>{terTwin.xetra}</span>, factsheet <span data-ter-issuer>{terTwin.issuer}</span>, stav k <span data-ter-asof>{fmtDate(terTwin.asOf!)}</span>;
-      poplatky brokera: <span data-broker-source>ceník {short(fxBroker)}{fxBroker.as_of && `, stav k ${fmtDate(fxBroker.as_of)}`}</span>.
+      poplatky brokera: <span data-broker-source>ceník {brokerShort(FX_BROKER)}{FX_BROKER.as_of && `, stav k ${fmtDate(FX_BROKER.as_of)}`}</span>.
       <a href="#jak-pocitame">Jak počítáme</a>
     </p>
     <details id="jak-pocitame" class="how">
@@ -101,14 +99,14 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
         směnu měny při nákupu i prodeji. Nepočítáme transakční náklady fondů, rozpětí cen na burze ani daně. Rozdíl je to,
         o kolik méně budete mít na konci proti investici bez poplatků.</p>
       <p class="src">Zdroje: {kidBanks.map((b) => `KID ${b.name} (${fmtDate(b.kid_date!)})`).join(', ')}, ceníky brokerů
-        ({BROKERS.map((b) => `${short(b)}${dateOr(b.as_of)}`).join(', ')}), factsheet fondu
+        ({BROKERS.map((b) => `${brokerShort(b)}${dateOr(b.as_of)}`).join(', ')}), factsheet fondu
         <span data-ter-ticker>{terTwin.xetra}</span>.</p>
     </details>
     <button type="button" class="btn btn-quiet" data-next="c">Ještě jedno upřesnění</button>
   </div>
 
   <div class="step" id="step-c" data-step="c">
-    <h2 id="step-c-h">3. Co s dividendami?</h2>
+    <h2 id="step-c-h" tabindex="-1">3. Co s dividendami?</h2>
     <fieldset class="radios" aria-labelledby="step-c-h">
       <label class="radio"><input type="radio" name="dividends" value="acc" /> Reinvestovat (akumulační)</label>
       <label class="radio"><input type="radio" name="dividends" value="dist" /> Vyplácet (distribuční)</label>
@@ -122,7 +120,7 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
 
   <div class="result" id="vysledek" data-result hidden>
     <h2>Vaše evropská dvojčata</h2>
-    <div data-result-body></div>
+    <div data-result-body aria-live="polite"></div>
     <LeadForm
       location="inline"
       heading="Chcete to celé, i s daňovým checklistem?"
@@ -135,3 +133,7 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
     <a class="btn" href="#lead-inline">Poslat plán e-mailem</a>
   </div>
 </div>
+
+<script>
+  import '../scripts/tool.ts';
+</script>

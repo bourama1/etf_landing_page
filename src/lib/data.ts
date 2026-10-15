@@ -23,6 +23,10 @@ export const FX = fxJson;
 export type BankFund = Bank & { kid_date: string | null; inducements?: { equity_eam_cr_pct_range: number[] } };
 export const BANKS = banksJson.funds as BankFund[];
 export const BROKERS = brokersJson.brokers as (Broker & { as_of: string | null })[];
+// "Nevím" uses the highest published FX surcharge, so its source line cites that broker (decisions §15 #3).
+export const FX_BROKER = BROKERS.reduce((a, b) => ((b.fx_pct ?? 0) > (a.fx_pct ?? 0) ? b : a));
+const SHORT: Record<string, string> = { xtb: 'XTB', t212: 'Trading 212', fio: 'Fio', cs: 'ČS' };
+export const brokerShort = (b: { id: string; name: string }) => SHORT[b.id] ?? b.name;
 
 const NBSP = String.fromCharCode(160);
 const num = new Intl.NumberFormat('cs-CZ', { maximumFractionDigits: 4 });
@@ -39,6 +43,8 @@ const span = (xs: number[], nf: Intl.NumberFormat) => {
 export const fmtPctRange = (xs: number[]) => span(xs, num);
 export const fmtTerRange = (xs: number[]) => span(xs, ter);
 export const fmtCzkRange = (lo: number, hi: number) => `${num.format(Math.round(lo))}–${fmtCzk(hi)}`;
+// Czech noun form: 1 → one, 2–4 → few, anything else (0, 5+) → many.
+export const plural = (n: number, one: string, few: string, many: string) => (n === 1 ? one : n >= 2 && n <= 4 ? few : many);
 export const fmtDate = (iso: string) => {
   const [y, m, d] = iso.split('-').map(Number);
   return `${d}. ${m}. ${y}`;

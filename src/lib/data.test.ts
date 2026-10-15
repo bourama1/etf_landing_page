@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fmtPct, fmtCzk, fmtDate, fmtPctRange, fmtCzkRange, fmtTer, fmtTerRange } from './data.ts';
+import { fmtPct, fmtCzk, fmtDate, fmtPctRange, fmtCzkRange, fmtTer, fmtTerRange, plural } from './data.ts';
 
 const S = ' '; // non-breaking space, as Intl cs-CZ and fmtPct emit
 
@@ -22,4 +22,9 @@ test('TER always has at least two decimals', () => {
   assert.equal(fmtTer(0.0945), `0,0945${S}%`);
   assert.equal(fmtTerRange([0.07, 0.03]), `0,03–0,07${S}%`);
   assert.equal(fmtTerRange([0.3, 0.3]), `0,30${S}%`);
+});
+
+test('plural picks the Czech form for 1, 2-4 and the rest', () => {
+  const p = (n: number) => plural(n, 'rok', 'roky', 'let');
+  assert.deepEqual([0, 1, 2, 4, 5, 11, 22].map(p), ['let', 'rok', 'roky', 'roky', 'let', 'let', 'let']);
 });
