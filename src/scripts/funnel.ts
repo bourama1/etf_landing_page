@@ -33,7 +33,11 @@ watch(document.querySelectorAll('.lead-form'), 'form_view', (el) => ({ location:
 
 // form_start: first focus in the e-mail field of each form.
 document.querySelectorAll<HTMLFormElement>('.lead-form').forEach((f) => f.addEventListener('focusin', (e) => {
-  if ((e.target as HTMLInputElement).name === 'email' && first(`form_start:${f.dataset.location}`)) track('form_start', { location: f.dataset.location! });
+  if ((e.target as HTMLInputElement).name !== 'email') return;
+  const location = f.dataset.location!;
+  // The sticky and 'Poslat plán' links focus the field before the scroll ends: form_view must still come first (ordered funnel).
+  if (first(`form_view:${location}`)) track('form_view', { location });
+  if (first(`form_start:${location}`)) track('form_start', { location });
 }));
 
 // cta_click: every click on a link to the form (sticky bar, a[data-cta]) or on a submit button.
