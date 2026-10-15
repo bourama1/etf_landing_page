@@ -34,5 +34,8 @@ const { title, description, noindex = false, ogTitle = title, ogDescription = de
   </head>
   <body>
     <slot />
+    <script>
+      import '../scripts/analytics.ts';
+    </script>
   </body>
 </html>
