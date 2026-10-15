@@ -4,6 +4,7 @@ import { blocks } from '../lib/email.ts';
 import type { Block } from '../lib/email.ts';
 import { buildPlan } from '../lib/plan.ts';
 import { parseSelection } from '../lib/selection.ts';
+import { track } from '../lib/track.ts';
 
 const LINK = /\[([^\]]+)\]\((https?:[^)\s]+)\)/g;
 
@@ -79,4 +80,6 @@ if (root) {
   const sel = parseSelection(new URLSearchParams(location.search), US_TICKERS);
   const plan = buildPlan(sel, FX);
   root.replaceChildren(...blocks(plan, sel, location.origin, new Date()).filter((b) => !b.mail).flatMap((b) => render(b) ?? []));
+  // The e-mail's "Otevřít plán online" link carries utm_source=email (src/lib/email.ts); decisions §6 step 3.
+  if (new URLSearchParams(location.search).get('utm_source') === 'email') track('magnet_opened');
 }

@@ -1,10 +1,11 @@
 // Progressive lead forms, sticky bar and thank-you state (page.md §2 states, §7, §8; decisions §3, §6a, §15 #13).
 // Without JS the forms are plain POSTs (303). All text goes in through createElement/append(string), never innerHTML.
-// Analytics (Phase 4) hooks in at: onResult (tool used), submit() (form_start/error/lead_submitted), thankYou() (thank_you_view).
+// Analytics here: form_error and lead_submitted in submit(), thank_you_view in thankYou(); the rest is in funnel.ts.
 import { US_TICKERS, FX, fmtTer, fmtDate } from '../lib/data.ts';
 import { buildPlan } from '../lib/plan.ts';
 import { parseSelection, sanitizeUtm, validateEmail } from '../lib/selection.ts';
 import type { Selection } from '../lib/selection.ts';
+import { track, variant } from '../lib/track.ts';
 
 const h = (tag: string, cls = '', ...kids: (Node | string)[]) => {
   const e = document.createElement(tag);
@@ -95,8 +96,9 @@ async function submit(f: HTMLFormElement) {
   const btn = q<HTMLButtonElement>('button[type="submit"]', f);
   const label = btn.textContent!;
   const fd = new FormData(f);
+  const loc = f.dataset.location!;
   const v = validateEmail(fd.get('email'));
-  if (!v.ok) return showError(f, MSG[v.reason], true);
+  if (!v.ok) { track('form_error', { reason: v.reason, location: loc }); return showError(f, MSG[v.reason], true); }
 
   btn.disabled = true;
   btn.textContent = 'Posíláme…';
@@ -109,11 +111,17 @@ async function submit(f: HTMLFormElement) {
       signal: AbortSignal.timeout(10000),
     });
     const data = await res.json().catch(() => null);
-    if (res.ok && data?.ok) return thankYou(f, v.email, () => { btn.disabled = false; btn.textContent = label; status(f).textContent = ''; });
-    if (res.status === 429) showError(f, MSG.rate, false);
-    else if (res.status === 400 && (data?.reason === 'invalid' || data?.reason === 'empty')) showError(f, MSG[data.reason as 'empty' | 'invalid'], true);
-    else showError(f, MSG.server, false);
+    if (res.ok && data?.ok) {
+      track('lead_submitted', { location: loc, ad_variant: variant() }); // only after the server confirmed (decisions §6)
+      return thankYou(f, v.email, () => { btn.disabled = false; btn.textContent = label; status(f).textContent = ''; });
+    }
+    if (res.status === 429) { track('form_error', { reason: 'rate', location: loc }); showError(f, MSG.rate, false); }
+    else if (res.status === 400 && (data?.reason === 'invalid' || data?.reason === 'empty')) {
+      track('form_error', { reason: data.reason, location: loc });
+      showError(f, MSG[data.reason as 'empty' | 'invalid'], true);
+    } else { track('form_error', { reason: 'server', location: loc }); showError(f, MSG.server, false); }
   } catch {
+    track('form_error', { reason: 'network', location: loc });
     showError(f, MSG.server, false); // network error or 10 s timeout
   }
   btn.disabled = false;
@@ -159,6 +167,7 @@ function thankYou(f: HTMLFormElement, email: string, reset: () => void) {
   f.hidden = true;
   f.after(box);
   heading.focus();
+  track('thank_you_view', { location: f.dataset.location! });
   sent = true;
   syncSticky();
 }
