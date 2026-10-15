@@ -279,3 +279,43 @@ printed inside. Machine-readable: `etfs.json` → `sources.kid` (URL, date) and 
 
 **Meaning for the page:** "má KID" is true for every twin. "KID v češtině" may be shown only where `kid_cs` is true.
 "Not found" means the issuer's own Czech route doesn't return one; it is not proof that none exists anywhere.
+
+## 9. GDPR and Czech law: legal basis for the plan e-mail and the newsletter: **verified (statute text), reading recorded** (retrieved 2026-10-15)
+
+Not legal advice. Statute quotes are verbatim; the conclusions are my reading and are marked as such. A lawyer
+should confirm them before launch (listed in the README).
+
+### 9.1 Sources
+
+| Source | Quote (verbatim, trimmed) |
+|---|---|
+| GDPR (EU) 2016/679 art. 6(1)(a), (b), (f). Official: https://eur-lex.europa.eu/eli/reg/2016/679/oj (EUR-Lex blocks automated fetches; text read from the mirror https://gdpr-info.eu/art-6-gdpr/) | (b) "processing is necessary for the performance of a contract to which the data subject is party or in order to take steps at the request of the data subject prior to entering into a contract"; (f) "necessary for the purposes of the legitimate interests pursued by the controller … except where such interests are overridden by the interests or fundamental rights and freedoms of the data subject" |
+| GDPR art. 7(1)–(4) (mirror https://gdpr-info.eu/art-7-gdpr/) | (1) "the controller shall be able to demonstrate that the data subject has consented"; (2) "clearly distinguishable from the other matters"; (3) "right to withdraw his or her consent at any time … as easy to withdraw as to give consent"; (4) "whether … the provision of a service, is conditional on consent to the processing of personal data that is not necessary for the performance of that contract" |
+| GDPR art. 13(1)–(2) (mirror https://gdpr-info.eu/art-13-gdpr/) | controller identity and contact, purposes and legal basis, the legitimate interests where (f) is used, recipients, retention period, rights (access, erasure, objection…), right to withdraw consent, right to lodge a complaint |
+| GDPR art. 21(1), (4) (mirror https://gdpr-info.eu/art-21-gdpr/) | (1) right to object to processing based on (e) or (f); (4) "At the latest at the time of the first communication with the data subject, the right … shall be explicitly brought to the attention of the data subject and shall be presented clearly and separately from any other information." |
+| EDPB Guidelines 2/2019 on art. 6(1)(b), version 2.0, 8 October 2019, https://www.edpb.europa.eu/sites/default/files/files/file1/edpb_guidelines-art_6-1-b-adopted_after_public_consultation_en.pdf | para. 2: "If the specific processing is part and parcel of delivery of the requested service, it is in the interests of both parties to process that data"; para. 25: "Article 6(1)(b) will not cover processing which is useful but not objectively necessary for performing the contractual service …, even if it is necessary for the controller's other business purposes." |
+| Zákon č. 480/2004 Sb., o některých službách informační společnosti, znění k 23. 3. 2023 (verze 12), https://www.zakonyprolidi.cz/cs/2004-480 | § 2 písm. f): obchodní sdělení = "všechny formy sdělení, včetně reklamy a vybízení k návštěvě internetových stránek, určeného k přímé či nepřímé podpoře zboží či služeb nebo image podniku osoby, která je podnikatelem"; § 7 odst. 2: "Podrobnosti elektronického kontaktu lze za účelem šíření obchodních sdělení elektronickými prostředky využít pouze ve vztahu k uživatelům, kteří k tomu dali předchozí souhlas."; § 7 odst. 3: the customer exception applies to contacts obtained "v souvislosti s prodejem výrobku nebo služby"; § 7 odst. 4: every commercial e-mail must be marked as such, show the sender and carry a valid opt-out address |
+
+### 9.2 What follows for ETF Dvojče (my reading)
+
+1. **Sending the requested plan:** art. 6(1)(b). The visitor asks for a free plan; delivering it to the given
+   address is "part and parcel of delivery of the requested service" (EDPB para. 2). Not consent: the plan is a
+   one-off delivery the visitor asked for, and making it depend on consent would add nothing.
+2. **Storing selections, UTM and `ad_variant` with the contact:** not necessary for the delivery (EDPB para. 25), so
+   **art. 6(1)(f)**: legitimate interest in knowing which ad brings requests and in the 24 h dedupe / abuse checks.
+   Because of (f), art. 21(4) requires the right to object to be pointed out **clearly and separately at the
+   latest in the first communication**, which is the plan e-mail.
+3. **Newsletter:** a commercial communication under § 2 f). The visitor is not a customer who bought anything, so the
+   § 7(3) exception does not apply; **§ 7(2) prior consent** is required, which under GDPR is art. 6(1)(a) with
+   art. 7: separate unticked checkbox (7(2)), stored proof (7(1): `NEWSLETTER_CONSENT_AT`, `CONSENT_TEXT_V`),
+   one-click withdrawal (7(3)), plan not conditional on it (7(4)). Every newsletter must be marked as obchodní
+   sdělení and carry an opt-out address (§ 7(4)).
+4. **The plan e-mail itself** is the information the visitor requested and promotes nothing, so it should not be an
+   obchodní sdělení. It must stay that way: no offers, no "přihlaste se k odběru", no third-party promotion. Even if
+   it were classed as one, it is sent at the visitor's own explicit request.
+5. **Retention (proposal):** contacts without newsletter consent are deleted 12 months after their last request
+   (long enough for dedupe and the campaign evaluation); newsletter contacts until they unsubscribe, then the consent
+   record is kept as proof for 3 years. Placeholder in the privacy notice until Matěj confirms.
+
+**Consequence for the build:** the form does not change (e-mail + optional unticked newsletter checkbox + privacy
+link). The plan e-mail footer needs **one added line** for art. 21(4) (point 2). The privacy notice covers art. 13.
