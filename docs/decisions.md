@@ -307,28 +307,28 @@ headword with its translation. All the boldness goes there. Everything else stay
 | Site | **Astro** (static output) + small vanilla TS island for the tool | JS budget < 60 kB gz. The tool is a few kB. |
 | Hosting **[user]** | **Vercel Hobby** | The Hobby plan is non-commercial. The README states that a real launch moves to Vercel Pro or Cloudflare Pages. **VERIFY** current terms. |
 | Form backend | One Vercel serverless function `/api/lead` → **Brevo** (create contact with attributes incl. UTMs + send transactional e-mail) | One vendor for list + e-mail. **VERIFY** free-tier limits (incl. the daily send cap). Input, dedupe and rate-limit rules in §6a. |
-| Analytics | **Umami Cloud** (cookieless, tiny script, custom events, funnel report) as first choice. PostHog EU (cookieless `persistence: memory`) as fallback. | Cookieless → no consent banner over the first screen. **VERIFY** before creating accounts: free-tier limits, funnel availability on the free plan, EU data location. PostHog's JS bundle size has to be measured against the budget. |
+| Analytics | **Umami Cloud** (cookieless, tiny script, custom events, funnel report). PostHog EU was the fallback; not needed. | **Verified 2026-10-15** (§16): Hobby free, 100K events/month, funnels included, EU data region chosen at signup, 2.3 kB gz. **Consent is still needed** (§ 89(3) ZEK, `data/sources.md` §10), so a consent bar appears after the first interaction (§16). |
 | Secrets | env vars only, `.env.example` committed | |
 
 No accounts get created until you approve them, as CLAUDE.md requires.
 
 ---
 
-## 12. Tracking plan (names fixed now, implementation in Phase 4)
+## 12. Tracking plan (names fixed in Phase 0; implemented in Phase 4, changes in §16)
 
 | Event | Fires when | Key props |
 |---|---|---|
-| `page_view` | load | all `utm_*`, `ad_variant`, entry step |
-| `section_view` | section ≥50 % visible, once per section | `section` |
+| `page_view` | load (Umami's own pageview, sent first after consent) | URL with all `utm_*`; `ad_variant` as Umami `tag` |
+| `section_view` | section ≥50 % visible **or** filling ≥50 % of the screen, once per section | `section` |
 | `interaction_start` | first chip tap / first slider move | `step`, `ad_variant` |
 | `step_complete` | Step A/B/C finished | `step`, selections |
-| `interaction_complete` | result + fee number rendered | tickers, amount, horizon |
+| `interaction_complete` | first result rendered **after** the visitor's own action (ad B's preloaded result doesn't count) | tickers, amount, horizon |
 | `cta_click` | any "Poslat plán" button | `location` (inline / sticky / footer) |
 | `form_view` | form ≥50 % visible | `location` |
 | `form_start` | first focus on the e-mail field | `location` |
-| `form_error` | client or server validation fails | `reason` |
+| `form_error` | client (incl. the browser's own check) or server validation fails, network error | `reason`, `location` |
 | `lead_submitted` | **only after `/api/lead` returns 2xx** | `location`, `ad_variant` |
-| `thank_you_view` | thank-you state rendered | |
+| `thank_you_view` | thank-you state rendered | `location` |
 | `magnet_opened` | `/plan` page load from the e-mail link | `utm_source=email` |
 
 `step_complete` is an addition to CLAUDE.md's list, needed because the tool now has three steps.
@@ -336,8 +336,9 @@ No accounts get created until you approve them, as CLAUDE.md requires.
 **Source of truth for conversions:** Brevo contacts per `ad_variant`, not Umami. `lead_submitted` is a browser event,
 so it is lost when the visitor closes the tab right after submitting or an ad blocker blocks the analytics script.
 The lead still exists in Brevo. Umami measures the funnel *up to* the form. The A/B result and the README's
-conversion figure use Brevo lead counts divided by Umami `page_view` per variant, and the gap between Brevo leads
-and Umami `lead_submitted` is reported as a measurement-loss check.
+conversion figure use Brevo lead counts divided by **Meta link clicks** per variant (changed in §16: with consent,
+Umami sees only consenting visitors), and the gap between Brevo leads and Umami `lead_submitted` is reported as a
+measurement-loss check.
 
 ---
 
@@ -398,3 +399,23 @@ From `docs/superpowers/plans/2026-10-15-phase3-build.md`. #16–17 are proposals
 | 17 | Rate limit (proposal only): (a) Vercel WAF rate-limit rule on `/api/lead` if Hobby allows it — VERIFY; (b) Upstash Redis free tier — needs an account | decisions §6a rule 5 |
 | 18 | The e-mail's small-amount example uses a 125 EUR purchase (email.md, sources.md §7 worked example); it is a copy constant in `src/lib/email.ts`, the fee itself comes from `brokers.json` | approved copy; the example amount is not data |
 | 19 | A plan with no twins (SCHD only) computes the fee comparison with the S&P 500 twins | the ETF side must always be a buyable UCITS fund, never the US ETF |
+
+---
+
+## 16. Phase 4 tracking decisions (plan approved by Matěj, 2026-10-15)
+
+From `docs/superpowers/plans/2026-10-15-phase4-tracking.md` (provider check with sources there) and `data/sources.md` §10.
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | `page_view` = Umami's own pageview, not a custom event; `data-auto-pageview="false"` and `track.ts` sends it first after consent | its URL already holds every `utm_*`; Umami bills each event property as an event (5 UTMs + variant = 8 per visit); the funnel is ordered, so the pageview must come before the queued events |
+| 2 | `ad_variant` on every event as Umami `data-tag`, from the existing `adVariant()`; explicit prop only on `interaction_start` and `lead_submitted` | a tag is not billed as event data; one mapping in the codebase |
+| 3 | Event budget: ~30 billable events for a fully engaged visit, ~3 for a bounce, ~10 on average → Hobby ≈ 10 000 consenting visits/month | Umami Cloud FAQ; Pro is $20/month for 1M |
+| 4 | `interaction_complete` only after the visitor's own action, recorded in the capture phase | ad B renders a result on load; `tool.ts` fires `tool:result` inside its own listeners (bug found by Playwright) |
+| 5 | `section_view` also when a section fills half the screen | the tool section is taller than two phone screens |
+| 6 | `form_error` also on the browser's `invalid` event | the e-mail field is `required`/`type=email`, so an empty submit never reaches our handler |
+| 7 | **Consent bar (Matěj)**: top of the screen, after the first scroll/tap/key, "Souhlasím"/"Nesouhlasím" styled alike; no tracker download before "Souhlasím"; earlier events wait in memory and are dropped on "Nesouhlasím"; choice in `localStorage`; "Nastavení měření" in the footer | § 89(3) ZEK + EDPB 2/2023 ¶33 + ÚOOÚ via eLegal (`data/sources.md` §10); keeps the ad-matched first screen and the sticky CTA clear |
+| 8 | Conversion = Brevo leads ÷ Meta link clicks per variant | with consent, Umami page views undercount visits |
+| 9 | Website ID only in Vercel's Production environment; without it `track()` no-ops (logs in dev) and the loader is tree-shaken | previews and local runs send nothing |
+| 10 | `magnet_opened` is not attributed to an ad | the e-mail link carries no `utm_content` (§6a); the variant is on the Brevo contact |
+| 11 | A/B arms are assigned by the ad (own `utm_content` per arm), not on the page | no flicker, no on-page randomisation; only test 1's arms exist so far |
