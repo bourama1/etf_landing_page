@@ -322,7 +322,7 @@ should confirm them before launch (listed in the README).
 **Consequence for the build:** the form does not change (e-mail + optional unticked newsletter checkbox + privacy
 link). The plan e-mail footer needs **one added line** for art. 21(4) (point 2). The privacy notice covers art. 13.
 
-## 10. Cookieless analytics (Umami) and § 89(3) ZEK: **verified (statute + EDPB text); ÚOOÚ position only secondhand; decision open** (retrieved 2026-10-15)
+## 10. Cookieless analytics (Umami) and § 89(3) ZEK: **verified (statute + EDPB text); ÚOOÚ position only secondhand; decided 2026-10-15: consent bar (decisions §16 #7)** (retrieved 2026-10-15)
 
 Not legal advice. Quotes verbatim; conclusions are my reading.
 
@@ -336,6 +336,7 @@ Not legal advice. Quotes verbatim; conclusions are my reading.
 | eLegal (law firm), *Analytické cookies a podobné technologie v roce 2025*, 7 July 2025, https://elegal.cz/analyticke-cookies-bez-souhlasu (**secondary**: reports ÚOOÚ's written answer to the firm's query; ÚOOÚ's text itself not published) | ÚOOÚ "výslovně potvrdil, že: i cookie-less sledovací nástroje, které vytvářejí jedinečný hash návštěvnického identifikátoru (např. ze zařízení, IP adresy a nastavení prohlížeče), spadají pod tzv. „podobné technologie", a tedy i na ně se vztahuje povinnost získat souhlas …, pokud nespadnou do „nezbytné" kategorie." "Nezbytné" if they: "slouží výhradně k měření návštěvnosti webu, neumožňují celkové sledování navigace osoby, slouží pouze k produkci anonymních statistických dat, jimi shromážděné osobní údaje nejsou spojovány s jinými zpracovávanými údaji, nezpřístupňují data třetím stranám." |
 | Umami source, `src/app/api/send/route.ts` (https://github.com/umami-software/umami, master, read 2026-10-15) and https://docs.umami.is/docs/metric-definitions | `const saltRotation = process.env.SALT_ROTATION || 'month'` (session hash salt rotates monthly by default); location metrics "Country", "Region", "City" from the IP; "Ad click IDs are automatically captured from URL query parameters" incl. fbclid. Hence `keepUtm()` strips everything but utm_* before sending. |
 | Umami docs: session = "hash generated from the visitor's IP address, user agent, and website ID" (https://docs.umami.is/docs/sessions); the tracker sends screen size and language (https://docs.umami.is/docs/metric-definitions) | — |
+| Umami Cloud account (Matěj, 2026-10-15) | Data region **Evropská unie** chosen at signup; the signup app says "Once selected this cannot be changed" (Phase 4 plan, provider table). Source for the privacy page's "Data jsou uložená v Evropské unii". |
 
 ### 10.2 What follows for ETF Dvojče (my reading)
 

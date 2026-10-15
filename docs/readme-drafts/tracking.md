@@ -17,7 +17,8 @@ takže potřebujeme souhlas (`data/sources.md` §10, rozhodnutí Matěje 2026-10
 
 - Lišta „Smíme měřit, jak se stránka používá?" s rovnocennými tlačítky „Souhlasím" / „Nesouhlasím".
 - Je nahoře a ukáže se až po prvním posunutí, ťuknutí nebo stisku klávesy. První obrazovka z reklamy tak zůstává
-  čistá a lišta nepřekrývá spodní tlačítko „Poslat plán e-mailem". Na telefonu je vysoká 112 px.
+  čistá a lišta nepřekrývá spodní tlačítko „Poslat plán e-mailem". Na telefonu je vysoká 112 px. Dokud je otevřená, skok na formulář (spodní lišta, „Poslat plán") se zastaví pod ní, a v pořadí
+  klávesnice je první.
 - Bez souhlasu se skript Umami vůbec nestáhne. Události z doby před odpovědí čekají jen v paměti stránky; po
   „Souhlasím" se odešlou (nejdřív zobrazení stránky, pak zbytek ve správném pořadí), po „Nesouhlasím" se zahodí.
 - Volba se pamatuje v `localStorage` a dá se změnit odkazem „Nastavení měření" v patičce.
