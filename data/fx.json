@@ -1,6 +1,6 @@
 {
-  "rate": 24.355,
-  "validFor": "2026-10-14",
+  "rate": 24.35,
+  "validFor": "2026-10-15",
   "source_url": "https://api.cnb.cz/cnbapi/exrates/daily?date=2026-10-15&lang=CZ",
   "retrieved_at": "2026-10-15"
 }
