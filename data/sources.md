@@ -226,6 +226,11 @@ fee can cost more than a bank fund's entry fee. The calculator must show this ho
 Selection limits and the connectivity fee. Also not covered: Interactive Brokers and Revolut. Spreads on the
 exchange itself (bid/ask) are not included for any broker.
 
+**EUR/CZK rate for fixed EUR fees:** ČNB API, https://api.cnb.cz/cnbapi/exrates/daily?date=YYYY-MM-DD&lang=CZ
+(docs: https://api.cnb.cz/cnbapi/swagger-ui.html). Checked 2026-10-15: EUR `rate` 24.355 `validFor` 2026-10-14; a
+weekend date returns the previous business day (2026-10-11 → 2026-10-09, 24.365). Fetched at build time, refreshed
+daily (decisions.md §14 #10). This is the ČNB fixing, not any broker's conversion rate.
+
 **Not used:** a Fio table on the devizové konverze page shows EUR at 23,65157 / 25,08943 CZK. The page labels the
 table "aktuální devizové kurzy ČNB", but ČNB publishes a single rate, so it is unclear which rate this is. It is not
 cited as Fio's conversion spread.

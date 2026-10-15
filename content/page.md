@@ -131,7 +131,7 @@ a hledejte evropské ETF se stejným indexem.
   - Česká spořitelna: ceník neuvádí kurzovou přirážku, počítáme jen poplatek za obchod a úschovu.
   - Fio / ČS at small amounts, when the fixed fee is above {2 %} of the payment: Při {3 000 Kč} měsíčně je pevný
     poplatek {3,95 EUR} asi {x} % z každého nákupu. V procentech vyjde levněji méně častý a větší nákup.
-    [CHYBÍ ZDROJ: kurz EUR/CZK. The CZK→EUR conversion for fixed fees needs a dated ČNB rate in `data/`.]
+    Přepočet kurzem ČNB k {validFor}, broker může použít jiný. *(rate from `data/fx.json`, decisions.md §14 #10)*
 
 **Live result line:** (same as hero B) **Kvůli poplatkům budete mít méně o:** Bankovní akciový fond
 **{272 000–339 000 Kč}** · Indexové ETF **{22 000 Kč}**
