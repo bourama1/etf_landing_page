@@ -1,6 +1,6 @@
 # Plan e-mail: "Váš ETF plán z Česka"
 
-Status: **Phase 2 draft for review (✋)** · 2026-10-11 · skill `emails` (single transactional e-mail; its
+Status: **Approved by Matěj 2026-10-15** (drafted 2026-10-11) · skill `emails` (single transactional e-mail; its
 nurture-sequence templates were not used because decisions.md §2 promises exactly one e-mail).
 Lead magnet v2: decisions.md §2. Delivery rules: §6, §6a (only allow-listed, escaped values are inserted).
 

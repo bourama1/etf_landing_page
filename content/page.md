@@ -1,6 +1,6 @@
 # Page copy: ETF Dvojče
 
-Status: **Phase 2 draft for review (✋)** · 2026-10-11 · written with `copywriting`, edited with `copy-editing`.
+Status: **Approved by Matěj 2026-10-15** (drafted 2026-10-11) · written with `copywriting`, edited with `copy-editing`.
 Inputs: `docs/decisions.md` §1–4, §7–10, §14, `.agents/product-marketing.md`, `content/voice-of-customer.md`, `data/`.
 
 **Conventions in this file**

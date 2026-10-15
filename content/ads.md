@@ -1,6 +1,6 @@
 # Ads: Meta (Instagram Stories 9:16 + Feed 4:5)
 
-Status: **Phase 2 draft for review (✋)** · 2026-10-11 · skills `ads` + `ad-creative` (Mode 1, grounded in
+Status: **Approved by Matěj 2026-10-15** (drafted 2026-10-11) · skills `ads` + `ad-creative` (Mode 1, grounded in
 `content/voice-of-customer.md`). Final assets (images + `copy.md` per ad) go to `ads/ad-a/` and `ads/ad-b/` in Phase 6.
 
 Format: **static images** (one design per ad, cut to 9:16 and 4:5). Statics are cheap to make and easy to iterate.
