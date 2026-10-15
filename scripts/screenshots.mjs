@@ -35,12 +35,14 @@ for (const [variant, utm] of [['a', 'ad_a_blocked'], ['b', 'ad_b_fees']]) {
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: `docs/screenshots/hero-${variant}-390x${h}.png` });
     // What is fully visible above the fold?
-    const fold = await page.evaluate((vh) => {
+    const fold = await page.evaluate(([vh, variant]) => {
       const vis = (sel) => { const e = document.querySelector(sel); if (!e) return 'missing'; const r = e.getBoundingClientRect(); return r.height === 0 ? 'hidden' : r.bottom <= vh ? 'yes' : `no (bottom ${Math.round(r.bottom)})`; };
       const trust = [...document.querySelectorAll('.trust, [data-trust]')].find((e) => e.getBoundingClientRect().height > 0);
-      return { h1: vis('h1'), firstControl: vis('[data-step="a"] button[data-ticker], #in-m'), resultLine: vis('.result-line'),
-        trust: trust ? (trust.getBoundingClientRect().bottom <= vh ? 'yes' : `no (bottom ${Math.round(trust.getBoundingClientRect().bottom)})`) : 'not found' };
-    }, h);
+      return { h1: vis('h1'), firstControl: vis(variant === 'a' ? '[data-step="a"] button[data-ticker]' : '#in-m'),
+        ...(variant === 'b' && { secondSlider: vis('#in-y'), returnLine: vis('.ret'), resultLine: vis('.result-line') }),
+        trust: trust ? (trust.getBoundingClientRect().bottom <= vh ? 'yes' : `no (bottom ${Math.round(trust.getBoundingClientRect().bottom)})`) : 'not found',
+        sticky: vis('[data-sticky]') };
+    }, [h, variant]);
     console.log(`hero ${variant} 390x${h}:`, JSON.stringify(fold));
     await page.close();
   }

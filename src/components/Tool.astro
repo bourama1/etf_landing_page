@@ -4,7 +4,8 @@
   adds the behaviour. Hooks for Task 10:
     #step-a [data-step="a"]   chips: button[data-ticker] (aria-pressed), "other" = Jiné; [data-twins] live region;
                               button[data-next="b"]; button[data-expand] (ad B: collapsed Step A, "Vybráno: VOO · změnit")
-    #step-b [data-step="b"]   inputs #in-m #in-y #in-r (range) with output[data-out="m|y|r"];
+    #step-b [data-step="b"]   inputs #in-m #in-y #in-r (range) with output[data-out="m|y|r"]; #in-r sits in #ret-panel (hidden),
+                              toggled by button[data-ret] (aria-expanded) in the compact return line p.ret;
                               radios name="broker" (unknown|xtb|t212|fio|cs); p[data-broker-note] (empty);
                               [data-bank-cost] [data-etf-cost] (default numbers rendered here);
                               [data-ter-ticker] [data-ter-issuer] [data-ter-asof] [data-broker-source] in the source line;
@@ -60,15 +61,28 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
       <output for="in-y" class="num" data-out="y">{yDef} let</output>
       <input type="range" id="in-y" name="y" min={yMin} max={yMax} step={yStep} value={yDef} />
     </div>
-    <div class="slider">
-      <label for="in-r">Výnos trhu</label>
-      <output for="in-r" class="num" data-out="r">{fmtPct(rDef)} ročně</output>
+    <p class="ret">
+      <label for="in-r">Výnos trhu</label> <output for="in-r" class="num" data-out="r">{fmtPct(rDef)} ročně</output> · <em>předpoklad, ne předpověď</em> ·{' '}
+      <button type="button" class="linkbtn" data-ret aria-expanded="false" aria-controls="ret-panel">změnit</button>
+    </p>
+    <div class="slider" id="ret-panel" hidden>
       <input type="range" id="in-r" name="r" min={rMin} max={rMax} step={rStep} value={rDef} />
       <p class="src"><em>Předpoklad, ne předpověď.</em> Pro srovnání: americké akcie vynesly v letech 1900–2025
         v průměru 6,6 % ročně nad inflaci. Zdroj: UBS Global Investment Returns Yearbook 2026. Minulá výkonnost není
         zárukou budoucích výnosů.</p>
     </div>
-
+    <div class="result-line" aria-live="polite">
+      <p class="result-h">Kvůli poplatkům budete mít méně o:</p>
+      <p class="result-row">Bankovní akciový fond <mark class="num" data-bank-cost>{fmtCzkRange(roundK(c.bankCostMin), roundK(c.bankCostMax))}</mark></p>
+      <p class="result-row">Indexové ETF <strong class="num" data-etf-cost>{fmtCzk(roundK(c.etfCost))}</strong></p>
+    </div>
+    <p class="src">
+      Zdroj: KID fondů {kidBanks.map((b, i) => <>{i > 0 && ' a '}{b.name} ({fmtDate(b.kid_date!)})</>)};
+      ETF <span data-ter-ticker>{terTwin.xetra}</span>, factsheet <span data-ter-issuer>{terTwin.issuer}</span>, stav k <span data-ter-asof>{fmtDate(terTwin.asOf!)}</span>;
+      poplatky brokera: <span data-broker-source>ceník {brokerShort(FX_BROKER)}{FX_BROKER.as_of && `, stav k ${fmtDate(FX_BROKER.as_of)}`}</span>.{' '}
+      <a href="#jak-pocitame">Jak počítáme</a>
+    </p>
+    <p class="trust only-b">{trust}</p>
     <fieldset class="radios">
       <legend>Kde nakupujete?</legend>
       {Object.entries(brokerLabels).map(([id, label]) => (
@@ -78,19 +92,6 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
       <p class="helper">Poplatky ETF počítáme i s poplatkem brokera a směnou měny. Nejde o srovnání ani doporučení brokerů.</p>
       <p class="helper" data-broker-note></p>
     </fieldset>
-
-    <div class="result-line" aria-live="polite">
-      <p class="result-h">Kvůli poplatkům budete mít méně o:</p>
-      <p class="result-row">Bankovní akciový fond <mark class="num" data-bank-cost>{fmtCzkRange(roundK(c.bankCostMin), roundK(c.bankCostMax))}</mark></p>
-      <p class="result-row">Indexové ETF <strong class="num" data-etf-cost>{fmtCzk(roundK(c.etfCost))}</strong></p>
-    </div>
-    <p class="trust only-b">{trust}</p>
-    <p class="src">
-      Zdroj: KID fondů {kidBanks.map((b, i) => <>{i > 0 && ' a '}{b.name} ({fmtDate(b.kid_date!)})</>)};
-      ETF <span data-ter-ticker>{terTwin.xetra}</span>, factsheet <span data-ter-issuer>{terTwin.issuer}</span>, stav k <span data-ter-asof>{fmtDate(terTwin.asOf!)}</span>;
-      poplatky brokera: <span data-broker-source>ceník {brokerShort(FX_BROKER)}{FX_BROKER.as_of && `, stav k ${fmtDate(FX_BROKER.as_of)}`}</span>.
-      <a href="#jak-pocitame">Jak počítáme</a>
-    </p>
     <details id="jak-pocitame" class="how">
       <summary>Jak počítáme</summary>
       <p>Každý měsíc vložíte stejnou částku. U bankovního fondu z ní odečteme vstupní poplatek
@@ -99,7 +100,7 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
         směnu měny při nákupu i prodeji. Nepočítáme transakční náklady fondů, rozpětí cen na burze ani daně. Rozdíl je to,
         o kolik méně budete mít na konci proti investici bez poplatků.</p>
       <p class="src">Zdroje: {kidBanks.map((b) => `KID ${b.name} (${fmtDate(b.kid_date!)})`).join(', ')}, ceníky brokerů
-        ({BROKERS.map((b) => `${brokerShort(b)}${dateOr(b.as_of)}`).join(', ')}), factsheet fondu
+        ({BROKERS.map((b) => `${brokerShort(b)}${dateOr(b.as_of)}`).join(', ')}), factsheet fondu{" "}
         <span data-ter-ticker>{terTwin.xetra}</span>.</p>
     </details>
     <button type="button" class="btn btn-quiet" data-next="c">Ještě jedno upřesnění</button>
@@ -112,7 +113,7 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
       <label class="radio"><input type="radio" name="dividends" value="dist" /> Vyplácet (distribuční)</label>
       <label class="radio"><input type="radio" name="dividends" value="both" checked /> Nevím, ukažte obojí</label>
     </fieldset>
-    <p class="helper">Akumulační fond dividendy nevyplácí, takže je každý rok nedaníte. Distribuční je vyplácí a daníte je.
+    <p class="helper">Akumulační fond dividendy nevyplácí, takže je každý rok nedaníte. Distribuční je vyplácí a daníte je.{" "}
       <em>Slouží jako filtr. Toto není doporučení.</em></p>
     <p class="src">Zdroj: zákon o daních z příjmů, § 8 odst. 4 a 8 a § 16a, znění k 1. 8. 2026. Informativní, nejde o daňové
       poradenství.</p>

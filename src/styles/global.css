@@ -119,15 +119,30 @@ legend { font-weight: 700; padding: 0; margin-bottom: 0.25rem; }
 .radio { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; margin-right: 1rem; }
 .radio input, .check input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); flex: none; }
 
-.result-line { margin: 1.25rem 0 0.5rem; }
+/* Compact return line (page.md §1B): the slider and the UBS note open under it. */
+.ret { color: var(--muted); font-size: 0.875rem; margin: -0.25rem 0 0; }
+.ret label, .ret output { color: var(--ink); }
+.ret output { font-weight: 700; }
+/* 44 px tap target without making the text line 44 px tall. */
+.linkbtn {
+  display: inline-block; padding: 12px 4px; margin: -12px 0; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 650;
+  text-decoration: underline; text-underline-offset: 0.15em; cursor: pointer;
+}
+#ret-panel { margin: 0 0 0.5rem; }
+.result-line { margin: 0.75rem 0 0.25rem; }
 .result-h { font-weight: 700; margin-bottom: 0.25rem; }
-.result-row { display: flex; justify-content: space-between; gap: 1rem; margin: 0; }
+.result-row { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 0; }
+.result-row > :last-child { white-space: nowrap; }
 mark { background: var(--marker); color: var(--ink); padding: 0 0.2em; font-weight: 800; }
 details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 650; }
 details.how { margin: 0.5rem 0 1rem; }
 
 /* Tool island (src/scripts/tool.ts): ad B collapses Step A; the ticker pair is the one animated moment (§10). */
 .step.collapsed > :not(h2, .expand) { display: none; }
+/* Ad B: collapsed Step A keeps its heading (structure, screen readers) at minimum height. */
+.step.collapsed h2 { font-size: 1rem; margin: 0; }
+.step.collapsed .expand { min-height: 44px; margin-top: -0.5rem; }
+.step.collapsed + .step { margin-top: 0.5rem; }
 .expand {
   min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 650;
   text-decoration: underline; text-underline-offset: 0.15em; cursor: pointer;
@@ -172,6 +187,8 @@ details.how { margin: 0.5rem 0 1rem; }
   position: fixed; inset: auto 0 0 0; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
   padding: 8px 16px; background: var(--paper); border-top: 2px solid var(--ink);
 }
+.sticky > span { min-width: 0; }
+.sticky .btn { flex: none; white-space: nowrap; padding: 0 14px; hyphens: none; }
 
 /* No-JS twin table */
 .table-wrap { overflow-x: auto; margin: 0.5rem 0; }

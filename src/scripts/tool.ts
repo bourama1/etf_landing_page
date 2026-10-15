@@ -171,6 +171,13 @@ tool.addEventListener('click', (e) => {
 document.addEventListener('click', (e) => {
   if ((e.target as Element).closest('a[href="#jak-pocitame"]')) q<HTMLDetailsElement>('#jak-pocitame').open = true;
 });
+const retBtn = q<HTMLButtonElement>('[data-ret]');
+retBtn.addEventListener('click', () => {
+  const open = retBtn.getAttribute('aria-expanded') !== 'true';
+  retBtn.setAttribute('aria-expanded', String(open));
+  q('#ret-panel').hidden = !open;
+  if (open) q('#in-r').focus();
+});
 expand.addEventListener('click', () => {
   stepA.classList.remove('collapsed');
   expand.hidden = true;
