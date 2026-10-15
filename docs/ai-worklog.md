@@ -4668,3 +4668,22 @@ into `vercel env add --sensitive` (the key never printed), then redeployed. Chec
 (undeliverable on purpose): 200, contact on list 4 "Plán", `PLAN_SENT_AT` stored with full time (text attribute,
 Review Focus 1 confirmed), contact deleted afterwards. Brevo account read-only check before that: Free plan,
 300/day, 17 attributes with the planned types, lists Plán (4) and Novinky (5).
+
+**Update (2026-10-15): real-inbox test passed (Matěj, from the live URL).** Screenshots
+`docs/screenshots/email-{seznam,gmail}-{1,2}.png` (personal addresses blacked out before commit; the repo is public).
+- **Gmail:** Inbox. From rewritten by Brevo to `<…>@12474095.brevosend.com`, reply-to Matěj's address, mailed-by
+  `gy.d.sender-sib.com`, signed-by `brevosend.com`; Gmail shows "Unsubscribe" (Brevo's List-Unsubscribe header).
+  Note: Brevo's help says transactional mail is rewritten to `…t-sender-sib.com`; the real header says `brevosend.com`.
+- **Email.cz (Seznam):** **Spam**, "E-mail jsme vyhodnotili jako nevyžádané sdělení". From showed the original
+  `email.cz` address sent through Brevo's servers, so it can't pass the domain checks Seznam requires (SPF/DKIM,
+  `data` in Task 0). Confirms the own-domain launch blocker.
+- Rendering: tables, ISINs, sources and the "Otevřít plán online" button render in both (screenshots are desktop
+  webmail, not phone apps).
+- Brevo (API, read-only): Seznam contact `AD_VARIANT a`, UTMs, `VOO,QQQ`, `t212`, 17 years, list 4 only, no
+  newsletter fields. **Dedupe:** the second submit 30 s later moved `LAST_REQUEST_AT` (16:07:38) but not
+  `PLAN_SENT_AT` (16:07:08); Brevo events 1 request / 1 delivered. Gmail contact `AD_VARIANT b`, `NEWSLETTER true`,
+  `NEWSLETTER_CONSENT_AT`, `CONSENT_TEXT_V 1`, lists 4 + 5 (+ 2, Brevo's default list holding the account owner's
+  address, not set by our code); 1 request / 1 delivered.
+- `magnet_opened` in Umami Realtime: confirmed by Matěj (the agent has no Umami access).
+- Art. 21(4) objection sentence: part of every e-mail (`src/lib/email.ts:141`, asserted in `email.test.ts`); not
+  visible in the cropped screenshots.
