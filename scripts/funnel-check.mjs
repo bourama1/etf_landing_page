@@ -224,6 +224,22 @@ const x = await run('ad A refused', `/?${UTM}ad_a_blocked`, async (page, loaded)
 });
 if (x.length || refusedLoaded) problems.push(`ad A refused: ${x.length} sends, script loaded: ${refusedLoaded}`);
 
+// 7. Bar still open (no answer yet): it is first in tab order and the sticky CTA never lands the form heading under it.
+const o = await run('bar open', `/?${UTM}ad_a_blocked`, async (page) => {
+  await page.click('button[data-ticker="VOO"]');
+  await page.waitForSelector('.consent');
+  const firstFocusable = await page.evaluate(() => !![...document.querySelectorAll('a[href],button,input,select,textarea')]
+    .find((e) => e.offsetParent !== null || getComputedStyle(e).position === 'fixed')?.closest('.consent'));
+  if (!firstFocusable) problems.push('bar open: the consent bar is not first in keyboard order');
+  await page.waitForSelector('[data-sticky]:not([hidden])');
+  await page.click('[data-sticky] a');
+  await page.waitForTimeout(1500);
+  const covered = await page.evaluate(() => document.querySelector('#lead-inline-h').getBoundingClientRect().top
+    < document.querySelector('.consent').getBoundingClientRect().bottom);
+  if (covered) problems.push('bar open: consent bar covers the form heading after the sticky CTA');
+});
+if (o.length) problems.push(`bar open: ${o.length} sends without an answer`);
+
 await browser.close();
 server?.close();
 lines.push('', problems.length ? `PROBLEMS:\n${problems.join('\n')}` : 'All expectations met.');

@@ -18,11 +18,16 @@ function openBar() {
   for (const [label, v] of [['Souhlasím', 'yes'], ['Nesouhlasím', 'no']] as const) {
     const b = Object.assign(document.createElement('button'), { type: 'button', className: 'btn btn-quiet', textContent: label });
     b.dataset.consent = v;
-    b.addEventListener('click', () => { setConsent(v); bar.remove(); });
+    b.addEventListener('click', () => { setConsent(v); bar.remove(); root.style.scrollPaddingTop = ''; removeEventListener('resize', pad); });
     answers.append(b);
   }
   bar.append(p, answers);
-  document.body.append(bar);
+  document.body.prepend(bar); // first in keyboard order: the choice comes before the page
+  // Jumps to the form (sticky CTA, 'Poslat plán') land below the fixed bar, not under it.
+  const root = document.documentElement;
+  const pad = () => { root.style.scrollPaddingTop = `${bar.offsetHeight}px`; };
+  pad();
+  addEventListener('resize', pad, { passive: true });
 }
 
 if (hasAnalytics()) {
