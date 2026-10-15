@@ -4237,3 +4237,137 @@ localhost): layout, first-screen fit, animation, focus, screen readers, CLS.
 11. "Zadat znovu" restored a form whose button stayed disabled ("Posíláme…").
 12. `forms.ts` would throw on the error pages; client and server disagreed on bare `ad_b` (attribution skew).
 13. Subagents signed commits with their own model name instead of the dispatch's trailer; kept as more accurate.
+
+<details><summary>2026-10-15 — subagent prompt: Task 13 first-screen fix (after Playwright screenshots) (model: opus)</summary>
+
+````text
+You are fixing the first-screen layout of "ETF Dvojče" (Czech landing page; Astro static + vanilla-TS island). Repo D:\etf_landing_page, Windows, Git Bash/PowerShell, Node 26 (runs .ts natively), NO Python. Branch master, commit directly, English commit messages ending with a `Co-Authored-By:` line for your model. Read CLAUDE.md ("Copy & design rules"), docs/decisions.md §3, §4, §10, and content/page.md §1B and §2 first. Copy in page.md is approved and verbatim. Do not dispatch subagents. Never remove a11y attributes, consent text, honeypot, source/date labels. No analytics.
+
+A real-browser check now exists: `npx astro build` then `node scripts/screenshots.mjs` (Playwright + Chromium installed). It writes docs/screenshots/hero-{a,b}-390x{844,700}.png and prints what is above the fold. Look at the PNGs with your Read tool.
+
+Current state (measured): hero A is fine. **Hero B fails**: at 390×844 the fee result line ends at y≈1110 and the trust line at ≈1173; the sticky bar shows on load and covers the bottom; its button wraps as "Poslat plán e- / mailem".
+
+Requirements:
+1. **Hero B must match page.md §1B**, which the build deviates from: after the two sliders (Měsíčně spořím, Jak dlouho) comes a **compact return line** "Výnos trhu {5 %} ročně · *předpoklad, ne předpověď* · [změnit]"; the `[změnit]` button reveals the return slider and the UBS comparison note (page.md §2 Step B text, incl. "Minulá výkonnost není zárukou budoucích výnosů.") — `aria-expanded` + `aria-controls`; the compact line keeps showing the current value. Directly after it: the result line ("Kvůli poplatkům budete mít méně o: …" with the marker) and its source line + [Jak počítáme], then the trust line for variant b, then "Kde nakupujete?" and the rest of Step B. Use this same order for variant a too (one layout, less code); the result updates live when the broker changes, so broker-below-result is fine.
+2. **Collapsed Step A in variant b** ("Vybráno: VOO · změnit") must take as little height as possible while keeping the "1. Které ETF jste chtěli koupit?" heading for structure (e.g. smaller margins; heading and the Vybráno button may share less vertical space). Don't hide the heading from assistive tech.
+3. **Target:** at 390×700 (Instagram in-app browser) hero B shows the h1, the sub, both sliders, the compact return line and the **whole result line**; ideally the trust line too. Hero A must stay as it is now (headline, sub, chips, trust line in the first screen at 390×700).
+4. **Only if 3 is still not met after 1–2:** shorten hero B's sub-line (Matěj's instruction: "if hero B doesn't fit, shorten its sub-line first"). Propose the shortest natural Czech variant that keeps the meaning, apply it, and update content/page.md §1B with the new sub and a one-line *Poznámka* ("zkráceno ve fázi 3, aby se výsledek vešel na první obrazovku"). Do not shorten the headline (it must match the ad word for word).
+5. **Sticky bar** must never cover the first screen on load: show it only after the visitor's first interaction with the tool (chip tap, slider/radio change, or the [změnit] button) — decisions §3 says it appears after the result, and on an ad-B landing the result is already there, so interaction is the trigger. Its button text must not hyphenate or wrap mid-word (`white-space: nowrap`, adjust widths so the summary and the button fit at 390 px; the summary may wrap).
+6. Fix the selector in scripts/screenshots.mjs step 1 so `firstControl` reports the first *visible* control (`#in-m` for variant b, a chip for a) and report the result line for b. Keep the rest of the script.
+
+Verify: `npm test` (all green), `npx astro build`, `node scripts/screenshots.mjs` → paste its printed fold report; view the four hero PNGs and describe what is in each first screen. Note: `npm run build`'s prebuild may rewrite data/fx.json; if it changes, `git checkout data/fx.json`. Commit the code; also commit the regenerated docs/screenshots/*.png and public/plan-preview.png in a separate commit `docs: first-screen screenshots and plan e-mail preview`.
+
+Write a report to D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-13-fix-report.md. Reply with ONLY: Status, commits, the fold report lines, whether the sub-line was shortened (and to what), concerns, report path.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 13 first-screen fix re-review (model: sonnet)</summary>
+
+````text
+You are re-reviewing one task's fix round. A previous review produced
+findings; an implementer has attempted to fix them. Your job is to
+verdict each finding and inspect the fix diff — nothing else.
+
+## The Task
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-13-fix.md
+
+## The Findings Under Verification
+
+Requirements 1–6 in D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-13-fix.md (hero B per page.md §1B, slim collapsed Step A, 390x700 target, sub-line only if needed, sticky bar after first interaction + no wrap, screenshot selector). Also judge the extra fix: restored spaces Astro dropped before inline elements (7 places) — check none of the touched copy deviates from page.md.
+
+## The Fix
+
+Read the implementer's report (fix reports are appended at the end):
+D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-13-fix-report.md
+
+**Fix base:** 08eb906 (the head the previous review saw)
+**Head:** 7a4b5ad
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-08eb906..7a4b5ad.diff
+
+Read the diff file once — it contains the fix commits, a stat summary,
+and the fix diff with surrounding context. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat 08eb906..7a4b5ad` and
+`git diff 08eb906..7a4b5ad`.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Scope
+
+Your scope is the findings list and the fix diff. Verdict every finding.
+Inspect the fix diff for new problems the fix itself introduced. Do NOT
+re-review code the fix did not touch: if you notice an issue entirely
+outside the fix diff, report it under Out-of-Scope Observations — it
+does not block this task and does not extend the loop. A broad
+whole-branch review happens after all tasks are complete.
+
+## Tests
+
+The implementer re-ran the tests covering the amended code and appended
+the results to the report file. Treat the report as unverified claims:
+confirm the fix report names the covering tests and shows their output,
+and verify the claims against the diff. Do not re-run the suite to
+confirm their report. Run a test only when reading the code raises a
+specific doubt that no existing run answers — and then a focused test,
+never a package-wide suite.
+
+## Output Format
+
+Your final message is the report itself: begin directly with the first
+finding's verdict. Every line is a verdict, a finding with file:line,
+or a check you ran — no preamble, no process narration.
+
+### Finding Verdicts
+
+For each finding in The Findings Under Verification, in order:
+- **[finding one-liner]** — ADDRESSED | NOT ADDRESSED, with file:line
+  evidence. "Attempted" is not addressed: the specific defect must no
+  longer exist.
+
+### New Breakage in the Fix Diff
+
+Anything the fix itself broke or introduced, with severity
+(Critical/Important/Minor) and file:line. "None" if clean.
+
+### Out-of-Scope Observations
+
+Issues you noticed entirely outside the fix diff. Non-blocking; the
+controller ledgers these for the final review. "None" if none.
+
+### Verdict
+
+**Fix round:** [All findings addressed, no new Critical/Important
+breakage | Findings remain open] — list the open ones.
+````
+
+</details>
+
+## 2026-10-15 — Phase 3 visual QA (Playwright, approved by Matěj)
+
+Matěj approved `playwright` as a dev dependency. `scripts/screenshots.mjs` serves `dist/`, screenshots both heroes at
+390×844 and 390×700 (`docs/screenshots/`), scans every page for console errors, failed requests and horizontal
+overflow, measures tabular figures, and renders `public/plan-preview.png` from the real e-mail renderer.
+
+**What the first run showed (lead agent, by looking at the PNGs):** hero A fit; **hero B did not**: the fee result
+line ended at y≈1110 px. Cause: the build had not implemented page.md §1B's compact return line ("Výnos trhu 5 % ročně
+· předpoklad, ne předpověď · [změnit]"), so the full return slider and the UBS note pushed the result down; the sticky
+bar also appeared on load over the first screen and its button wrapped "e-/mailem". No unit test or code review had
+caught any of this; only the browser did.
+**Fix (Opus implementer, Sonnet re-review):** §1B layout implemented for both variants, collapsed Step A slimmed,
+sticky bar only after the first interaction. The sub-line did not need shortening. The implementer also found that
+Astro drops the space between a line-ending word and a following inline element ("2026.Jak počítáme") in 7 places.
+**Result (re-run by the lead agent):** hero B at 390×700 shows headline, sub, both sliders, return line and the full
+result line (trust line just below the fold); hero A unchanged; tnum widths equal; no console errors; 61/61 tests;
+first-load JS 13.9 kB gz.
