@@ -1,6 +1,7 @@
 // End-to-end check of every funnel event (decisions §12, plan docs/superpowers/plans/2026-10-15-phase4-tracking.md Task 5).
 // Builds the site with a fake Umami website ID into .dev/dist-funnel, runs the REAL Umami tracker (fetched from
-// cloud.umami.is) in Chromium, and intercepts its sends to gateway.umami.is: nothing reaches Umami. /api/lead runs
+// cloud.umami.is) in Chromium after the visitor accepts the consent bar, and intercepts its sends to gateway.umami.is: nothing
+// reaches Umami. /api/lead runs
 // the real handler in Brevo dry-run. Writes docs/funnel-check.log; exits 1 on any mismatch.
 // Run: node scripts/funnel-check.mjs   (needs `npx playwright install chromium` once)
 import { createServer } from 'node:http';
@@ -45,6 +46,7 @@ const problems = [];
 
 async function run(label, path, steps) {
   const sent = [];
+  let scriptLoaded = false;
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   await page.route('https://cloud.umami.is/script.js', (r) => r.fulfill({ contentType: 'text/javascript', body: umamiJs }));
   await page.route('https://gateway.umami.is/**', (r) => {
@@ -55,11 +57,12 @@ async function run(label, path, steps) {
     return r.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
   page.on('request', (r) => { const h = new URL(r.url()).host; if (!/^(localhost|cloud\.umami\.is|gateway\.umami\.is)/.test(h)) problems.push(`${label}: unexpected request ${r.url()}`); });
+  page.on('request', (r) => { if (r.url().startsWith('https://cloud.umami.is/')) scriptLoaded = true; });
   page.on('pageerror', (e) => problems.push(`${label}: pageerror ${e.message}`));
   lines.push(`--- ${label}: ${path}`);
   await page.goto(base + path);
   await page.waitForTimeout(800);
-  await steps(page);
+  await steps(page, () => scriptLoaded);
   await page.waitForTimeout(800);
   await page.close();
   return sent.map((b) => ({ type: b.type, ...(b.payload ?? {}) }));
@@ -74,6 +77,13 @@ const slowScroll = async (page) => {
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForTimeout(300);
 };
+// The bar appears after the first scroll/tap/key; before the answer the tracker must not even be downloaded.
+async function consent(page, label, v, loaded) {
+  await page.waitForSelector('.consent');
+  if (loaded()) problems.push(`${label}: Umami script requested before consent`);
+  await page.click(`.consent button[data-consent="${v}"]`);
+  await page.waitForTimeout(600);
+}
 const keys = async (page, sel, key, n) => { await page.focus(sel); for (let i = 0; i < n; i++) await page.keyboard.press(key); };
 
 // --- expectations
@@ -81,6 +91,7 @@ const count = (ev, name) => ev.filter((e) => (name === 'page_view' ? !e.name : e
 const find = (ev, name, pred = () => true) => ev.find((e) => e.name === name && pred(e.data ?? {}));
 function expect(label, ev, tag, counts, props = []) {
   for (const [name, n] of Object.entries(counts)) if (count(ev, name) !== n) problems.push(`${label}: ${name} ×${count(ev, name)}, expected ×${n}`);
+  if (ev.length && ev[0].name) problems.push(`${label}: first send is ${ev[0].name}, expected the pageview`);
   for (const e of ev) {
     if (e.website !== ID) problems.push(`${label}: wrong website ${e.website}`);
     if (e.tag !== tag) problems.push(`${label}: ${e.name ?? 'pageview'} tag=${e.tag}, expected ${tag}`);
@@ -91,8 +102,9 @@ function expect(label, ev, tag, counts, props = []) {
 const ONCE = ['interaction_start', 'interaction_complete'];
 
 // 1. Ad A: chips, sliders, broker, dividends, full scroll, why-link, sticky CTA, empty + bad e-mail, success.
-const a = await run('ad A', `/?${UTM}ad_a_blocked`, async (page) => {
+const a = await run('ad A', `/?${UTM}ad_a_blocked`, async (page, loaded) => {
   await page.click('button[data-ticker="VOO"]');
+  await consent(page, 'ad A', 'yes', loaded);
   await page.click('button[data-ticker="QQQ"]');
   await page.click('button[data-ticker="VOO"]');
   await page.click('[data-next="b"]');
@@ -124,11 +136,14 @@ for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_co
 // 2. Ad B: no touch for 2 s (result pre-rendered: no interaction events), then horizon slider, plan CTA, footer form
 //    with one forced server error, then success.
 let failNext = true;
-const b = await run('ad B', `/?${UTM}ad_b_fees`, async (page) => {
+const b = await run('ad B', `/?${UTM}ad_b_fees`, async (page, loaded) => {
   await page.waitForTimeout(2000);
+  if (await page.locator('.consent').count()) problems.push('ad B: consent bar shown before any interaction');
   const early = lines.filter((l) => l.startsWith('[ad B]') && ONCE.concat('step_complete').some((n) => l.includes(` ${n} `)));
   if (early.length) problems.push(`ad B: interaction events without a touch: ${early.join(' | ')}`);
-  await keys(page, '#in-y', 'ArrowLeft', 3);
+  await keys(page, '#in-y', 'ArrowLeft', 1);
+  await consent(page, 'ad B', 'yes', loaded);
+  await keys(page, '#in-y', 'ArrowLeft', 2);
   await page.locator('a[data-cta="plan"]').scrollIntoViewIfNeeded();
   await page.waitForTimeout(400);
   await page.click('a[data-cta="plan"]');
@@ -151,15 +166,45 @@ expect('ad B', b, 'b', { page_view: 1, interaction_start: 1, interaction_complet
 for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content=ad_b_fees']) if (!b.find((e) => !e.name)?.url.includes(k)) problems.push(`ad B: pageview url lacks ${k}`);
 
 // 3. No UTM (or an unknown ad): tag unknown, nothing but pageview + sections.
-const n = await run('no UTM', '/', async () => {});
+const n = await run('no UTM', '/', async (page, loaded) => {
+  await page.mouse.wheel(0, 300);
+  await consent(page, 'no UTM', 'yes', loaded);
+});
 expect('no UTM', n, 'unknown', { page_view: 1, interaction_start: 0, lead_submitted: 0 });
 
 // 4. /plan from the e-mail link: magnet_opened once; without utm_source=email: none.
 const planQ = '/plan/?t=VOO&m=3000&y=20&r=5&b=xtb&d=acc';
-const p1 = await run('/plan from e-mail', `${planQ}&utm_source=email`, async () => {});
-expect('/plan from e-mail', p1, 'unknown', { page_view: 1, magnet_opened: 1 });
-const p2 = await run('/plan direct', planQ, async () => {});
+const p1 = await run('/plan from e-mail', `${planQ}&utm_source=email`, async (page, loaded) => {
+  await page.mouse.wheel(0, 300);
+  await consent(page, '/plan from e-mail', 'yes', loaded);
+  await page.reload(); // the stored "Souhlasím": no bar, tracker loads straight away
+  await page.waitForTimeout(800);
+  await page.mouse.wheel(0, 300);
+  await page.waitForTimeout(300);
+  if (await page.locator('.consent').count()) problems.push('/plan: consent bar shown again after Souhlasím');
+});
+expect('/plan from e-mail', p1, 'unknown', { page_view: 2, magnet_opened: 2 });
+const p2 = await run('/plan direct', planQ, async (page, loaded) => {
+  await page.mouse.wheel(0, 300);
+  await consent(page, '/plan direct', 'yes', loaded);
+});
 expect('/plan direct', p2, 'unknown', { page_view: 1, magnet_opened: 0 });
+
+// 5. Refusal: the same ad A path, "Nesouhlasím": the tracker is never downloaded and nothing is sent.
+let refusedLoaded = false;
+const x = await run('ad A refused', `/?${UTM}ad_a_blocked`, async (page, loaded) => {
+  await page.click('button[data-ticker="VOO"]');
+  await consent(page, 'ad A refused', 'no', loaded);
+  await keys(page, '#in-m', 'ArrowRight', 2);
+  await slowScroll(page);
+  await page.fill('#lead-inline-email', 'test@example.com');
+  await page.click('#lead-inline button[type="submit"]');
+  await page.waitForSelector('.thanks');
+  await page.click('[data-consent-open]'); // footer link brings the choice back (art. 7(3) GDPR)
+  if (!(await page.locator('.consent').count())) problems.push('ad A refused: footer link did not reopen the bar');
+  refusedLoaded = loaded();
+});
+if (x.length || refusedLoaded) problems.push(`ad A refused: ${x.length} sends, script loaded: ${refusedLoaded}`);
 
 await browser.close();
 server.close();

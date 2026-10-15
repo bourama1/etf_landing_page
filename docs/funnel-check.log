@@ -1,8 +1,8 @@
-# node scripts/funnel-check.mjs — 2026-10-15T11:39:27.222Z
+# node scripts/funnel-check.mjs — 2026-10-15T11:46:36.907Z
 --- ad A: /?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_a_blocked
+[ad A] page_view (pageview)   tag=a url=http://localhost:4398/?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_a_blocked
 [ad A] section_view           tag=a {"section":"hero"}
 [ad A] section_view           tag=a {"section":"tool"}
-[ad A] page_view (pageview)   tag=a url=http://localhost:4398/?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_a_blocked
 [ad A] interaction_start      tag=a {"step":"a","ad_variant":"a"}
 [ad A] interaction_complete   tag=a {"tickers":"VOO","monthly":3000,"years":20}
 [ad A] step_complete          tag=a {"step":"a","tickers":"VOO"}
@@ -13,8 +13,8 @@
 [ad A] section_view           tag=a {"section":"plan"}
 [ad A] section_view           tag=a {"section":"about"}
 [ad A] section_view           tag=a {"section":"faq"}
-[ad A] section_view           tag=a {"section":"final"}
 [ad A] form_view              tag=a {"location":"footer"}
+[ad A] section_view           tag=a {"section":"final"}
 [ad A] cta_click              tag=a {"location":"why"}
 [ad A] form_start             tag=a {"location":"inline"}
 [ad A] cta_click              tag=a {"location":"sticky"}
@@ -26,9 +26,9 @@
 [ad A] lead_submitted         tag=a {"location":"inline","ad_variant":"a"}
 [ad A] thank_you_view         tag=a {"location":"inline"}
 --- ad B: /?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_b_fees
+[ad B] page_view (pageview)   tag=b url=http://localhost:4398/?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_b_fees
 [ad B] section_view           tag=b {"section":"hero"}
 [ad B] section_view           tag=b {"section":"tool"}
-[ad B] page_view (pageview)   tag=b url=http://localhost:4398/?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_b_fees
 [ad B] interaction_start      tag=b {"step":"b","ad_variant":"b"}
 [ad B] interaction_complete   tag=b {"tickers":"VOO","monthly":3000,"years":19}
 [ad B] step_complete          tag=b {"step":"b","monthly":3000,"years":19,"broker":"unknown"}
@@ -38,8 +38,8 @@
 [ad B] cta_click              tag=b {"location":"plan"}
 [ad B] section_view           tag=b {"section":"why"}
 [ad B] form_view              tag=b {"location":"inline"}
-[ad B] form_view              tag=b {"location":"footer"}
 [ad B] section_view           tag=b {"section":"final"}
+[ad B] form_view              tag=b {"location":"footer"}
 [ad B] form_start             tag=b {"location":"footer"}
 [ad B] cta_click              tag=b {"location":"footer"}
 [ad B] form_error             tag=b {"reason":"server","location":"footer"}
@@ -47,13 +47,16 @@
 [ad B] lead_submitted         tag=b {"location":"footer","ad_variant":"b"}
 [ad B] thank_you_view         tag=b {"location":"footer"}
 --- no UTM: /
+[no UTM] page_view (pageview)   tag=unknown url=http://localhost:4398/
 [no UTM] section_view           tag=unknown {"section":"hero"}
 [no UTM] section_view           tag=unknown {"section":"tool"}
-[no UTM] page_view (pageview)   tag=unknown url=http://localhost:4398/
 --- /plan from e-mail: /plan/?t=VOO&m=3000&y=20&r=5&b=xtb&d=acc&utm_source=email
+[/plan from e-mail] page_view (pageview)   tag=unknown url=http://localhost:4398/plan/?t=VOO&m=3000&y=20&r=5&b=xtb&d=acc&utm_source=email
 [/plan from e-mail] magnet_opened          tag=unknown {}
 [/plan from e-mail] page_view (pageview)   tag=unknown url=http://localhost:4398/plan/?t=VOO&m=3000&y=20&r=5&b=xtb&d=acc&utm_source=email
+[/plan from e-mail] magnet_opened          tag=unknown {}
 --- /plan direct: /plan/?t=VOO&m=3000&y=20&r=5&b=xtb&d=acc
 [/plan direct] page_view (pageview)   tag=unknown url=http://localhost:4398/plan/?t=VOO&m=3000&y=20&r=5&b=xtb&d=acc
+--- ad A refused: /?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_a_blocked
 
 All expectations met.
