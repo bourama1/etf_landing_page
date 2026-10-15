@@ -239,6 +239,8 @@ Listed for cost realism in the calculator, not as a recommendation (decisions.md
 
 | **Česká spořitelna** | Xetra/Tradegate: **0,35 %, minimálně 4 EUR**; regular fractional orders via internet banking 0,35 % without minimum | not stated in the price list | **0,08 % ročně** ("Zahraniční kotované akcie … 0,08 % ročně"; ETFs are priced "stejné ceny … ETF") | *Ceník investování a investování PLUS*, effective 01. 02. 2026, https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE |
 
+**Machine fields (Phase 3):** `brokers.json` adds `id` and numeric `custody_pct` read from the Custody column above (XTB 0: the 0,02 % applies only above 250 000 EUR, beyond the calculator range; T212 0; Fio 0; ČS 0,08).
+
 **Worked example** (computed with `brokers.json`): a monthly purchase of 125 EUR at Fio costs 3,95 EUR, i.e.
 **3,16 %** of the purchase (1,58 % on a DIP account), before currency conversion. At small monthly amounts a fixed
 fee can cost more than a bank fund's entry fee. The calculator must show this honestly and not assume 0 %.

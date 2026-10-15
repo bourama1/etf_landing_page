@@ -3,6 +3,7 @@
   "note": "Costs of buying a EUR-listed UCITS ETF on Xetra from a CZK account. See data/sources.md §7. Not a ranking or recommendation.",
   "brokers": [
     {
+      "id": "xtb",
       "name": "XTB",
       "commission": {
         "pct": 0,
@@ -12,10 +13,12 @@
       "fx_pct": 0.5,
       "fx_note": "Applies to every trading-related conversion (buy and sell).",
       "custody": "0.02 % p.a. only if average portfolio value exceeds 250 000 EUR",
+      "custody_pct": 0,
       "source_url": "https://www.xtb.com/cz/soubory/tabulka-poplatku-a-provizi.pdf",
       "as_of": "2026-04-29"
     },
     {
+      "id": "t212",
       "name": "Trading 212",
       "commission": {
         "pct": 0,
@@ -25,11 +28,13 @@
       "fx_pct": 0.15,
       "fx_note": "Spot rate + 0.15 % when the instrument's currency differs from the account currency (buy and sell); not on dividends.",
       "custody": "free",
+      "custody_pct": 0,
       "source_url": "https://helpcentre.trading212.com/hc/en-us/articles/11471996799517-What-are-the-fees-in-the-Invest-ISAs-and-SIPP",
       "source_url_fx": "https://helpcentre.trading212.com/hc/en-us/articles/360018909758-What-is-the-FX-fee-Invest-Stocks-ISA",
       "as_of": null
     },
     {
+      "id": "fio",
       "name": "Fio banka (e-Broker)",
       "commission": {
         "tiers_eur": [
@@ -52,11 +57,13 @@
       "fx_pct": null,
       "fx_note": "Not published: 'Měnová konverze probíhá vždy za devizové kurzy, které naleznete přímo v aplikaci e-Broker.'",
       "custody": "free: 'IN uložené na sběrném účtu pro obchodování na DB XETRA zdarma'",
+      "custody_pct": 0,
       "source_url": "https://www.fio.cz/docs/cz/C_zaklad.pdf",
       "source_url_fx": "https://www.fio.cz/akcie-investice/dalsi-sluzby-fio/devizove-konverze",
       "as_of": "2026-07-01"
     },
     {
+      "id": "cs",
       "name": "Česká spořitelna",
       "commission": {
         "pct": 0.35,
@@ -66,6 +73,7 @@
       "fx_pct": null,
       "fx_note": "Not stated in the price list.",
       "custody": "0,08 % p.a. (\"Zahraniční kotované akcie … 0,08 % ročně\"; ETFs priced as akcie), billed quarterly",
+      "custody_pct": 0.08,
       "source_url": "https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE",
       "as_of": "2026-02-01"
     }
