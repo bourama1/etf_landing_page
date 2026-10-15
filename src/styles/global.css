@@ -210,6 +210,9 @@ html.js[data-variant="b"] #step-a:not(.open) + .step { margin-top: 0.5rem; }
 .consent div { display: flex; gap: 8px; }
 .consent .btn { min-height: 44px; padding: 0 14px; }
 
+/* /plan renders from the URL after load (plan-page.ts): hold a screen so the footer never starts in view and jumps. */
+html.js [data-plan] { min-height: 100svh; }
+
 /* No-JS twin table */
 .table-wrap { overflow-x: auto; margin: 0.5rem 0; }
 table { border-collapse: collapse; width: max-content; min-width: 100%; font-size: 0.875rem; }
