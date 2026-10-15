@@ -78,3 +78,12 @@ test('broker names are in the genitive, ETF line has no colon (email.md)', () =>
   assert.ok(render('t=VOO').html.includes('nakupujete u „nevím“.'));
   assert.ok(!fio.includes('směna měny:  u') && !fio.includes('směna měny: u'));
 });
+
+test('table rows start with a row header, so every data cell has a header (axe td-has-header)', () => {
+  const { html } = render('t=VOO');
+  const tables = html.match(/<table style="border-collapse:collapse;width:100%">.*?<\/table>/g)!; // data tables, not the layout ones
+  assert.equal(tables.length, 3);
+  const bodyRows = tables.flatMap((t) => t.match(/<tr><t[dh][^>]*>/g)!.slice(1));
+  assert.ok(bodyRows.length > 5, `${bodyRows.length} body rows`);
+  for (const r of bodyRows) assert.ok(r.startsWith('<tr><th scope="row"'), r);
+});

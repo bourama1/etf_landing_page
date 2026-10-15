@@ -156,7 +156,7 @@ function html(b: Block): string {
       const tag = b.mark === '1' ? 'ol' : 'ul', style = b.mark === '☐' ? 'list-style:none;padding-left:0' : 'padding-left:22px';
       return `<${tag} style="margin:0 0 12px;${style}">${b.items.map((i) => `<li style="margin:0 0 8px">${b.mark === '☐' ? '☐ ' : ''}${inline(i)}</li>`).join('')}</${tag}>`;
     }
-    case 'table': return `<div style="overflow-x:auto;margin:0 0 12px"><table style="border-collapse:collapse;width:100%"><tr>${b.head.map((c) => `<th scope="col" style="${TD};background:#f1f1ec">${esc(c)}</th>`).join('')}</tr>${b.rows.map((r) => `<tr>${r.map((c) => `<td style="${TD}">${inline(c)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+    case 'table': return `<div style="overflow-x:auto;margin:0 0 12px"><table style="border-collapse:collapse;width:100%"><tr>${b.head.map((c) => `<th scope="col" style="${TD};background:#f1f1ec">${esc(c)}</th>`).join('')}</tr>${b.rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td style="${TD}">${inline(c)}</td>` : `<th scope="row" style="${TD}">${inline(c)}</th>`)).join('')}</tr>`).join('')}</table></div>`;
   }
 }
 function text(b: Block): string {

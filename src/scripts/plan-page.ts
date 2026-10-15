@@ -65,7 +65,8 @@ function render(b: Block): Node | null {
       const body = t.createTBody();
       for (const r of b.rows) {
         const tr = body.insertRow();
-        for (const c of r) inline(tr.insertCell(), c);
+        // First cell labels the row (fund, year, item): a row header, so every data cell has a header (a11y).
+        r.forEach((c, i) => { if (i) inline(tr.insertCell(), c); else { const th = el('th'); th.scope = 'row'; inline(th, c); tr.append(th); } });
       }
       const wrap = el('div');
       wrap.className = 'table-wrap';
