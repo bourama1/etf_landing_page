@@ -5,7 +5,8 @@
 // the real handler in Brevo dry-run. Writes docs/funnel-check.log; exits 1 on any mismatch.
 // Run: node scripts/funnel-check.mjs   (needs `npx playwright install chromium` once)
 // Live: LIVE_URL=https://….vercel.app UMAMI_WEBSITE_ID=<id> node scripts/funnel-check.mjs — no build, no interception:
-// the events really go to Umami (check them in its Realtime view) and every send must get a 2xx.
+// the events really go to Umami (check them in its Realtime view) and every send must be stored. Umami answers bots
+// (incl. the "HeadlessChrome" user agent) with 200 {"beep":"boop"} and stores nothing, so live runs use a phone UA.
 import { createServer } from 'node:http';
 import { readFile, writeFile } from 'node:fs/promises';
 import { execSync } from 'node:child_process';
@@ -51,9 +52,14 @@ const problems = [];
 async function run(label, path, steps) {
   const sent = [];
   let scriptLoaded = false;
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2,
+    ...(LIVE && { userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36' }) });
   if (!LIVE) await page.route('https://cloud.umami.is/script.js', (r) => r.fulfill({ contentType: 'text/javascript', body: umamiJs }));
-  page.on('response', (res) => { if (res.url().startsWith('https://gateway.umami.is/') && !res.ok()) problems.push(`${label}: Umami answered ${res.status()}`); });
+  page.on('response', async (res) => {
+    if (!res.url().startsWith('https://gateway.umami.is/')) return;
+    const body = await res.text().catch(() => '');
+    if (!res.ok() || body.includes('beep')) problems.push(`${label}: Umami did not store a send (${res.status()} ${body.slice(0, 40)})`);
+  });
   await page.route('https://gateway.umami.is/**', (r) => {
     const body = JSON.parse(r.request().postData() ?? '{}');
     sent.push(body);
