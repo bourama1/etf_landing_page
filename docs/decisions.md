@@ -126,7 +126,7 @@ Step A  Které ETF jste chtěli koupit?     chips: VOO · SPY · IVV · VTI · Q
         -> VTI: S&P 500 twins labelled "nejbližší dostupné, jiný index"; SCHD: "nemá evropské dvojče" (§14)
 Step B  Kolik měsíčně a na jak dlouho?     amount slider (CZK) + horizon (years) + adjustable return
         -> fee line in CZK: bank fund vs. index ETF (ad B story) + spread within the twin shortlist
-Step C  Dvě upřesnění (filters)            "Dividendy: vyplácet / reinvestovat" · "Měna fondu: USD / EUR / nevím"
+Step C  Jedno upřesnění (filter)           "Dividendy: vyplácet / reinvestovat"  (currency filter dropped, §14 #8)
         -> narrows the twin list; labelled as a filter, not a recommendation
 Result  shortlist + fee number  ->  inline e-mail ask
 ```
@@ -366,3 +366,5 @@ Taken on the agent's recommendations in `data/NOTES.md`.
 | 5 | QQQ is on Nasdaq, not NYSE | **Keep QQQ.** Page copy says "americká ETF", never "ETF z NYSE". README notes the deviation from the brief. |
 | 6 | Fio FX cost not published | Calculator shows Fio's commission labelled **"bez kurzové přirážky"**; Fio stays in the broker options. |
 | 7 | ČS fund ongoing cost (KID not found) | Ongoing-cost range cites ČSOB + KB; entry fees cite all three banks. Revisit if a ČS KID turns up. |
+| 8 | Step C "Měna fondu" filter (2026-10-15) | **Dropped.** All twins have fund currency USD, so it filtered nothing. The twin list states the trading currency instead. |
+| 9 | Name the bank fund in ad B (2026-10-15) | **No.** The ad names no bank or fund; the landing page gives the full source. |

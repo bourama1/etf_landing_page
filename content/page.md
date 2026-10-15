@@ -159,11 +159,9 @@ brokerů ({XTB 29. 4. 2026, Trading 212, Fio 1. 7. 2026, ČS 1. 2. 2026}), facts
   Source line: Zdroj: zákon o daních z příjmů, § 20b a § 16a, znění k 1. 8. 2026. Informativní, nejde o daňové
   poradenství.
 
-[ROZHODNUTÍ: decisions.md §4 planned a second filter, "Měna fondu: USD / EUR / nevím". Every twin in `etfs.json` has
-fund currency **USD**, so it would filter nothing. VoC theme 2 shows the real confusion is the *trading* currency
-(EUR on Xetra vs. USD in London). Proposal: drop the filter (one fewer tap) and state in the twin list "na Xetře
-v eurech" and, in the plan, the London USD ticker. Alternative: "V jaké měně nakupujete? Eura (Xetra) / Dolary
-(Londýn) / Nevím".]
+*Poznámka:* the planned "Měna fondu" filter was dropped (Matěj, 2026-10-15; decisions.md §14 #8). Every twin has
+fund currency USD, so it filtered nothing. The twin list says "na Xetře v eurech" and the plan adds the London USD
+ticker instead.
 
 ### Result block
 

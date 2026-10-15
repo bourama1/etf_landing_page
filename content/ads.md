@@ -136,12 +136,10 @@ Learn More (localised by Meta).
 
 ---
 
-## Decisions needed (Matěj)
+## Decisions
 
-- [ROZHODNUTÍ] Ad B names no bank or fund on the image; the full source (KB Portfolio – Akciových indexů –
-  Exclusive, KID 24. 4. 2026) is on the landing page. Should the primary text name the fund too? Naming it is more
-  transparent; leaving it out avoids looking like an attack ad on one bank. Default: leave it out of the ad, name it
-  on the page.
+- Ad B names no bank or fund, neither on the image nor in the primary text. The full source (KB Portfolio –
+  Akciových indexů – Exclusive, KID 24. 4. 2026) is on the landing page (Matěj, 2026-10-15; decisions.md §14 #9).
 - `<LIVE_URL>` is filled after deploy (Phase 5).
 
 ## Measured lengths
