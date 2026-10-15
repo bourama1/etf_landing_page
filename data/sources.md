@@ -234,3 +234,27 @@ daily (decisions.md §14 #10). This is the ČNB fixing, not any broker's convers
 **Not used:** a Fio table on the devizové konverze page shows EUR at 23,65157 / 25,08943 CZK. The page labels the
 table "aktuální devizové kurzy ČNB", but ČNB publishes a single rate, so it is unclear which rate this is. It is not
 cited as Fio's conversion spread.
+
+## 8. PRIIPs KIDs of the UCITS twins: **verified, 13 of 13 have a KID** (retrieved 2026-10-15)
+
+Each KID was downloaded from the issuer, read with `pdftotext -raw`, and checked for the expected ISIN and the date
+printed inside. Machine-readable: `etfs.json` → `sources.kid` (URL, date) and `kid_cs`.
+
+| Twin | ISIN | KID in Czech | Date in the KID | How the Czech version was checked |
+|---|---|---|---|---|
+| SXR8 | IE00B5BMR087 | **yes** | 3. 9. 2026 | linked from BlackRock's Czech product page; file `…-cs.pdf` |
+| SXRV | IE00B53SZB19 | **yes** | 3. 9. 2026 | same BlackRock pattern, `…-cs.pdf` |
+| IUSA | IE0031442068 | **not found** | 3. 9. 2026 (EN) | `-en.pdf` and `-de.pdf` exist at the same slug, `-cs.pdf` does not |
+| SPYL | IE000XZSV718 | **yes** | 19. 2. 2026 | SSGA `kids?…&country=cz` returns `kid-cz-cs-spyl-gy.pdf` |
+| SPY5 | IE00B6YX5C33 | **not found** | 19. 2. 2026 (EN) | the same SSGA request with `country=cz` returns 404; `country=ie` works |
+| EQQB | IE00BFZXGZ54 | **not determined** | 26. 6. 2026 (EN) | Invesco's URL pattern 404s for Czech, but also for Italian, so a 404 proves nothing |
+| EQQQ | IE0032077012 | **not determined** | 26. 6. 2026 (EN) | as EQQB |
+| VUAA | IE00BFMXXD54 | **yes** | 24. 3. 2026 | `fund-docs.vanguard.com/<isin>_priipskid_cz.pdf` |
+| VUSA | IE00B3XXRP09 | **yes** | 24. 3. 2026 | same |
+| VGLA | IE000VAHT5T0 | **yes** | 20. 8. 2026 | same |
+| VGLD | IE000CVUM3N6 | **yes** | 20. 8. 2026 | same |
+| VWCE | IE00BK5BQT80 | **yes** | 28. 7. 2026 | same |
+| VGWL | IE00B3RBWM25 | **yes** | 28. 7. 2026 | same |
+
+**Meaning for the page:** "má KID" is true for every twin. "KID v češtině" may be shown only where `kid_cs` is true.
+"Not found" means the issuer's own Czech route doesn't return one; it is not proof that none exists anywhere.

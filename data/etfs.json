@@ -225,9 +225,12 @@
       "share_class_assets_musd": 35852,
       "fund_assets_musd": 89226,
       "inception": "2019-05-14",
+      "kid_cs": true,
       "sources": {
-        "default": { "url": "https://fund-docs.vanguard.com/SandP_500_UCITS_ETF_USD_Accumulating_9694_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
-      }
+        "default": { "url": "https://fund-docs.vanguard.com/SandP_500_UCITS_ETF_USD_Accumulating_9694_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "kid": { "url": "https://fund-docs.vanguard.com/ie00bfmxxd54_priipskid_cz.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-03-24" }
+      },
+      "field_sources": { "kid_cs": "kid" }
     },
     {
       "ticker": "VUSA",
@@ -252,9 +255,12 @@
       "share_class_assets_musd": 53374,
       "fund_assets_musd": 89226,
       "inception": "2012-05-22",
+      "kid_cs": true,
       "sources": {
-        "default": { "url": "https://fund-docs.vanguard.com/SandP_500_UCITS_ETF_USD_Distributing_9503_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
-      }
+        "default": { "url": "https://fund-docs.vanguard.com/SandP_500_UCITS_ETF_USD_Distributing_9503_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "kid": { "url": "https://fund-docs.vanguard.com/ie00b3xxrp09_priipskid_cz.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-03-24" }
+      },
+      "field_sources": { "kid_cs": "kid" }
     },
     {
       "ticker": "CSPX",
@@ -277,11 +283,13 @@
       "share_class_assets_musd": 154477.00,
       "fund_assets_musd": 157627.72,
       "inception": "2010-05-19",
+      "kid_cs": true,
       "sources": {
         "default": { "url": "https://www.blackrock.com/uk/individual/literature/fact-sheet/cspx-ishares-core-s-p-500-ucits-etf-fund-fact-sheet-en-gb.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" },
+        "kid": { "url": "https://www.blackrock.com/gls-download/literature/kiid/eu-priips-ishares-core-sp-500-ucits-etf-usd-acc-ie00b5bmr087-cs.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-09-03" },
         "factsheet_de": { "url": "https://www.ishares.com/gls-download/literature/fact-sheet/cspx-ishares-core-s-p-500-ucits-etf-fund-fact-sheet-en-de.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" }
       },
-      "field_sources": { "listings": "factsheet_de" }
+      "field_sources": { "kid_cs": "kid", "listings": "factsheet_de" }
     },
     {
       "ticker": "IUSA",
@@ -304,11 +312,13 @@
       "share_class_assets_musd": 22874.43,
       "fund_assets_musd": 22874.43,
       "inception": "2002-03-15",
+      "kid_cs": false,
       "sources": {
         "default": { "url": "https://www.blackrock.com/uk/individual/literature/fact-sheet/iusa-ishares-core-s-p-500-ucits-etf-usd-dist-fund-fact-sheet-en-gb.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" },
+        "kid": { "url": "https://www.blackrock.com/gls-download/literature/kiid/eu-priips-ishares-core-sp-500-ucits-etf-usd-dist-ie0031442068-en.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-09-03" },
         "xetra": { "url": "https://live.deutsche-boerse.com/en/etf/ishares-core-s-p-500-ucits-etf-usd-dist", "retrieved_at": "2026-10-09", "as_of": null }
       },
-      "field_sources": { "listings[Xetra]": "xetra" }
+      "field_sources": { "kid_cs": "kid", "listings[Xetra]": "xetra" }
     },
     {
       "ticker": "SPYL",
@@ -333,9 +343,12 @@
       "share_class_assets_musd": 19178.77,
       "fund_assets_musd": 43773.94,
       "inception": "2023-10-31",
+      "kid_cs": true,
       "sources": {
-        "default": { "url": "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-spyl-gy.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" }
-      }
+        "default": { "url": "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-spyl-gy.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" },
+        "kid": { "url": "https://www.ssga.com/library-content/kids?isin=IE000XZSV718&documentType=kid&country=cz&language=cs_cz&ticker=spyl-gy", "retrieved_at": "2026-10-15", "as_of": "2026-02-19" }
+      },
+      "field_sources": { "kid_cs": "kid" }
     },
     {
       "ticker": "SPY5",
@@ -360,9 +373,12 @@
       "share_class_assets_musd": 21095.55,
       "fund_assets_musd": 43773.94,
       "inception": "2012-03-19",
+      "kid_cs": false,
       "sources": {
-        "default": { "url": "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-spy5-gy.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" }
-      }
+        "default": { "url": "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-spy5-gy.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" },
+        "kid": { "url": "https://www.ssga.com/library-content/kids?isin=IE00B6YX5C33&documentType=kid&country=ie&language=en_gb&ticker=spy5-gy", "retrieved_at": "2026-10-15", "as_of": "2026-02-19" }
+      },
+      "field_sources": { "kid_cs": "kid" }
     },
     {
       "ticker": "EQAC",
@@ -383,11 +399,13 @@
       "share_class_assets_musd": null,
       "fund_assets_musd": 20595.39,
       "inception": "2018-09-24",
+      "kid_cs": null,
       "sources": {
         "default": { "url": "https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/factsheet/IE00BFZXGZ54_factsheet_en.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "kid": { "url": "https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/kid/IE00BFZXGZ54_kid_en.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-06-26" },
         "xetra": { "url": "https://live.deutsche-boerse.com/en/etf/invesco-eqqq-nasdaq-100-ucits-etf-acc", "retrieved_at": "2026-10-09", "as_of": null }
       },
-      "field_sources": { "listings[Xetra]": "xetra" }
+      "field_sources": { "kid_cs": "kid", "listings[Xetra]": "xetra" }
     },
     {
       "ticker": "EQQQ",
@@ -408,11 +426,13 @@
       "share_class_assets_musd": null,
       "fund_assets_musd": 20595.39,
       "inception": "2002-12-02",
+      "kid_cs": null,
       "sources": {
         "default": { "url": "https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/factsheet/IE0032077012_factsheet_en.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "kid": { "url": "https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/kid/IE0032077012_kid_en.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-06-26" },
         "xetra": { "url": "https://live.deutsche-boerse.com/en/etf/invesco-eqqq-nasdaq-100-ucits-etf-dist", "retrieved_at": "2026-10-09", "as_of": null }
       },
-      "field_sources": { "listings[Xetra]": "xetra" }
+      "field_sources": { "kid_cs": "kid", "listings[Xetra]": "xetra" }
     },
     {
       "ticker": "CNDX",
@@ -434,11 +454,13 @@
       "share_class_assets_musd": 29243.11,
       "fund_assets_musd": 31254.35,
       "inception": "2010-01-26",
+      "kid_cs": true,
       "sources": {
         "default": { "url": "https://www.blackrock.com/uk/individual/literature/fact-sheet/csndx-ishares-nasdaq-100-ucits-etf-fund-fact-sheet-en-gb.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" },
+        "kid": { "url": "https://www.blackrock.com/gls-download/literature/kiid/eu-priips-ishares-nasdaq-100-ucits-etf-usd-acc-ie00b53szb19-cs.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-09-03" },
         "factsheet_de": { "url": "https://www.ishares.com/gls-download/literature/fact-sheet/csndx-ishares-nasdaq-100-ucits-etf-fund-fact-sheet-en-de.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-09-30" }
       },
-      "field_sources": { "listings": "factsheet_de" }
+      "field_sources": { "kid_cs": "kid", "listings": "factsheet_de" }
     },
     {
       "ticker": "VGLA",
@@ -463,9 +485,12 @@
       "share_class_assets_musd": 645,
       "fund_assets_musd": 660,
       "inception": "2026-08-18",
+      "kid_cs": true,
       "sources": {
-        "default": { "url": "https://fund-docs.vanguard.com/FTSE_Global_All-Cap_UCITS_ETF_USD_Acc_E161_EU_INT_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
-      }
+        "default": { "url": "https://fund-docs.vanguard.com/FTSE_Global_All-Cap_UCITS_ETF_USD_Acc_E161_EU_INT_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "kid": { "url": "https://fund-docs.vanguard.com/ie000vaht5t0_priipskid_cz.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-08-20" }
+      },
+      "field_sources": { "kid_cs": "kid" }
     },
     {
       "ticker": "VGLD",
@@ -488,9 +513,12 @@
       "share_class_assets_musd": 15,
       "fund_assets_musd": 660,
       "inception": "2026-08-18",
+      "kid_cs": true,
       "sources": {
-        "default": { "url": "https://fund-docs.vanguard.com/FTSE_Global_All-Cap_UCITS_ETF_USD_Dist_E162_EU_INT_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
-      }
+        "default": { "url": "https://fund-docs.vanguard.com/FTSE_Global_All-Cap_UCITS_ETF_USD_Dist_E162_EU_INT_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "kid": { "url": "https://fund-docs.vanguard.com/ie000cvum3n6_priipskid_cz.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-08-20" }
+      },
+      "field_sources": { "kid_cs": "kid" }
     },
     {
       "ticker": "VWCE",
@@ -515,9 +543,12 @@
       "share_class_assets_musd": 58049,
       "fund_assets_musd": 85317,
       "inception": "2019-07-23",
+      "kid_cs": true,
       "sources": {
-        "default": { "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
-      }
+        "default": { "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "kid": { "url": "https://fund-docs.vanguard.com/ie00bk5bqt80_priipskid_cz.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-07-28" }
+      },
+      "field_sources": { "kid_cs": "kid" }
     },
     {
       "ticker": "VWRL",
@@ -542,9 +573,12 @@
       "share_class_assets_musd": 27268,
       "fund_assets_musd": 85317,
       "inception": "2012-05-22",
+      "kid_cs": true,
       "sources": {
-        "default": { "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Distributing_9505_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" }
-      }
+        "default": { "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Distributing_9505_EU_INT_UK_EN.pdf", "retrieved_at": "2026-10-09", "as_of": "2026-08-31" },
+        "kid": { "url": "https://fund-docs.vanguard.com/ie00b3rbwm25_priipskid_cz.pdf", "retrieved_at": "2026-10-15", "as_of": "2026-07-28" }
+      },
+      "field_sources": { "kid_cs": "kid" }
     }
   ]
 }

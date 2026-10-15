@@ -42,6 +42,8 @@ Snapshot retrieved 2026-10-09. Files: `etfs.json` (fund data), `bank-funds.json`
 - **Fio currency conversion cost:** not published outside the e-Broker app (sources.md §7). The calculator must
   show Fio's commission without FX, labelled as such, or leave Fio out.
 - **DEGIRO, Interactive Brokers, Revolut fees:** not researched/verified (sources.md §7).
+- **Czech-language KIDs:** IUSA and SPY5 not found at the issuer; EQQB/EQQQ not determined (Invesco's document URLs
+  can't be enumerated). On the page this only means no "KID v češtině" label. See sources.md §8.
 
 ## Data choices
 
@@ -63,4 +65,5 @@ Snapshot retrieved 2026-10-09. Files: `etfs.json` (fund data), `bank-funds.json`
 3. Update the values, `as_of` and `retrieved_at`. Run `node data/validate.mjs`. It must print `OK`.
 4. Re-check the bank KIDs (`bank-funds.json`, KID dates) and the tax pages in `sources.md` §2–4. Czech tax rules
    change most years.
-5. Update the "stav k …" date on the page.
+5. Re-download the twins' KIDs (`sources.kid` in `etfs.json`) and re-check the Czech versions (sources.md §8).
+6. Update the "stav k …" date on the page.
