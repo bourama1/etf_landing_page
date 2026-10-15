@@ -4538,3 +4538,27 @@ no e-mail can reach Umami (title never changes, thank-you heading is DOM only) a
 queue when an ad blocker blocks the script; the 112 px bar covers the form heading after the sticky-CTA scroll; the
 bar is last in keyboard order; "data uložená v EU" holds only if EU is picked at signup; §10 heading still says
 "decision open".
+
+## 2026-10-15 — Phase 4 deploy and live verification (Matěj approved Umami + Vercel)
+
+**Who did what:** Matěj created the Umami Cloud account (EU region) and the Vercel project (GitHub import), set
+`PUBLIC_UMAMI_WEBSITE_ID` + `SITE_URL` for Production, and logged the Vercel CLI in. The lead agent pushed `master`,
+linked the CLI, read the runtime logs, fixed the function and ran the live check.
+
+**Caught on the live URL**
+1. `/api/lead` returned 500. Runtime log: `ERR_MODULE_NOT_FOUND: Cannot find module '/var/task/src/lib/data.ts'
+   imported from /var/task/api/lead.js`. Vercel compiles the entry file but keeps `.ts` specifiers and doesn't ship
+   the imported sources. Fix: `vercel.json` `includeFiles` for `src/lib/**/*.ts` and `data/*.json`; Node 24 runs the
+   `.ts` files natively. After the fix: invalid e-mail → 400, valid → `{"ok":true}` (dry-run, no Brevo key yet).
+   This was flagged as an unverified risk before the deploy; local dev never exercised Vercel's bundling.
+2. The first build had no Umami loader: it ran before the Website ID was saved (the ID is inlined at build time).
+   The push for fix 1 rebuilt it.
+3. **Lead agent's own:** the first live funnel check "passed" while Umami stored nothing. Umami answers bots
+   (headless Chromium's `HeadlessChrome` user agent) with `200 {"beep":"boop"}`, and the check only required a 2xx.
+   Found by comparing response bodies for a headless vs. a phone user agent. The live mode now uses a phone UA and
+   fails on `beep`; re-run: 53 sends stored, all expectations met (`docs/funnel-check-live.log`).
+4. The Vercel CLI's `link` appended `.env*` to `.gitignore`, which would have ignored the committed `.env.example`;
+   reverted (the existing `.env.*` + `!.env.example` rules already cover `.env.local`).
+
+**Test data in Umami:** the live runs used the real campaign UTMs (`etf_dvojce_2026q4`). Reset the website's data in
+Umami before launch, or filter the report to dates after launch.
