@@ -1,0 +1,17 @@
+{
+  "name": "etf-dvojce",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "prebuild": "node scripts/fetch-fx.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "node --test \"src/**/*.test.ts\" \"api/**/*.test.ts\" \"scripts/**/*.test.mjs\"",
+    "size": "node scripts/size.mjs"
+  },
+  "dependencies": {
+    "astro": "7.3.8"
+  }
+}
