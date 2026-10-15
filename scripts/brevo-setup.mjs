@@ -1,6 +1,6 @@
 // One-off Brevo account setup (decisions §6a): the contact attributes /api/lead writes, and the two lists.
 // Run: node --env-file=.env.local scripts/brevo-setup.mjs   (BREVO_API_KEY in the gitignored .env.local)
-// Prints the list IDs for BREVO_PLAN_LIST_ID / BREVO_NEWSLETTER_LIST_ID. Safe to re-run: existing attributes are skipped.
+// Prints the list IDs for BREVO_PLAN_LIST_ID / BREVO_NEWSLETTER_LIST_ID. Run once: a re-run skips existing attributes but creates a new folder and new lists.
 import { pathToFileURL } from 'node:url';
 
 // Timestamps are text: a Brevo `date` attribute stores only YYYY-MM-DD, which would break the 24 h dedupe on PLAN_SENT_AT.
