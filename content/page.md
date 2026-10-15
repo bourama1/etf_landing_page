@@ -194,7 +194,7 @@ poplatky po letech a daně z ETF v Česku 2026.
 - Empty: Vyplňte e-mail, ať máme kam plán poslat.
 - Invalid: Tenhle e-mail nevypadá úplně správně. Zkontrolujete ho?
 - Server error: Plán se nepodařilo odeslat. Zkuste to prosím za chvíli znovu.
-- Rate limit: Příliš mnoho pokusů z jednoho místa. Zkuste to prosím za hodinu.
+- Rate limit: Příliš mnoho pokusů z jednoho místa. Zkuste to prosím za 10 minut.
 
 ### Sticky bar (appears only after the result is shown; hidden while the inline form is on screen)
 

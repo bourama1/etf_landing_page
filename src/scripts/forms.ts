@@ -19,7 +19,7 @@ const MSG = {
   empty: 'Vyplňte e-mail, ať máme kam plán poslat.',
   invalid: 'Tenhle e-mail nevypadá úplně správně. Zkontrolujete ho?',
   server: 'Plán se nepodařilo odeslat. Zkuste to prosím za chvíli znovu.',
-  rate: 'Příliš mnoho pokusů z jednoho místa. Zkuste to prosím za hodinu.',
+  rate: 'Příliš mnoho pokusů z jednoho místa. Zkuste to prosím za 10 minut.',
 };
 
 const forms = [...document.querySelectorAll<HTMLFormElement>('.lead-form')];
