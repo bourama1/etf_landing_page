@@ -1,0 +1,169 @@
+// End-to-end check of every funnel event (decisions §12, plan docs/superpowers/plans/2026-10-15-phase4-tracking.md Task 5).
+// Builds the site with a fake Umami website ID into .dev/dist-funnel, runs the REAL Umami tracker (fetched from
+// cloud.umami.is) in Chromium, and intercepts its sends to gateway.umami.is: nothing reaches Umami. /api/lead runs
+// the real handler in Brevo dry-run. Writes docs/funnel-check.log; exits 1 on any mismatch.
+// Run: node scripts/funnel-check.mjs   (needs `npx playwright install chromium` once)
+import { createServer } from 'node:http';
+import { readFile, writeFile } from 'node:fs/promises';
+import { execSync } from 'node:child_process';
+import { extname, join, normalize } from 'node:path';
+import { chromium } from 'playwright';
+import { handleLead } from '../api/lead.ts';
+import { brevoFromEnv } from '../src/lib/brevo.ts';
+
+const ID = '00000000-0000-4000-8000-000000000000';
+const OUT = '.dev/dist-funnel';
+execSync(`npx astro build --outDir ${OUT}`, { stdio: 'ignore', env: { ...process.env, PUBLIC_UMAMI_WEBSITE_ID: ID } });
+
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.png': 'image/png', '.svg': 'image/svg+xml' };
+const deps = { brevo: brevoFromEnv({}, fetch), now: () => new Date(), log: () => {}, siteUrl: 'http://localhost:4398' };
+const server = createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://localhost:4398');
+  if (url.pathname === '/api/lead') {
+    const chunks = [];
+    for await (const c of req) chunks.push(c);
+    const out = await handleLead(new Request(url, { method: req.method, headers: req.headers, body: Buffer.concat(chunks) }), deps);
+    res.writeHead(out.status, Object.fromEntries(out.headers)).end(Buffer.from(await out.arrayBuffer()));
+    return;
+  }
+  let p = normalize(decodeURIComponent(url.pathname)).replace(/^([/\\])+/, '');
+  if (p === '' || p.endsWith('\\') || p.endsWith('/')) p = join(p, 'index.html');
+  try {
+    const body = await readFile(join(OUT, p)).catch(() => readFile(join(OUT, p, 'index.html')));
+    res.writeHead(200, { 'content-type': TYPES[extname(p)] ?? 'text/html; charset=utf-8' }).end(body);
+  } catch {
+    res.writeHead(404).end('not found');
+  }
+}).listen(4398);
+const base = 'http://localhost:4398';
+const umamiJs = await (await fetch('https://cloud.umami.is/script.js')).text();
+
+const UTM = 'utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=';
+const browser = await chromium.launch();
+const lines = [];
+const problems = [];
+
+async function run(label, path, steps) {
+  const sent = [];
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  await page.route('https://cloud.umami.is/script.js', (r) => r.fulfill({ contentType: 'text/javascript', body: umamiJs }));
+  await page.route('https://gateway.umami.is/**', (r) => {
+    const body = JSON.parse(r.request().postData() ?? '{}');
+    sent.push(body);
+    const p = body.payload ?? {};
+    lines.push(`[${label}] ${(p.name ?? 'page_view (pageview)').padEnd(22)} tag=${p.tag ?? '-'} ${p.name ? JSON.stringify(p.data ?? {}) : `url=${p.url}`}`);
+    return r.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+  });
+  page.on('request', (r) => { const h = new URL(r.url()).host; if (!/^(localhost|cloud\.umami\.is|gateway\.umami\.is)/.test(h)) problems.push(`${label}: unexpected request ${r.url()}`); });
+  page.on('pageerror', (e) => problems.push(`${label}: pageerror ${e.message}`));
+  lines.push(`--- ${label}: ${path}`);
+  await page.goto(base + path);
+  await page.waitForTimeout(800);
+  await steps(page);
+  await page.waitForTimeout(800);
+  await page.close();
+  return sent.map((b) => ({ type: b.type, ...(b.payload ?? {}) }));
+}
+
+const slowScroll = async (page) => {
+  for (let i = 0; i < 80; i++) {
+    const done = await page.evaluate(() => { scrollBy(0, 250); return innerHeight + scrollY >= document.body.scrollHeight - 2; });
+    await page.waitForTimeout(60);
+    if (done) break;
+  }
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.waitForTimeout(300);
+};
+const keys = async (page, sel, key, n) => { await page.focus(sel); for (let i = 0; i < n; i++) await page.keyboard.press(key); };
+
+// --- expectations
+const count = (ev, name) => ev.filter((e) => (name === 'page_view' ? !e.name : e.name === name)).length;
+const find = (ev, name, pred = () => true) => ev.find((e) => e.name === name && pred(e.data ?? {}));
+function expect(label, ev, tag, counts, props = []) {
+  for (const [name, n] of Object.entries(counts)) if (count(ev, name) !== n) problems.push(`${label}: ${name} ×${count(ev, name)}, expected ×${n}`);
+  for (const e of ev) {
+    if (e.website !== ID) problems.push(`${label}: wrong website ${e.website}`);
+    if (e.tag !== tag) problems.push(`${label}: ${e.name ?? 'pageview'} tag=${e.tag}, expected ${tag}`);
+    if (JSON.stringify(e.data ?? {}).includes('@') || String(e.url).includes('@')) problems.push(`${label}: '@' in ${e.name}`);
+  }
+  for (const [name, want] of props) if (!find(ev, name, (d) => Object.entries(want).every(([k, v]) => d[k] === v))) problems.push(`${label}: no ${name} with ${JSON.stringify(want)}`);
+}
+const ONCE = ['interaction_start', 'interaction_complete'];
+
+// 1. Ad A: chips, sliders, broker, dividends, full scroll, why-link, sticky CTA, empty + bad e-mail, success.
+const a = await run('ad A', `/?${UTM}ad_a_blocked`, async (page) => {
+  await page.click('button[data-ticker="VOO"]');
+  await page.click('button[data-ticker="QQQ"]');
+  await page.click('button[data-ticker="VOO"]');
+  await page.click('[data-next="b"]');
+  await keys(page, '#in-m', 'ArrowRight', 10);
+  await page.click('label:has(input[name="broker"][value="xtb"])');
+  await page.click('label:has(input[name="dividends"][value="acc"])');
+  await slowScroll(page);
+  await page.click('a[data-cta="why"]');
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.waitForTimeout(300);
+  await page.click('[data-sticky] a');
+  await page.waitForTimeout(600);
+  await page.click('#lead-inline button[type="submit"]');
+  await page.fill('#lead-inline-email', 'a@b');
+  await page.click('#lead-inline button[type="submit"]');
+  await page.fill('#lead-inline-email', 'test@example.com');
+  await page.click('#lead-inline button[type="submit"]');
+  await page.waitForSelector('.thanks');
+});
+expect('ad A', a, 'a', { page_view: 1, interaction_start: 1, interaction_complete: 1, step_complete: 3, section_view: 7, form_view: 2,
+  form_start: 1, cta_click: 5, form_error: 2, lead_submitted: 1, thank_you_view: 1, magnet_opened: 0 }, [
+  ['interaction_start', { step: 'a', ad_variant: 'a' }], ['step_complete', { step: 'a', tickers: 'VOO' }],
+  ['step_complete', { step: 'b', monthly: 3500, years: 20 }], ['step_complete', { step: 'c', dividends: 'acc' }],
+  ['interaction_complete', { tickers: 'VOO', monthly: 3000, years: 20 }], ['cta_click', { location: 'why' }], ['cta_click', { location: 'sticky' }],
+  ['form_start', { location: 'inline' }], ['form_error', { reason: 'empty', location: 'inline' }], ['form_error', { reason: 'invalid', location: 'inline' }],
+  ['lead_submitted', { location: 'inline', ad_variant: 'a' }], ['thank_you_view', { location: 'inline' }]]);
+for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content=ad_a_blocked']) if (!a.find((e) => !e.name)?.url.includes(k)) problems.push(`ad A: pageview url lacks ${k}`);
+
+// 2. Ad B: no touch for 2 s (result pre-rendered: no interaction events), then horizon slider, plan CTA, footer form
+//    with one forced server error, then success.
+let failNext = true;
+const b = await run('ad B', `/?${UTM}ad_b_fees`, async (page) => {
+  await page.waitForTimeout(2000);
+  const early = lines.filter((l) => l.startsWith('[ad B]') && ONCE.concat('step_complete').some((n) => l.includes(` ${n} `)));
+  if (early.length) problems.push(`ad B: interaction events without a touch: ${early.join(' | ')}`);
+  await keys(page, '#in-y', 'ArrowLeft', 3);
+  await page.locator('a[data-cta="plan"]').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+  await page.click('a[data-cta="plan"]');
+  await page.waitForTimeout(600);
+  await page.route('**/api/lead', (r) => (failNext ? (failNext = false, r.fulfill({ status: 502, contentType: 'application/json', body: '{"ok":false,"reason":"server"}' })) : r.fallback()));
+  await page.locator('#lead-footer').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+  await page.fill('#lead-footer-email', 'test@example.com');
+  await page.click('#lead-footer button[type="submit"]');
+  await page.waitForTimeout(400);
+  await page.click('#lead-footer button[type="submit"]');
+  await page.waitForSelector('.thanks');
+});
+expect('ad B', b, 'b', { page_view: 1, interaction_start: 1, interaction_complete: 1, step_complete: 1, form_start: 2, cta_click: 3,
+  form_error: 1, lead_submitted: 1, thank_you_view: 1 }, [
+  ['interaction_start', { step: 'b', ad_variant: 'b' }], ['step_complete', { step: 'b', monthly: 3000, years: 19 }],
+  ['interaction_complete', { tickers: 'VOO', monthly: 3000, years: 19 }], ['cta_click', { location: 'plan' }], ['form_view', { location: 'footer' }],
+  ['form_start', { location: 'footer' }], ['form_error', { reason: 'server', location: 'footer' }],
+  ['lead_submitted', { location: 'footer', ad_variant: 'b' }], ['thank_you_view', { location: 'footer' }]]);
+for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content=ad_b_fees']) if (!b.find((e) => !e.name)?.url.includes(k)) problems.push(`ad B: pageview url lacks ${k}`);
+
+// 3. No UTM (or an unknown ad): tag unknown, nothing but pageview + sections.
+const n = await run('no UTM', '/', async () => {});
+expect('no UTM', n, 'unknown', { page_view: 1, interaction_start: 0, lead_submitted: 0 });
+
+// 4. /plan from the e-mail link: magnet_opened once; without utm_source=email: none.
+const planQ = '/plan/?t=VOO&m=3000&y=20&r=5&b=xtb&d=acc';
+const p1 = await run('/plan from e-mail', `${planQ}&utm_source=email`, async () => {});
+expect('/plan from e-mail', p1, 'unknown', { page_view: 1, magnet_opened: 1 });
+const p2 = await run('/plan direct', planQ, async () => {});
+expect('/plan direct', p2, 'unknown', { page_view: 1, magnet_opened: 0 });
+
+await browser.close();
+server.close();
+lines.push('', problems.length ? `PROBLEMS:\n${problems.join('\n')}` : 'All expectations met.');
+await writeFile('docs/funnel-check.log', `# node scripts/funnel-check.mjs — ${new Date().toISOString()}\n${lines.join('\n')}\n`);
+console.log(lines.join('\n'));
+process.exit(problems.length ? 1 : 0);
