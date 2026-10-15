@@ -1,0 +1,138 @@
+<!doctype html>
+<!-- Source of the four ad images (content/ads.md). Rendered by ads/render.mjs: ads.html#a-story, #a-feed, #b-story, #b-feed.
+     Same tokens and fonts as the page (decisions §10). Numbers: node content/calc-examples.mjs (KB fund case). -->
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Archivo"; src: url("../../public/fonts/archivo-latin.woff2") format("woff2"); font-weight: 400 800; }
+  @font-face { font-family: "Archivo"; src: url("../../public/fonts/archivo-latin-ext.woff2") format("woff2"); font-weight: 400 800;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1E00-1E9F; }
+  @font-face { font-family: "Archivo Wide"; src: url("../../public/fonts/archivo-wide-800.woff2") format("woff2"); font-weight: 800; }
+  :root { --paper: #f1f3ee; --ink: #1a2421; --muted: #5a6762; --blocked: #b8361e; --marker: #f3dc5a; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { background: var(--paper); color: var(--ink); font-family: "Archivo", sans-serif; }
+  .ad { display: none; position: relative; width: 1080px; padding: 0 88px; overflow: hidden; background: var(--paper); }
+  .ad.on { display: flex; flex-direction: column; }
+  .story { height: 1920px; padding-top: 250px; }   /* top and bottom bands stay free for Instagram's own UI */
+  .feed { height: 1350px; padding-top: 110px; }
+  .grow { flex: 1; }
+
+  .toast { display: flex; gap: 28px; align-items: center; background: #fff; border-radius: 24px; padding: 34px 38px;
+    box-shadow: 0 6px 24px rgb(26 36 33 / 0.12); font-size: 38px; line-height: 1.3; }
+  .toast i { flex: none; width: 64px; height: 64px; border-radius: 50%; background: #d7dbd6; color: #3d4844;
+    font: 800 40px/64px "Archivo"; text-align: center; font-style: normal; }
+  .toast b { display: block; font-weight: 750; }
+
+  .pair { display: flex; align-items: center; gap: 40px; }
+  .us { position: relative; font: 800 230px/1 "Archivo Wide"; letter-spacing: 0.02em; color: var(--ink); }
+  .us::after { content: ""; position: absolute; left: -12px; right: -12px; top: 52%; height: 22px; background: var(--blocked); }
+  .no { font-size: 40px; font-weight: 750; color: var(--blocked); margin-top: 18px; }
+  .arrow { font-size: 120px; font-weight: 800; }
+  .flaps { display: flex; gap: 14px; }
+  .flap { position: relative; width: 104px; height: 150px; border-radius: 10px; background: var(--ink); overflow: hidden; }
+  .flap::before { content: ""; position: absolute; left: 0; right: 0; top: 74px; height: 4px; background: var(--paper); z-index: 2; }
+  /* mid-flip: only a sliver of each glyph shows, so no ticker can be read yet */
+  .flap span { position: absolute; left: 0; right: 0; text-align: center; font: 800 124px/150px "Archivo Wide"; color: var(--paper); }
+  .flap:nth-child(1) span { clip-path: inset(0 0 62% 0); transform: translateY(6px) scaleY(0.55); }
+  .flap:nth-child(2) span { clip-path: inset(58% 0 0 0); transform: scaleY(0.4); }
+  .flap:nth-child(3) span { clip-path: inset(0 0 66% 0); transform: translateY(10px) scaleY(0.7); }
+
+  h1 { font-size: 104px; line-height: 1.04; font-weight: 800; letter-spacing: -0.01em; }
+  .sub { font-size: 50px; line-height: 1.3; }
+  .brand { display: flex; justify-content: space-between; align-items: baseline; border-top: 6px solid var(--ink); padding-top: 26px;
+    font-size: 44px; font-weight: 800; }
+  .brand span { font-size: 34px; font-weight: 600; }
+  .small { font-size: 28px; line-height: 1.35; color: var(--muted); margin-top: 20px; }
+
+  .feed h1 { font-size: 92px; }
+  .scenario { font-size: 52px; font-weight: 650; }
+  .bars { display: grid; gap: 54px; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; font-size: 44px; margin-bottom: 18px; }
+  .row b { font-weight: 800; font-size: 60px; font-variant-numeric: tabular-nums; }
+  .row mark { background: var(--marker); color: var(--ink); padding: 0 12px; }
+  .bar { height: 76px; background: var(--ink); border-radius: 6px; }
+</style>
+</head>
+<body>
+
+<!-- Ad A: "Blocked trade" — 9:16 -->
+<section class="ad story" id="a-story">
+  <div class="toast"><i>!</i><div><b>Nákup nelze dokončit.</b>Chybí dokument KID.</div></div>
+  <div style="height: 100px"></div>
+  <div class="pair">
+    <div><div class="us">VOO</div><div class="no">nejde koupit</div></div>
+  </div>
+  <div class="pair" style="margin-top: 36px">
+    <div class="arrow">→</div>
+    <div class="flaps"><div class="flap"><span>S</span></div><div class="flap"><span>X</span></div><div class="flap"><span>V</span></div></div>
+  </div>
+  <div style="height: 90px"></div>
+  <h1>Broker vám nedovolí koupit VOO? Má evropské dvojče.</h1>
+  <p class="sub" style="margin-top: 40px">Stejný index S&amp;P 500. Najdete ho jedním ťuknutím.</p>
+  <div class="grow"></div>
+  <div class="brand">ETF Dvojče <span>Zdarma · u čísel zdroj a datum</span></div>
+  <p class="small">Informativní obsah, nejde o investiční doporučení.</p>
+  <div style="height: 340px"></div>
+</section>
+
+<!-- Ad A — 4:5 (no toast; the KID message moves under VOO) -->
+<section class="ad feed" id="a-feed">
+  <div class="pair">
+    <div><div class="us">VOO</div><div class="no">nejde koupit · chybí dokument KID</div></div>
+  </div>
+  <div class="pair" style="margin-top: 28px">
+    <div class="arrow">→</div>
+    <div class="flaps"><div class="flap"><span>S</span></div><div class="flap"><span>X</span></div><div class="flap"><span>V</span></div></div>
+  </div>
+  <div style="height: 60px"></div>
+  <h1>Broker vám nedovolí koupit VOO? Má evropské dvojče.</h1>
+  <p class="sub" style="margin-top: 32px">Stejný index S&amp;P 500. Najdete ho jedním ťuknutím.</p>
+  <div class="grow"></div>
+  <div class="brand">ETF Dvojče <span>Zdarma · u čísel zdroj a datum</span></div>
+  <p class="small">Informativní obsah, nejde o investiční doporučení.</p>
+  <div style="height: 70px"></div>
+</section>
+
+<!-- Ad B: "Fees in CZK" — 9:16. Bars to scale: 272&nbsp;000 : 22&nbsp;000. -->
+<section class="ad story" id="b-story">
+  <h1>Kolik vás za 20&nbsp;let stojí poplatky?</h1>
+  <p class="scenario" style="margin-top: 44px">3&nbsp;000&nbsp;Kč měsíčně, 20 let</p>
+  <div style="height: 110px"></div>
+  <div class="bars">
+    <div><div class="row">Bankovní akciový fond <b><mark>272&nbsp;000&nbsp;Kč</mark></b></div><div class="bar" style="width: 100%"></div></div>
+    <div><div class="row">Indexové ETF <b>22&nbsp;000&nbsp;Kč</b></div><div class="bar" style="width: 8.09%"></div></div>
+  </div>
+  <div style="height: 110px"></div>
+  <p class="sub" style="font-weight: 650">Spočítejte si to v korunách.</p>
+  <div class="grow"></div>
+  <div class="brand">ETF Dvojče <span>Zdroje u každého čísla</span></div>
+  <p class="small">Výnos 5&nbsp;% ročně je předpoklad, ne předpověď. Fond: vstupní poplatek 5&nbsp;% (max. dle KID), 1,75&nbsp;% ročně.
+    ETF: 0,07&nbsp;% ročně + 0,5&nbsp;% směna měny. Nejde o investiční doporučení.</p>
+  <div style="height: 340px"></div>
+</section>
+
+<!-- Ad B — 4:5 -->
+<section class="ad feed" id="b-feed">
+  <h1>Kolik vás za 20 let stojí poplatky?</h1>
+  <p class="scenario" style="margin-top: 36px">3&nbsp;000&nbsp;Kč měsíčně, 20 let</p>
+  <div style="height: 80px"></div>
+  <div class="bars">
+    <div><div class="row">Bankovní akciový fond <b><mark>272&nbsp;000&nbsp;Kč</mark></b></div><div class="bar" style="width: 100%"></div></div>
+    <div><div class="row">Indexové ETF <b>22&nbsp;000&nbsp;Kč</b></div><div class="bar" style="width: 8.09%"></div></div>
+  </div>
+  <div style="height: 70px"></div>
+  <p class="sub" style="font-weight: 650">Spočítejte si to v korunách.</p>
+  <div class="grow"></div>
+  <div class="brand">ETF Dvojče <span>Zdroje u každého čísla</span></div>
+  <p class="small">Výnos 5&nbsp;% ročně je předpoklad, ne předpověď. Fond: vstupní poplatek 5&nbsp;% (max. dle KID), 1,75&nbsp;% ročně.
+    ETF: 0,07&nbsp;% ročně + 0,5&nbsp;% směna měny. Nejde o investiční doporučení.</p>
+  <div style="height: 60px"></div>
+</section>
+
+<script>
+  const show = () => document.querySelectorAll('.ad').forEach((s) => s.classList.toggle('on', '#' + s.id === location.hash));
+  addEventListener('hashchange', show); show();
+</script>
+</body>
+</html>
