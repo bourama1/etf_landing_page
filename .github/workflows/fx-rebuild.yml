@@ -1,0 +1,14 @@
+# Daily rebuild so data/fx.json (fetched at build by scripts/fetch-fx.mjs) carries ČNB's latest EUR rate (decisions §14 #10).
+# ČNB publishes "každý pracovní den kolem 14.30" (cnb.cz, kurzy devizového trhu); 15:17 UTC is after that in CET and CEST.
+name: FX rebuild
+on:
+  schedule:
+    - cron: '17 15 * * 1-5' # off the busy :00, when GitHub delays or drops scheduled runs
+  workflow_dispatch:
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -X POST "$HOOK" # -f: a dead hook fails the job and GitHub e-mails the owner
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
