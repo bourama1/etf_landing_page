@@ -55,3 +55,10 @@ test('ad variant from utm_content', () => {
   assert.equal(adVariant('AD_B_x'), 'unknown');
   assert.equal(adVariant(''), 'unknown');
 });
+test('ad variant needs the ad_a_ / ad_b_ prefix (decisions §7)', () => {
+  assert.equal(adVariant('ad_a'), 'unknown');
+  assert.equal(adVariant('ad_b'), 'unknown');
+});
+test('UTM: leading whitespace does not eat the 100-char budget', () => {
+  assert.equal(sanitizeUtm(p(`utm_source=${' '.repeat(150)}instagram`)).utm_source, 'instagram');
+});

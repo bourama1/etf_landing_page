@@ -63,7 +63,7 @@ export function validateEmail(raw: unknown): { ok: true; email: string } | { ok:
 }
 
 export function sanitizeUtm(p: URLSearchParams): Record<'utm_source' | 'utm_medium' | 'utm_campaign' | 'utm_content' | 'utm_term', string> {
-  const get = (k: string) => (p.get(k) ?? '').replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 100).trim();
+  const get = (k: string) => (p.get(k) ?? '').replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, 100);
   return {
     utm_source: get('utm_source'),
     utm_medium: get('utm_medium'),
@@ -74,6 +74,6 @@ export function sanitizeUtm(p: URLSearchParams): Record<'utm_source' | 'utm_medi
 }
 
 export function adVariant(utmContent: string): 'a' | 'b' | 'unknown' {
-  const m = /^ad_([ab])(?:_|$)/.exec(utmContent);
+  const m = /^ad_([ab])_/.exec(utmContent);
   return m ? (m[1] as 'a' | 'b') : 'unknown';
 }
