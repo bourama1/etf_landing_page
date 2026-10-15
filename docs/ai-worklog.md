@@ -4562,3 +4562,29 @@ linked the CLI, read the runtime logs, fixed the function and ran the live check
 
 **Test data in Umami:** the live runs used the real campaign UTMs (`etf_dvojce_2026q4`). Reset the website's data in
 Umami before launch, or filter the report to dates after launch.
+
+---
+
+## 2026-10-15 — Phase 5 QA: provider check and plan (Claude Code, Opus 5.5)
+
+**Asked (Matěj):** start Phase 5. Verify Brevo (limits, sender authentication, EU data, DPA) and the Vercel Hobby
+firewall before anything else; plan with `superpowers:writing-plans`; stop before code.
+
+**Skills loaded:** `superpowers:writing-plans`. No subagents.
+
+**Verification:** web search only to find pages; values read from the raw pages (curl + text extraction; Brevo help
+articles through the Zendesk JSON API, Vercel docs as `.md`, GitHub docs article API). Table with quotes and URLs in
+`docs/superpowers/plans/2026-10-15-phase5-qa.md`, Task 0.
+
+**Caught during the check**
+1. Search summaries contradicted each other on Brevo's Free plan (contacts "unlimited" vs. 100 000; API "not on
+   free" vs. included) and on Vercel Hobby rate-limit rules ("up to 3" vs. 1). Brevo's own help article (100 000
+   contacts, API included) and Vercel's limits table (1 rate-limit rule, 3 custom rules in total) settled it.
+2. Not in any earlier decision: **a free mailbox can't be an authenticated Brevo sender**, and Brevo rewrites it to
+   `…@<id>.t-sender-sib.com`. We have no domain, so this is a launch blocker and a decision for Matěj.
+3. Brevo's Free plan has an **account approval step** before sending, with no stated duration: a schedule risk for the
+   16 Oct deadline.
+4. Vercel Hobby's maximum rate-limit window is 10 min, so decisions §6a's "per hour" can't be configured as written;
+   the client's 429 message ("za hodinu") must change with it.
+5. Plan Review Focus: a Brevo *date* attribute would truncate `PLAN_SENT_AT` to the day and break the 24 h dedupe.
+   That is a guess about Brevo's behaviour, so it gets a schema test and a live check rather than a claim.
