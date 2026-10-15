@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { once, sectionVisible, stepProps, resultProps, isSafeProps } from './funnel.ts';
+import { once, sectionVisible, stepProps, resultProps, isSafeProps, keepUtm } from './funnel.ts';
 import type { Selection } from './selection.ts';
 
 const sel: Selection = { tickers: ['VOO', 'QQQ'], monthly: 3000, years: 20, returnPct: 5, broker: 'xtb', dividends: 'acc' };
@@ -42,4 +42,12 @@ test('isSafeProps: rejects anything that looks like an e-mail', () => {
   assert.equal(isSafeProps({ location: 'inline' }), true);
   assert.equal(isSafeProps({ x: 'jan@seznam.cz' }), false);
   assert.equal(isSafeProps({ x: 'a@b' }), false);
+});
+
+test('keepUtm: only utm_* survive (no fbclid, no plan params), path kept', () => {
+  assert.equal(keepUtm('https://x.cz/?utm_source=instagram&fbclid=IwAR0&utm_content=ad_a_blocked#nastroj'),
+    'https://x.cz/?utm_source=instagram&utm_content=ad_a_blocked');
+  assert.equal(keepUtm('https://x.cz/plan/?t=VOO&m=3000&utm_source=email'), 'https://x.cz/plan/?utm_source=email');
+  assert.equal(keepUtm('https://x.cz/plan/?t=VOO'), 'https://x.cz/plan/');
+  assert.equal(keepUtm('/?fbclid=1&utm_medium=paid_social'), '/?utm_medium=paid_social');
 });

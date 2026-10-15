@@ -24,3 +24,10 @@ export const resultProps = (s: Selection): Props => ({ tickers: s.tickers.join('
 
 // Last line of defence: no e-mail address ever leaves in an event (CLAUDE.md tracking, GDPR).
 export const isSafeProps = (p?: Props) => !p || Object.values(p).every((v) => typeof v !== 'string' || !v.includes('@'));
+
+// URL sent to Umami: only utm_* (drops Meta's fbclid, which Umami would store as a click ID, and /plan's selection).
+export function keepUtm(url: string) {
+  const [path, query = ''] = url.split('#')[0].split('?');
+  const q = new URLSearchParams([...new URLSearchParams(query)].filter(([k]) => k.startsWith('utm_'))).toString();
+  return q ? `${path}?${q}` : path;
+}

@@ -1,6 +1,6 @@
 // The one door to analytics (decisions §11–12, §16). Umami Cloud, cookieless, but only after consent: § 89(3) ZEK
 // covers a script that makes the browser send data (data/sources.md §10). ad_variant rides on every event as data-tag.
-import { isSafeProps } from './funnel.ts';
+import { isSafeProps, keepUtm } from './funnel.ts';
 import type { Props } from './funnel.ts';
 import { adVariant, sanitizeUtm } from './selection.ts';
 
@@ -63,6 +63,10 @@ export function loadUmami() {
   s.dataset.websiteId = id;
   s.dataset.tag = variant();
   s.dataset.autoPageview = 'false';
+  // Umami calls window[data-before-send] with every payload; only utm_* leave in the URL and referrer (privacy page).
+  (window as unknown as Record<string, unknown>).etfdBeforeSend = (_type: string, p: { url?: string; referrer?: string }) =>
+    ({ ...p, url: p.url && keepUtm(p.url), referrer: p.referrer && keepUtm(p.referrer) });
+  s.dataset.beforeSend = 'etfdBeforeSend';
   s.onload = _flush;
   document.head.append(s);
 }

@@ -41,13 +41,14 @@ import Footer from '../components/Footer.astro';
     <h3 id="mereni">Měření návštěvnosti</h3>
     <p>Když v liště „Smíme měřit, jak se stránka používá?“ zvolíte „Souhlasím“, načte se měřicí nástroj Umami. Bez
       souhlasu se nenačte a nic neměříme.</p>
-    <p>Co měříme: kterou stránku jste otevřeli i s parametry odkazu (UTM), ze které reklamy jste přišli, které části
+    <p>Co měříme: kterou stránku jste otevřeli, parametry odkazu UTM a z nich, ze které reklamy jste přišli. Ostatní
+      parametry adresy (třeba identifikátor kliknutí z Mety) odstraníme ještě ve vašem prohlížeči. Dále které části
       stránky jste viděli, které kroky nástroje jste použili a co jste v nich nastavili (vybraná ETF, částku, dobu,
-      brokera a filtr dividend), na která tlačítka jste klikli a jaký druh chyby hlásil formulář. Umami k tomu zjistí
-      zemi, typ zařízení, prohlížeč, operační systém, jazyk a velikost obrazovky.</p>
+      brokera a filtr dividend), na která tlačítka jste klikli a jaký druh chyby hlásil formulář. Umami k tomu z IP adresy
+      odvodí zemi, region a město a zjistí typ zařízení, prohlížeč, operační systém, jazyk a velikost obrazovky.</p>
     <p>Co neměříme: váš e-mail ani nic, co do formuláře napíšete. Nepoužíváme cookies a měření nepropojujeme s kontaktem,
-      který ukládáme kvůli plánu. Umami vaši IP adresu neukládá. Jednu návštěvu pozná podle otisku (hash) vytvořeného
-      z IP adresy, prohlížeče a adresy webu.</p>
+      který ukládáme kvůli plánu. Umami vaši IP adresu neukládá. Návštěvy pozná podle otisku (hash) vytvořeného
+      z IP adresy, prohlížeče a adresy webu. Umami otisk ve výchozím nastavení mění jednou měsíčně, takže vaše návštěvy během jednoho měsíce může spojit dohromady.</p>
     <p>Právní základ je váš souhlas podle § 89 odst. 3 zákona č. 127/2005 Sb., o elektronických komunikacích, a čl. 6
       odst. 1 písm. a) GDPR. Volbu můžete kdykoli změnit odkazem „Nastavení měření“ v patičce (čl. 7 odst. 3 GDPR).
       Abychom se nemuseli ptát při každé návštěvě, pamatuje si ji váš prohlížeč (localStorage).</p>
