@@ -179,16 +179,10 @@ retBtn.addEventListener('click', () => {
   if (open) q('#in-r').focus();
 });
 expand.addEventListener('click', () => {
-  stepA.classList.remove('collapsed');
-  expand.hidden = true;
+  stepA.classList.add('open');
   chip(US_TICKERS[0]).focus();
 });
 
-// Ad B lands on the fee calculator with VOO picked (decisions §4); the head script set the variant before paint.
-if (document.documentElement.dataset.variant === 'b') {
-  chip('VOO').setAttribute('aria-pressed', 'true');
-  stepA.classList.add('collapsed');
-  expand.textContent = 'Vybráno: VOO · změnit';
-  expand.hidden = false;
-}
+// Ad B lands on the fee calculator with VOO picked (decisions §4); CSS collapses Step A from the first paint.
+if (document.documentElement.dataset.variant === 'b') chip('VOO').setAttribute('aria-pressed', 'true');
 update(true);

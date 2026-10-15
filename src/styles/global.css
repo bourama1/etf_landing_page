@@ -148,13 +148,14 @@ details summary { min-height: 44px; display: flex; align-items: center; cursor: 
 details.how { margin: 0.5rem 0 1rem; }
 
 /* Tool island (src/scripts/tool.ts): ad B collapses Step A; the ticker pair is the one animated moment (§10). */
-.step.collapsed > :not(h2, .expand) { display: none; }
-/* Ad B: collapsed Step A keeps its heading (structure, screen readers) at minimum height. */
-.step.collapsed h2 { font-size: 1rem; margin: 0; }
-.step.collapsed .expand { min-height: 44px; margin-top: -0.5rem; }
-.step.collapsed + .step { margin-top: 0.5rem; }
+/* Ad B: Step A is collapsed from the first paint (the head script sets html.js + data-variant before it), so nothing
+   jumps when tool.ts runs; "změnit" adds .open. The collapsed step keeps its heading (structure, screen readers). */
+html.js[data-variant="b"] #step-a:not(.open) > :not(h2, .expand) { display: none; }
+html.js[data-variant="b"] #step-a:not(.open) h2 { font-size: 1rem; margin: 0; }
+html.js[data-variant="b"] #step-a:not(.open) .expand { display: block; margin-top: -0.5rem; }
+html.js[data-variant="b"] #step-a:not(.open) + .step { margin-top: 0.5rem; }
 .expand {
-  min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 650;
+  display: none; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 650;
   text-decoration: underline; text-underline-offset: 0.15em; cursor: pointer;
 }
 .pair { margin: 1.25rem 0; }

@@ -3,7 +3,7 @@
   Static skeleton of the three-step tool (page.md §2). Hidden without JS (.needs-js); src/scripts/tool.ts (Task 10)
   adds the behaviour. Hooks for Task 10:
     #step-a [data-step="a"]   chips: button[data-ticker] (aria-pressed), "other" = Jiné; [data-twins] live region;
-                              button[data-next="b"]; button[data-expand] (ad B: collapsed Step A, "Vybráno: VOO · změnit")
+                              button[data-next="b"]; button[data-expand] (ad B: Step A collapsed by CSS, "Vybráno: VOO · změnit")
     #step-b [data-step="b"]   inputs #in-m #in-y #in-r (range) with output[data-out="m|y|r"]; #in-r sits in #ret-panel (hidden),
                               toggled by button[data-ret] (aria-expanded) in the compact return line p.ret;
                               radios name="broker" (unknown|xtb|t212|fio|cs); p[data-broker-note] (empty);
@@ -38,7 +38,7 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
 <div class="tool needs-js">
   <div class="step" id="step-a" data-step="a">
     <h2 id="step-a-h">1. Které ETF jste chtěli koupit?</h2>
-    <button type="button" class="expand" data-expand hidden></button>
+    <button type="button" class="expand" data-expand>Vybráno: VOO · změnit</button>
     <div class="chips" role="group" aria-labelledby="step-a-h">
       {chips.map((t) => <button type="button" class="chip ticker" aria-pressed="false" data-ticker={t}>{t}</button>)}
       <button type="button" class="chip" aria-pressed="false" data-ticker="other">Jiné</button>
