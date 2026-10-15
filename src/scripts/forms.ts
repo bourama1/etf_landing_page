@@ -175,6 +175,9 @@ function thankYou(f: HTMLFormElement, email: string, reset: () => void) {
 forms.forEach((f) => {
   status(f).id = `${f.id}-status`;
   f.addEventListener('submit', (e) => { e.preventDefault(); void submit(f); });
+  // The browser's own check (required, type=email) blocks the submit event, so count that failure here.
+  emailOf(f).addEventListener('invalid', () =>
+    track('form_error', { reason: emailOf(f).validity.valueMissing ? 'empty' : 'invalid', location: f.dataset.location! }));
   emailOf(f).addEventListener('input', () => {
     emailOf(f).removeAttribute('aria-invalid');
     emailOf(f).removeAttribute('aria-describedby');
