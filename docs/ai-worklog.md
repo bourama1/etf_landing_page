@@ -4657,3 +4657,14 @@ IP → 10× 400 (invalid e-mail) then 429; in the browser the JS form shows "Př
 Zkuste to prosím za 10 minut." (`form_error reason=rate`). The no-JS form gets Vercel's own English "Too Many
 Requests" page: Hobby's rule can only answer 429/deny/challenge, accepted. Repo public: `data/sources.md` 200; link
 check 0 broken (`docs/qa/links.log`).
+
+**Update (2026-10-15): Brevo live, first real submit failed.** Matěj's first test showed "Plán se nepodařilo
+odeslat". Vercel log: `Brevo GET contacts failed: 401`, status only, so a wrong key and Brevo's IP blocking looked
+the same. Diagnosis (`systematic-debugging`): Brevo's error code and message now go into the log, addresses masked
+(test RED→GREEN, 83/83); the reproduced call said `401 unauthorized: Key not found`, so not an IP block. The local
+`.env.local` key had the right shape (`xkeysib-` prefix, 89 chars) and worked from the agent's machine; the value in
+Vercel did not. With Matěj's OK the agent removed `BREVO_API_KEY` (Production) and piped the value from `.env.local`
+into `vercel env add --sensitive` (the key never printed), then redeployed. Check with `diag@etfdvojce.invalid`
+(undeliverable on purpose): 200, contact on list 4 "Plán", `PLAN_SENT_AT` stored with full time (text attribute,
+Review Focus 1 confirmed), contact deleted afterwards. Brevo account read-only check before that: Free plan,
+300/day, 17 attributes with the planned types, lists Plán (4) and Novinky (5).
