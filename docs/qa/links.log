@@ -1,0 +1,122 @@
+# node scripts/check-links.mjs https://etf-landing-page-sigma.vercel.app — 2026-10-15T13:43:59.841Z
+# 6 site pages crawled, 110 unique URLs checked
+
+## Broken (0)
+
+## Blocked to scripts: check in a browser (7)
+429  https://github.com/bourama1/etf_landing_page/blob/master/data/sources.md  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+403  https://conversionxl.com/reduce-form-fields/  ← data/benchmarks.md
+403  https://newsroom.morningstar.com/news/news-details/2026/Morningstar-Reaches-New-Milestone-in-the-CRSP-Acquisition-Rebranding-CRSP-Market-Indexes-to-Morningstar-Indexes/default.aspx  ← data/etfs.json
+406  https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/factsheet/IE00BFZXGZ54_factsheet_en.pdf  ← data/etfs.json
+406  https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/kid/IE00BFZXGZ54_kid_en.pdf  ← data/etfs.json
+406  https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/factsheet/IE0032077012_factsheet_en.pdf  ← data/etfs.json
+406  https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/kid/IE0032077012_kid_en.pdf  ← data/etfs.json
+
+## OK (103)
+200  https://etf-landing-page-sigma.vercel.app/  ← crawl, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/favicon.svg  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/fonts/archivo-latin.woff2  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/fonts/archivo-latin-ext.woff2  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/fonts/archivo-wide-800.woff2  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/_astro/Footer.Dp2JbHha.css  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/ochrana-osobnich-udaju/  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, crawl, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/_astro/LeadForm.astro_astro_type_script_index_0_lang.C_DSBdKl.js  ← /, /chyba-formulare/, /chyba-odeslani/
+200  https://etf-landing-page-sigma.vercel.app/_astro/Tool.astro_astro_type_script_index_0_lang.B50xJGyE.js  ← /
+200  https://etf-landing-page-sigma.vercel.app/plan-preview.png  ← /
+200  https://etf-landing-page-sigma.vercel.app/_astro/Base.astro_astro_type_script_index_0_lang.CTDQlAVw.js  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/_astro/index.astro_astro_type_script_index_0_lang.BmH3iCRl.js  ← /
+200  https://etf-landing-page-sigma.vercel.app/plan/?t=VOO&m=3000&y=20  ← crawl
+200  https://etf-landing-page-sigma.vercel.app/_astro/plan.astro_astro_type_script_index_0_lang.DkBnwXrW.js  ← /plan/?t=VOO&m=3000&y=20
+200  https://etf-landing-page-sigma.vercel.app/dekujeme/  ← crawl
+200  https://etf-landing-page-sigma.vercel.app/chyba-formulare/  ← crawl
+200  https://etf-landing-page-sigma.vercel.app/chyba-odeslani/  ← crawl
+200  https://uoou.gov.cz/  ← /ochrana-osobnich-udaju/
+200  https://multimediafiles.kbcgroup.eu/ng/feed/am/funds/KID/KID_770000001170_CS.PDF  ← data/bank-funds.json, data/sources.md
+200  https://www.amundi-kb.cz/storage/app/media/KIID/KIID_CZ0008478492.pdf  ← data/bank-funds.json, data/sources.md
+200  https://www.csas.cz/banka/content/inet/internet/cs/RR_SK.INV..xml,pdf_IE  ← data/bank-funds.json, data/brokers.json, data/sources.md
+200  https://www.csas.cz/banka/content/inet/internet/cs/zakladni_informace_o_poskytovani_is.pdf  ← data/bank-funds.json, data/sources.md
+200  https://unbounce.com/landing-pages/whats-a-good-conversion-rate/  ← data/benchmarks.md
+200  https://localiq.com/blog/facebook-advertising-benchmarks/  ← data/benchmarks.md
+200  https://mailchimp.com/resources/email-marketing-benchmarks/  ← data/benchmarks.md
+200  https://www.xtb.com/cz/soubory/tabulka-poplatku-a-provizi.pdf  ← data/brokers.json, data/sources.md
+200  https://helpcentre.trading212.com/hc/en-us/articles/11471996799517-What-are-the-fees-in-the-Invest-ISAs-and-SIPP  ← data/brokers.json, data/sources.md
+200  https://helpcentre.trading212.com/hc/en-us/articles/360018909758-What-is-the-FX-fee-Invest-Stocks-ISA  ← data/brokers.json, data/sources.md
+200  https://www.fio.cz/docs/cz/C_zaklad.pdf  ← data/brokers.json, data/sources.md
+200  https://www.fio.cz/akcie-investice/dalsi-sluzby-fio/devizove-konverze  ← data/brokers.json, data/sources.md
+200  https://fund-docs.vanguard.com/F0968.pdf  ← data/etfs.json
+200  https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-sp-500-etf-trust-spy  ← data/etfs.json
+200  https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-spy.pdf  ← data/etfs.json
+200  https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/F0970.pdf  ← data/etfs.json
+200  https://investor.vanguard.com/investment-products/etfs/profile/vti  ← data/etfs.json
+200  https://www.invesco.com/qqq-etf/en/home.html  ← data/etfs.json
+200  https://www.sec.gov/Archives/edgar/data/0001067839/000119312526250483/8deb6f921189c0e.htm  ← data/etfs.json
+200  https://fund-docs.vanguard.com/F3141.pdf  ← data/etfs.json
+200  https://bynder.schwab.com/m/3fc90e8c7dd8c3f7  ← data/etfs.json
+200  https://fund-docs.vanguard.com/SandP_500_UCITS_ETF_USD_Accumulating_9694_EU_INT_UK_EN.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/ie00bfmxxd54_priipskid_cz.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/SandP_500_UCITS_ETF_USD_Distributing_9503_EU_INT_UK_EN.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/ie00b3xxrp09_priipskid_cz.pdf  ← data/etfs.json
+200  https://www.blackrock.com/uk/individual/literature/fact-sheet/cspx-ishares-core-s-p-500-ucits-etf-fund-fact-sheet-en-gb.pdf  ← data/etfs.json
+200  https://www.blackrock.com/gls-download/literature/kiid/eu-priips-ishares-core-sp-500-ucits-etf-usd-acc-ie00b5bmr087-cs.pdf  ← data/etfs.json
+200  https://www.ishares.com/gls-download/literature/fact-sheet/cspx-ishares-core-s-p-500-ucits-etf-fund-fact-sheet-en-de.pdf  ← data/etfs.json
+200  https://www.blackrock.com/uk/individual/literature/fact-sheet/iusa-ishares-core-s-p-500-ucits-etf-usd-dist-fund-fact-sheet-en-gb.pdf  ← data/etfs.json
+200  https://www.blackrock.com/gls-download/literature/kiid/eu-priips-ishares-core-sp-500-ucits-etf-usd-dist-ie0031442068-en.pdf  ← data/etfs.json
+200  https://live.deutsche-boerse.com/en/etf/ishares-core-s-p-500-ucits-etf-usd-dist  ← data/etfs.json
+200  https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-spyl-gy.pdf  ← data/etfs.json
+200  https://www.ssga.com/library-content/kids?isin=IE000XZSV718&documentType=kid&country=cz&language=cs_cz&ticker=spyl-gy  ← data/etfs.json
+200  https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-spy5-gy.pdf  ← data/etfs.json
+200  https://www.ssga.com/library-content/kids?isin=IE00B6YX5C33&documentType=kid&country=ie&language=en_gb&ticker=spy5-gy  ← data/etfs.json
+200  https://live.deutsche-boerse.com/en/etf/invesco-eqqq-nasdaq-100-ucits-etf-acc  ← data/etfs.json
+200  https://live.deutsche-boerse.com/en/etf/invesco-eqqq-nasdaq-100-ucits-etf-dist  ← data/etfs.json
+200  https://www.blackrock.com/uk/individual/literature/fact-sheet/csndx-ishares-nasdaq-100-ucits-etf-fund-fact-sheet-en-gb.pdf  ← data/etfs.json
+200  https://www.blackrock.com/gls-download/literature/kiid/eu-priips-ishares-nasdaq-100-ucits-etf-usd-acc-ie00b53szb19-cs.pdf  ← data/etfs.json
+200  https://www.ishares.com/gls-download/literature/fact-sheet/csndx-ishares-nasdaq-100-ucits-etf-fund-fact-sheet-en-de.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/FTSE_Global_All-Cap_UCITS_ETF_USD_Acc_E161_EU_INT_EN.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/ie000vaht5t0_priipskid_cz.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/FTSE_Global_All-Cap_UCITS_ETF_USD_Dist_E162_EU_INT_EN.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/ie000cvum3n6_priipskid_cz.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/ie00bk5bqt80_priipskid_cz.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Distributing_9505_EU_INT_UK_EN.pdf  ← data/etfs.json
+200  https://fund-docs.vanguard.com/ie00b3rbwm25_priipskid_cz.pdf  ← data/etfs.json
+200  https://api.cnb.cz/cnbapi/exrates/daily?date=2026-10-15&lang=CZ  ← data/fx.json
+202  https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014R1286  ← data/sources.md
+200  https://lawplayer.com/eu/act/32014R1286  ← data/sources.md
+200  https://www.cnb.cz/cs/dohled-financni-trh/legislativni-zakladna/stanoviska-k-regulaci-financniho-trhu/RS2018-12/  ← data/sources.md
+200  https://www.fio.cz/akcie-investice/etf  ← data/sources.md
+200  https://www.finhacker.cz/jak-obejit-znemozneni-obchodovani-americkych-etfek-2-cast/  ← data/sources.md
+200  https://www.xtb.com/int/help-center/stocks-and-etfs/adding-a-new-instrument-to-the-offer  ← data/sources.md
+200  https://www.lynxbroker.com/service/products-and-regulations/regulations/key-information-document/  ← data/sources.md
+200  https://ibkb.interactivebrokers.com/node/2993  ← data/sources.md
+200  https://www.irs.gov/pub/irs-trty/czech.pdf  ← data/sources.md
+200  https://dostupnyadvokat.cz/en/blog/dividend-taxation  ← data/sources.md
+200  https://www.irs.gov/pub/irs-trty/ireland.pdf  ← data/sources.md
+200  https://www.revenue.ie/en/tax-professionals/tdm/income-tax-capital-gains-tax-corporation-tax/part-27/27-01a-02.pdf  ← data/sources.md
+200  https://www.zakonyprolidi.cz/cs/1992-586  ← data/sources.md
+200  https://financnisprava.gov.cz/assets/tiskopisy/5405-1_34.pdf  ← data/sources.md
+200  https://www.irs.gov/individuals/international-taxpayers/some-nonresidents-with-us-assets-must-file-estate-tax-returns  ← data/sources.md
+200  https://www.irs.gov/pub/irs-pdf/i706na.pdf  ← data/sources.md
+200  https://www.irs.gov/businesses/small-businesses-self-employed/estate-gift-tax-treaties-international  ← data/sources.md
+200  https://financnisprava.gov.cz/cs/financni-sprava/media-a-verejnost/tiskove-zpravy-gfr/tiskove-zpravy-2026/danove-novinky-pro-rok-2026  ← data/sources.md
+200  https://www.tpa-group.cz/news/zruseni-limitu-pro-osvobozeni-prijmu-z-prodeje-obchodnich-podilu-a-cennych-papiru/  ← data/sources.md
+200  https://www.ubs.com/content/dam/assets/wm/static/cio/documents/giry2026-summary-public.pdf  ← data/sources.md
+200  https://api.cnb.cz/cnbapi/swagger-ui.html  ← data/sources.md
+202  https://eur-lex.europa.eu/eli/reg/2016/679/oj  ← data/sources.md
+200  https://gdpr-info.eu/art-6-gdpr/  ← data/sources.md
+200  https://gdpr-info.eu/art-7-gdpr/  ← data/sources.md
+200  https://gdpr-info.eu/art-13-gdpr/  ← data/sources.md
+200  https://gdpr-info.eu/art-21-gdpr/  ← data/sources.md
+200  https://www.edpb.europa.eu/sites/default/files/files/file1/edpb_guidelines-art_6-1-b-adopted_after_public_consultation_en.pdf  ← data/sources.md
+200  https://www.zakonyprolidi.cz/cs/2004-480  ← data/sources.md
+200  https://www.zakonyprolidi.cz/cs/2005-127  ← data/sources.md
+200  https://www.edpb.europa.eu/system/files/2024-10/edpb_guidelines_202302_technical_scope_art_53_eprivacydirective_v2_en_0.pdf  ← data/sources.md
+200  https://uoou.gov.cz/media/seminare-uoou/prezentace/2024-06-12-p04-praxe-uoou-v-oblasti-cookies.pdf  ← data/sources.md
+200  https://elegal.cz/analyticke-cookies-bez-souhlasu  ← data/sources.md
+200  https://github.com/umami-software/umami  ← data/sources.md
+200  https://docs.umami.is/docs/metric-definitions  ← data/sources.md
+200  https://docs.umami.is/docs/sessions  ← data/sources.md
+
+## Manual follow-up (2026-10-15)
+- github.com/bourama1/etf_landing_page/blob/master/data/sources.md: earlier runs got **404**; `curl https://github.com/bourama1/etf_landing_page` → 404: **the repository is private**, so the "Zdroje" link on every page is broken for visitors until Matěj makes the repo public (the brief requires a public repo anyway). The 429 above is GitHub rate-limiting repeated checks.
+- conversionxl.com, newsroom.morningstar.com, 4× invesco.com PDFs: `curl -L` with a browser user agent → 200 for all (they refuse Node's fetch, not browsers).
