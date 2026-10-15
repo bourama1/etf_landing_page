@@ -37,7 +37,7 @@ let inlineOnScreen = false;
 let sent = false;
 const syncSticky = () => { sticky.hidden = result.hidden || inlineOnScreen || sent; };
 new IntersectionObserver(([e]) => { inlineOnScreen = e.isIntersecting; syncSticky(); }).observe(inline);
-new MutationObserver(syncSticky).observe(result, { attributes: true, attributeFilter: ['hidden'] }); // all picks removed
+new MutationObserver(() => { syncSticky(); syncFooter(); }).observe(result, { attributes: true, attributeFilter: ['hidden'] }); // all picks removed
 q('a', sticky).addEventListener('click', (e) => {
   e.preventDefault();
   inline.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
@@ -45,13 +45,20 @@ q('a', sticky).addEventListener('click', (e) => {
 });
 
 // ---- Final form says what the visitor picked. tool:result fires on every slider frame: write only on change.
-const footH = q('.lead-h', footer);
-const footP = footH.nextElementSibling as HTMLElement;
+const footH = q('[data-lead-h]', footer);
+const footP = q('[data-lead-body]', footer);
+const footDefault = [footH.textContent!, footP.textContent!];
 const setText = (el: Element, v: string) => { if (el.textContent !== v) el.textContent = v; };
 function onResult(sel: Selection) {
   setText(footH, 'Poslat plán e-mailem');
   setText(footP, `Pošleme vám plán pro ${sel.tickers.join(', ')}.`);
   syncSticky();
+}
+// Picks removed again (result block hidden): back to the S&P 500 fallback ask.
+function syncFooter() {
+  if (!result.hidden) return;
+  setText(footH, footDefault[0]);
+  setText(footP, footDefault[1]);
 }
 window.addEventListener('tool:result', ((e: CustomEvent<Selection>) => onResult(e.detail)) as EventListener);
 // tool.ts runs first and may already have fired (ad B preselects VOO): catch up from the form fields it filled.
@@ -86,7 +93,7 @@ async function submit(f: HTMLFormElement) {
       signal: AbortSignal.timeout(10000),
     });
     const data = await res.json().catch(() => null);
-    if (res.ok && data?.ok) return thankYou(f, v.email);
+    if (res.ok && data?.ok) return thankYou(f, v.email, () => { btn.disabled = false; btn.textContent = label; status(f).textContent = ''; });
     if (res.status === 429) showError(f, MSG.rate, false);
     else if (res.status === 400 && (data?.reason === 'invalid' || data?.reason === 'empty')) showError(f, MSG[data.reason as 'empty' | 'invalid'], true);
     else showError(f, MSG.server, false);
@@ -98,7 +105,7 @@ async function submit(f: HTMLFormElement) {
 }
 
 // ---- Thank-you state: replaces the submitted form; the form stays in the DOM (hidden) for "Zadat znovu".
-function thankYou(f: HTMLFormElement, email: string) {
+function thankYou(f: HTMLFormElement, email: string, reset: () => void) {
   const sel = selectionOf(f);
   const plan = buildPlan(sel, FX); // no picks → the fallback plan, same as the e-mail
   const rows = plan.groups.flatMap((g) => [...g.twins.map((t) => [t, g.kind === 'nearest' ? ' (jiný index)' : ''] as const),
@@ -109,8 +116,9 @@ function thankYou(f: HTMLFormElement, email: string) {
 
   const heading = Object.assign(h(q('.lead-h', f).tagName.toLowerCase(), 'lead-h', `Hotovo. Plán je na cestě na ${email}.`), { tabIndex: -1 });
   const again = h('button', 'btn btn-quiet', 'Zadat znovu');
-  const shareNote = h('span', '', '');
+  const shareNote = h('span', '');
   shareNote.setAttribute('role', 'status');
+  shareNote.setAttribute('aria-live', 'polite');
   const share = h('button', 'btn btn-quiet', 'Poslat odkaz');
   const box = h('div', 'thanks', heading,
     h('p', '', 'Měl by dorazit do pár minut. Když ho nevidíte, podívejte se do složky s hromadnou poštou nebo do spamu.'),
@@ -121,7 +129,7 @@ function thankYou(f: HTMLFormElement, email: string) {
     h('p', '', `Znáte někoho, kdo taky chtěl ${sel.tickers[0] ?? 'VOO'}? `, share, ' ', shareNote));
 
   again.type = share.type = 'button';
-  again.addEventListener('click', () => { box.remove(); f.hidden = false; emailOf(f).focus(); });
+  again.addEventListener('click', () => { box.remove(); reset(); f.hidden = false; emailOf(f).focus(); });
   share.addEventListener('click', async () => {
     const url = `${location.origin}${location.pathname}?utm_source=share`; // no personal data, no selection
     try {

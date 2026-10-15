@@ -15,8 +15,8 @@ const def = (r: readonly number[]) => String(r[3]);
 ---
 
 <form class="lead-form" method="post" action="/api/lead" data-location={location} id={id} aria-labelledby={`${id}-h`}>
-  <H id={`${id}-h`} class="lead-h">{heading}</H>
-  <p>{body}</p>
+  <H id={`${id}-h`} class="lead-h" data-lead-h>{heading}</H>
+  <p data-lead-body>{body}</p>
   <label class="field-label" for={`${id}-email`}>Váš e-mail</label>
   <input
     class="email"
