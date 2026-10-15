@@ -1,13 +1,13 @@
-# node scripts/qa-live.mjs https://etf-landing-page-sigma.vercel.app — 2026-10-15T13:41:18.073Z
+# node scripts/qa-live.mjs https://etf-landing-page-sigma.vercel.app — 2026-10-15T13:49:09.133Z
 # device: 412×915 Android UA, 4G 150 ms / 1.6 Mbps, CPU 4×
-[ad A] LCP 896 ms · CLS 0.001 · overflow false
-[ad B] LCP 872 ms · CLS 0.001 · overflow false
-[no UTM] LCP 872 ms · CLS 0.001 · overflow false
-[/plan] LCP 1008 ms · CLS 0.001 · overflow false
-[/dekujeme] LCP 708 ms · CLS 0.004 · overflow false
-[/chyba-formulare] LCP 744 ms · CLS 0.029 · overflow false
-[/chyba-odeslani] LCP 740 ms · CLS 0.003 · overflow false
-[privacy] LCP 756 ms · CLS 0.004 · overflow false
+[ad A] LCP 916 ms · CLS 0.001 · overflow false
+[ad B] LCP 904 ms · CLS 0.001 · overflow false
+[no UTM] LCP 956 ms · CLS 0.001 · overflow false
+[/plan] LCP 1016 ms · CLS 0.001 · overflow false
+[/dekujeme] LCP 724 ms · CLS 0.004 · overflow false
+[/chyba-formulare] LCP 748 ms · CLS 0.029 · overflow false
+[/chyba-odeslani] LCP 780 ms · CLS 0.003 · overflow false
+[privacy] LCP 796 ms · CLS 0.004 · overflow false
 
 # JavaScript off
 [ad A] h1 "Broker vám nedovolí koupit VOO? Má evropské dvojče." · lead forms 2 · tables 1 · overflow false

@@ -420,3 +420,21 @@ From `docs/superpowers/plans/2026-10-15-phase4-tracking.md` (provider check with
 | 10 | `magnet_opened` is not attributed to an ad | the e-mail link carries no `utm_content` (§6a); the variant is on the Brevo contact |
 | 11 | A/B arms are assigned by the ad (own `utm_content` per arm), not on the page | no flicker, no on-page randomisation; only test 1's arms exist so far |
 | 12 | Only `utm_*` leave in the URL and referrer sent to Umami (`keepUtm()` via `data-before-send`); `form_view` is sent before `form_start` when a CTA focuses the field mid-scroll | final review: Umami stores `fbclid` as a click ID; the ordered funnel lost sticky-CTA visitors |
+
+---
+
+## 17. Phase 5 deploy + QA decisions (plan approved by Matěj, 2026-10-15)
+
+From `docs/superpowers/plans/2026-10-15-phase5-qa.md` (provider check with sources in its Task 0).
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Rate limit = **Vercel WAF rule**: POST `/api/lead`, 10 requests / 10 min per IP, fixed window, 429 (§6a rule 5 option a) | Hobby allows 1 rate-limit rule, window 10 s–10 min (Vercel docs); no code, no Upstash account. Client message now says "za 10 minut" |
+| 2 | Brevo sender for the test = Matěj's existing mailbox (Brevo rewrites it to `…@<id>.t-sender-sib.com`); own domain + DKIM/DMARC is a launch blocker | free domains can't be authenticated in Brevo; a domain bought today may need 48 h of DNS (Matěj, option A) |
+| 3 | Brevo attribute types: timestamps (`PLAN_SENT_AT`, `LAST_REQUEST_AT`, `NEWSLETTER_CONSENT_AT`) are **text** | a Brevo `date` keeps only YYYY-MM-DD and would break the 24 h dedupe; pinned by `scripts/brevo-setup.test.mjs` |
+| 4 | Daily FX rebuild: GitHub Actions cron `17 15 * * 1-5` → Vercel Deploy Hook (§15 #16) | ČNB publishes "každý pracovní den kolem 14.30"; off the busy :00 |
+| 5 | `/api/lead` runs in **fra1** (`vercel.json` `regions`) | Vercel's default for new projects is iad1 (Washington): leads crossed the US on their way to Brevo (EU) |
+| 6 | Production without `BREVO_API_KEY` answers **502**; dry-run only in preview/local | a silent dry-run in production would show the thank-you while no lead is kept (`/ponytail-review` #1) |
+| 7 | Live funnel check submits with the honeypot filled | with real Brevo it would e-mail `test@example.com`; the honeypot keeps the 2xx path and `lead_submitted` |
+| 8 | Font fallback re-measured: Arial `size-adjust` 98 % (was 130.8 %), separate Roboto face for Android | the old value made every page reflow on font swap (CLS 0.12–0.22 on throttled 4G) |
+| 9 | Not fixed: `/plan` `noindex` (SEO 60 in Lighthouse); ad A shows the fee result under the chips before a pick | personal plan URLs must not be indexed; the second changes approved structure, listed as an A/B idea |
