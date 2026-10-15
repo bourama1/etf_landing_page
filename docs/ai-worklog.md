@@ -312,3 +312,11 @@ because this question needed the whole act, not one grepped paragraph. The indiv
 The e-mail's claim that dividends "patří do samostatného základu" was also wrong (it's an option) and was
 rewritten. The conclusions built on it (≈ 15 % either way, distributing Irish is the worst) still hold.
 - 2026-10-15 — `claude-md-management:revise-claude-md`: folded Phase 2 learnings into CLAUDE.md (Phase 2 done + hand-off, ZDP part/§ 8 gotcha, 404 ≠ absence, ČNB no-CORS, Reddit/WordPress feeds, Czech-text shell quirks, claim-attribution copy rule). Approved by Matěj.
+
+## 2026-10-15 — Phase 3 plan
+
+- `superpowers:writing-plans`: wrote `docs/superpowers/plans/2026-10-15-phase3-build.md` (13 tasks; decisions to be
+  recorded as decisions.md §15). Inputs read: CLAUDE.md, decisions §3–6a/§8/§10–12/§14, page.md, email.md,
+  calc-examples.mjs, sources.md §7–8, NOTES.md. Checked before planning: Astro 7.3.8 is current and has a built-in
+  `fonts` config; no headless Chrome/Edge on this machine (only a leftover `pwahelper.exe`), so screenshots go through
+  the built-in-browser skill. Waiting for Matěj's review before any code.
