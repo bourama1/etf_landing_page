@@ -8,9 +8,10 @@ import type { Selection } from './selection.ts';
 export const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
-type Block =
+// `mail` marks blocks that only make sense in the e-mail itself (greeting, link to /plan, footer); /plan drops them.
+export type Block = (
   | { k: 'h'; s: string } | { k: 'h3'; s: string } | { k: 'p'; s: string } | { k: 'hr' } | { k: 'cta'; s: string; href: string }
-  | { k: 'list'; items: string[]; mark: '•' | '☐' | '1' } | { k: 'table'; head: string[]; rows: string[][] };
+  | { k: 'list'; items: string[]; mark: '•' | '☐' | '1' } | { k: 'table'; head: string[]; rows: string[][] }) & { mail?: true };
 
 const LINK = /\[([^\]]+)\]\((https?:[^)\s]+)\)/g;
 const A = 'color:#14532d;text-decoration:underline';
@@ -93,13 +94,13 @@ const tickersOf = (plan: Plan, d: 'acc' | 'dist') =>
   [...new Set(plan.groups.flatMap((g) => g.twins.filter((t) => t.distribution === d).map((t) => t.xetra)))].join(', ');
 const withList = (s: string, l: string) => (l ? `${s} (${l})` : s);
 
-function blocks(plan: Plan, sel: Selection, siteUrl: string, sentOn: Date): Block[] {
+export function blocks(plan: Plan, sel: Selection, siteUrl: string, sentOn: Date): Block[] {
   const picks = plan.groups.flatMap((g) => g.picks).join(', ');
   const link = `${siteUrl}/plan?${toParams(sel).toString().replaceAll('%2C', ',')}&utm_source=email`;
   return [
-    { k: 'p', s: 'Dobrý den,' },
+    { k: 'p', s: 'Dobrý den,', mail: true },
     { k: 'p', s: `tady je plán, který jste si vyžádali na ETF Dvojče. Data jsou k ${fmtDate(plan.dataDate)}, u každého čísla najdete zdroj.` },
-    { k: 'cta', s: 'Otevřít plán online', href: link },
+    { k: 'cta', s: 'Otevřít plán online', href: link, mail: true },
     { k: 'p', s: 'Obsah: 1. Vaše dvojčata · 2. Akumulační, nebo distribuční? · 3. Poplatky v korunách · 4. Daně z ETF v Česku 2026 · 5. Jak fond koupit' },
     { k: 'h', s: '1. Vaše dvojčata' }, ...groupBlocks(plan),
     { k: 'p', s: 'Toto není doporučení. Který fond koupíte a jestli vůbec, je na vás.' },
@@ -134,9 +135,9 @@ function blocks(plan: Plan, sel: Selection, siteUrl: string, sentOn: Date): Bloc
       'Pokud fond nenajdete, napište brokerovi ISIN. Nabídka se u brokerů liší.'] },
     { k: 'p', s: 'Konkrétního brokera nedoporučujeme a od žádného nemáme provizi.' },
     { k: 'hr' },
-    { k: 'p', s: `Plán vám přišel, protože jste si ho ${pragueDate(sentOn)} vyžádali na ${new URL(siteUrl).host}. Další e-maily posíláme, jen pokud jste zaškrtli odběr novinek. [Odhlásit se]` },
-    { k: 'p', s: 'Co jste v nástroji vybrali a z jaké reklamy jste přišli, si ukládáme, abychom poznali, které reklamy lidem pomáhají. Proti tomu můžete kdykoli vznést námitku: stačí odpovědět na tento e-mail.' },
-    { k: 'p', s: `ETF Dvojče · [DOPLNIT: provozovatel, IČO, sídlo] · [Zásady ochrany osobních údajů](${siteUrl}/ochrana-osobnich-udaju/)` },
+    { k: 'p', s: `Plán vám přišel, protože jste si ho ${pragueDate(sentOn)} vyžádali na ${new URL(siteUrl).host}. Další e-maily posíláme, jen pokud jste zaškrtli odběr novinek. [Odhlásit se]`, mail: true },
+    { k: 'p', s: 'Co jste v nástroji vybrali a z jaké reklamy jste přišli, si ukládáme, abychom poznali, které reklamy lidem pomáhají. Proti tomu můžete kdykoli vznést námitku: stačí odpovědět na tento e-mail.', mail: true },
+    { k: 'p', s: `ETF Dvojče · [DOPLNIT: provozovatel, IČO, sídlo] · [Zásady ochrany osobních údajů](${siteUrl}/ochrana-osobnich-udaju/)`, mail: true },
     { k: 'p', s: 'Informace slouží jen ke vzdělávání. Nejde o investiční doporučení, investiční poradenství ani daňové poradenství. Minulá výkonnost není zárukou budoucích výnosů. Hodnota investice může klesat i stoupat a nemusí se vám vrátit celá vložená částka.' },
   ];
 }

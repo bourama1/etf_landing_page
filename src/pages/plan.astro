@@ -1,0 +1,21 @@
+---
+// Online copy of the plan e-mail. Content is rendered client-side from allow-listed URL params (src/scripts/plan-page.ts).
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base title="Váš ETF plán | ETF Dvojče" description="Váš ETF plán: evropská dvojčata, poplatky v korunách a daně." noindex>
+  <main class="page">
+    <section data-section="plan">
+      <p class="brand"><a href="/">ETF Dvojče</a></p>
+      <h1>Váš ETF plán</h1>
+      <p class="no-js">Plán se zobrazí jen se zapnutým JavaScriptem. Celý ho máte i v e-mailu. <a href="/">Na úvodní stránku</a></p>
+      <div data-plan class="needs-js"></div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/plan-page.ts';
+</script>
