@@ -4441,30 +4441,82 @@ deploy), a real phone, whether Umami's funnel report can filter by tag.
 
 ### Phase 4 final review (fresh reviewer, Opus) and fix pass
 
-**Prompt (verbatim, the `superpowers:requesting-code-review` template filled in):**
+**Prompt (verbatim):**
 
 <details><summary>2026-10-15 — subagent prompt: Phase 4 whole-branch review (model: opus)</summary>
 
 ````text
-[Template: superpowers 6.4.1 requesting-code-review/code-reviewer.md, sections "The spec is a vision document",
-"Declined to judge", "Read-Only Review", "You Do Not Dispatch Subagents", "What to Check", "Calibration",
-"Output Format" copied unchanged. Filled-in parts:]
+You are a Senior Code Reviewer with expertise in software architecture, design patterns, and best practices. Your job is to review completed work against its plan or requirements and identify issues before they cascade.
 
-What Was Implemented: Phase 4 (funnel tracking) of "ETF Dvojče" … track() wrapper + Umami Cloud loader
-(src/lib/track.ts), pure helpers (src/lib/funnel.ts), DOM wiring (src/scripts/funnel.ts), consent bar
-(src/scripts/analytics.ts), server-confirmed events in forms.ts and plan-page.ts, Playwright check against the real
-Umami tracker (scripts/funnel-check.mjs), privacy section, data/sources.md §10, README drafts, sample sizes,
-decisions §12/§16. Mid-run change approved by Matěj: consent bar (§ 89(3) ZEK, EDPB 2/2023 ¶33).
+## What Was Implemented
 
-Requirements / Plan: docs/superpowers/plans/2026-10-15-phase4-tracking.md, decisions §11/§12/§16, CLAUDE.md
-Tracking / Legal basics / Copy & design / Stack; the executor's Ruling: lines in the ledger. Plan's Review Focus 1–5
-verbatim. Also check: no e-mail or free text can reach Umami by any path (props, URL, title — the thank-you heading
-contains the e-mail); consent honoured on every page and path (withdrawal, stored yes, private mode); honeypot, a11y,
-consent text, source labels untouched; JS budget; Czech copy doesn't overclaim; README drafts state nothing
-unverified as fact.
+Phase 4 (funnel tracking) of "ETF Dvojče", a Czech mobile landing page (Astro static + vanilla-TS island, Vercel function /api/lead → Brevo). Repo D:\etf_landing_page, Windows, Node 26 runs .ts natively, NO Python. Built: a `track()` wrapper + Umami Cloud loader (src/lib/track.ts), pure helpers (src/lib/funnel.ts), DOM wiring (src/scripts/funnel.ts), consent bar (src/scripts/analytics.ts, loaded from src/layouts/Base.astro), server-confirmed events in src/scripts/forms.ts and src/scripts/plan-page.ts, a Playwright end-to-end check against the real Umami tracker with its network sends intercepted (scripts/funnel-check.mjs → docs/funnel-check.log), a privacy-page section (src/pages/ochrana-osobnich-udaju.astro), legal research (data/sources.md §10), README drafts (docs/readme-drafts/), A/B sample sizes (scripts/sample-size.mjs), decisions (docs/decisions.md §12, §16).
 
-Git range 96265f0..cc5e7c0 (package .superpowers/sdd/2026-10-15-phase4-tracking/review-96265f0..cc5e7c0.diff).
-May run npm test and node scripts/funnel-check.mjs; not npm run build (prebuild rewrites data/fx.json).
+Mid-run change approved by the product owner (Matěj): legal research showed cookieless analytics still needs consent in CZ (§ 89(3) zákona 127/2005 Sb., EDPB 2/2023 ¶33), so a consent bar was added: shown at the top after the first scroll/tap/key, Umami script only downloaded after "Souhlasím", earlier events queued in memory and flushed after the pageview, dropped on "Nesouhlasím"; choice in localStorage; footer "Nastavení měření" reopens it.
+
+## Requirements / Plan
+
+Read: docs/superpowers/plans/2026-10-15-phase4-tracking.md (the plan; its event table is the contract), docs/decisions.md §11, §12, §16, CLAUDE.md sections "Tracking", "Legal basics", "Copy & design rules", "Stack". The executor's rulings are the `Ruling:` lines in .superpowers/sdd/2026-10-15-phase4-tracking/progress.md — weigh them.
+
+Plan's Review Focus (check each deliberately):
+1. Ad B landing with no touch must not produce interaction_start / step_complete / interaction_complete (the result is pre-rendered).
+2. Slider drag fires tool:result every animation frame; interaction_complete and step_complete B must still fire once.
+3. Events before the Umami script has loaded (and now: before consent) must be queued, not lost — and must not be sent at all without consent.
+4. An e-mail-like string in a prop must never be sent.
+5. Tall sections (the tool on a 390 px phone) must still produce section_view.
+
+Also check: no e-mail or free text can reach Umami by any path (props, URL, title — note the thank-you heading contains the e-mail; check whether Umami's payload includes document.title or anything else that could carry it); consent is honoured on every page and every path (incl. withdrawal, a stored "yes" on later visits, private mode where localStorage throws); the honeypot, a11y attributes, consent text and source/date labels are untouched; JS budget < 60 kB gz; Czech copy on the bar/privacy page is natural and doesn't overclaim (e.g. "anonymous"); README drafts don't state anything unverified as fact.
+
+## Git Range to Review
+
+**Base:** 96265f0
+**Head:** cc5e7c0
+
+A prepared package: .superpowers/sdd/2026-10-15-phase4-tracking/review-96265f0..cc5e7c0.diff (17 commits). Or:
+git diff --stat 96265f0..cc5e7c0
+git diff 96265f0..cc5e7c0
+
+You may run `npm test` and `node scripts/funnel-check.mjs` (it builds into .dev/dist-funnel, fetches the real tracker from cloud.umami.is, intercepts its sends; takes ~1–2 min). Do not run `npm run build` (its prebuild rewrites data/fx.json); `npx astro build --outDir <tmp>` is fine.
+
+## The spec is a vision document
+
+The spec says what the software must do. It does not enumerate every input, environment, or condition the software will meet. For behavior the spec is silent on, judge by what a reasonable person using this software would expect: a reasonable person's expectation is a requirement, and a spec's silence is not permission. Grade such findings by their effect on that person, not by whether the spec mentions the trigger.
+
+## Declined to judge
+
+Before your verdict, list every behavior you considered and set aside as outside the plan or spec, one line each, with the reason. The executor rules on each line; nothing you set aside is dropped silently. An empty list means you set nothing aside.
+
+## Read-Only Review
+
+Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way. Use tools like `git show`, `git diff`, and `git log` to inspect history. If you need a working copy of a different revision, check it out into a separate temporary directory — never move HEAD on this checkout. (Running funnel-check.mjs writes docs/funnel-check.log and .dev/; if you run it, restore the log with `git checkout docs/funnel-check.log`.)
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part of the diff, and never spawn another reviewer for a second opinion. If the diff feels too large for one pass, review it in passes yourself and say so in your report.
+
+## What to Check
+
+Plan alignment (match, justified deviations, missing pieces); code quality (separation, error handling, types, DRY without premature abstraction, edge cases); architecture (soundness, performance, security, integration with surrounding code); testing (real behavior not mocks, edge cases, integration where it matters, all passing); production readiness (docs complete, no obvious bugs).
+
+## Calibration
+
+Categorize issues by actual severity. Not everything is Critical. Acknowledge what was done well before listing issues. Flag significant deviations from the plan specifically. If you find issues with the plan itself rather than the implementation, say so.
+
+## Output Format
+
+### Strengths
+### Issues
+#### Critical (Must Fix)
+#### Important (Should Fix)
+#### Minor (Nice to Have)
+For each issue: File:line, what's wrong, why it matters, how to fix (if not obvious).
+### Declined to judge
+### Recommendations
+### Assessment
+**Ready to merge?** [Yes | No | With fixes]
+**Reasoning:** [1-2 sentences]
+
+Rules: be specific (file:line), explain why, give a clear verdict, don't review code you didn't read.
 ````
 
 </details>
