@@ -151,8 +151,13 @@ Podrobně v [`docs/readme-drafts/tracking.md`](docs/readme-drafts/tracking.md).
 (otevření `/plan` z e-mailu). Žádná událost nikdy nenese e-mail; `track()` zahodí každou s `@`.
 
 **Ověřeno:** `node scripts/funnel-check.mjs` spustí skutečný skript Umami v prohlížeči a zkontroluje všechny
-události a jejich pořadí (lokálně i proti živé URL, `docs/funnel-check*.log`). Trychtýř v Umami:
-`docs/umami-funnel.png`.
+události a jejich pořadí (lokálně i proti živé URL, `docs/funnel-check*.log`). Trychtýř v Umami (6 kroků, okno 60 minut):
+
+![Trychtýř v Umami: zobrazení / → interaction_start → interaction_complete → form_view → form_start → lead_submitted](docs/umami-funnel.png)
+
+Jde jen o **testovací provoz z 15. 10. 2026** (automatické kontroly a test z mobilu). Snímek dokazuje, že všechny
+kroky dorazí do Umami ve správném pořadí; procenta nejsou konverze. Umami navíc slučuje návštěvy ze stejného
+zařízení a IP do jednoho návštěvníka, proto ukazuje 1. Před spuštěním se testovací data smažou (bod 14).
 
 **Konverzní poměr varianty = leady v Brevo ÷ prokliky z Meta.** Umami vidí jen návštěvníky se souhlasem, proto
 jeho trychtýř slouží k vysvětlení, kde lidé odpadají, ne k vyhlášení vítěze.
