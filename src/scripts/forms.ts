@@ -35,14 +35,22 @@ forms.forEach((f) => Object.entries(utm).forEach(([k, v]) => { (f.elements.named
 // ---- Sticky bar: after the first result, while the inline form is off screen, until a lead is sent.
 let inlineOnScreen = false;
 let sent = false;
-const syncSticky = () => { sticky.hidden = result.hidden || inlineOnScreen || sent; };
-new IntersectionObserver(([e]) => { inlineOnScreen = e.isIntersecting; syncSticky(); }).observe(inline);
-new MutationObserver(() => { syncSticky(); syncFooter(); }).observe(result, { attributes: true, attributeFilter: ['hidden'] }); // all picks removed
-q('a', sticky).addEventListener('click', (e) => {
-  e.preventDefault();
+// The error pages (/chyba-*) have only the footer form: set up what exists, submit handling below always attaches.
+const hasTool = !!(inline && result && sticky);
+const syncSticky = () => { if (hasTool) sticky.hidden = result.hidden || inlineOnScreen || sent; };
+const goToInline = () => {
   inline.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   q<HTMLInputElement>('input[name="email"]', inline).focus({ preventScroll: true });
-});
+};
+if (hasTool) {
+  new IntersectionObserver(([e]) => { inlineOnScreen = e.isIntersecting; syncSticky(); }).observe(inline);
+  new MutationObserver(() => { syncSticky(); syncFooter(); }).observe(result, { attributes: true, attributeFilter: ['hidden'] }); // all picks removed
+  q('a', sticky).addEventListener('click', (e) => { e.preventDefault(); goToInline(); });
+  // "Poslat plán" in "Co vám přijde e-mailem" (page.md §4): inline form if a result is shown, else the href goes to Step A.
+  document.querySelectorAll<HTMLAnchorElement>('a[data-cta="plan"]').forEach((a) => a.addEventListener('click', (e) => {
+    if (!result.hidden) { e.preventDefault(); goToInline(); }
+  }));
+}
 
 // ---- Final form says what the visitor picked. tool:result fires on every slider frame: write only on change.
 const footH = q('[data-lead-h]', footer);
@@ -56,13 +64,15 @@ function onResult(sel: Selection) {
 }
 // Picks removed again (result block hidden): back to the S&P 500 fallback ask.
 function syncFooter() {
-  if (!result.hidden) return;
+  if (!hasTool || !result.hidden) return;
   setText(footH, footDefault[0]);
   setText(footP, footDefault[1]);
 }
-window.addEventListener('tool:result', ((e: CustomEvent<Selection>) => onResult(e.detail)) as EventListener);
-// tool.ts runs first and may already have fired (ad B preselects VOO): catch up from the form fields it filled.
-if (!result.hidden) onResult(selectionOf(inline));
+if (hasTool) {
+  window.addEventListener('tool:result', ((e: CustomEvent<Selection>) => onResult(e.detail)) as EventListener);
+  // tool.ts runs first and may already have fired (ad B preselects VOO): catch up from the form fields it filled.
+  if (!result.hidden) onResult(selectionOf(inline));
+}
 
 // ---- Form states
 const status = (f: HTMLFormElement) => q('[data-status]', f);
