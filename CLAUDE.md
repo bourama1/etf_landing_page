@@ -58,7 +58,8 @@ thank-you, ads, section order, brand, visuals, stack, tracking).
 
 **Phase 1 — Data.** ✅ Done: `data/` (see Data rules), decisions in `docs/decisions.md` §14.
 
-**Phase 2 — Copy.** Write all Czech page copy and both ads into `content/` before building UI. ✋ Review.
+**Phase 2 — Copy.** ✅ Done: `content/` (page, ads, email, voice-of-customer), decisions §14 #8–10. Phase 3 must
+reproduce `content/calc-examples.mjs` in the tested calculator, and fill `{…}` placeholders from `data/` only.
 
 **Phase 3 — Build.** Page, interactive element, form, thank-you state, legal pages.
 
@@ -113,8 +114,13 @@ Overrides (these win over plugin defaults):
 - Check the date printed *inside* every official document (XTB's current URL served a 2021 table) and check every
   factsheet/page against the expected ISIN (a guessed Vanguard page ID opened a different fund).
 - Blocked to automated fetches: EUR-Lex (use a mirror, cite EUR-Lex), iShares UK (use blackrock.com factsheet PDFs),
-  IBKR, Schwab pages, trading212.com (use helpcentre.trading212.com), ČS/Erste KIDs (ask Matěj to download).
+  IBKR, Schwab pages, trading212.com (use helpcentre.trading212.com), ČS/Erste KIDs (ask Matěj to download), Reddit
+  (403; pullpush 429). WordPress blogs (Finhacker): `<article-url>/feed/` returns comments with dates.
 - After editing `data/etfs.json` run `node data/validate.mjs`; it must print `OK`. `--isin <cusip>` derives a US ISIN.
+- ZDP Part Two (§ 17–21a, incl. § 20b) is corporate tax: check the part heading before citing a §. Individuals'
+  foreign dividends: § 8(4), § 8(8) (optional 15 % base, § 16a); they count toward § 38g(2)'s 20 000 Kč.
+- A 404 on a guessed document URL proves nothing; record "not determined". KID URL patterns: `data/sources.md` §8.
+- EUR/CZK: ČNB API `exrates/daily` has no CORS → fetch at build into `data/fx.json`, daily rebuild (decisions §14 #10).
 - Third-party PDFs Matěj downloads into the repo root are not committed; cite their public URL (verify with `cmp`).
 
 ## Copy & design rules
@@ -129,6 +135,8 @@ Overrides (these win over plugin defaults):
   ticker pair, Archivo, semantic colour tokens). Load `frontend-design` when building.
 - Trust signals that are honest: data sources, dates, "nejsme broker, nic neprodáváme" (if true), no fake
   testimonials, no fake counters ("1 248 lidí si stáhlo…"), no fake urgency.
+- No popularity or "every broker" claims without data ("nejčastější", "u každého brokera"). A rule quoted from one
+  broker is attributed to that broker. Fio "nenabízí" ETFs: say "u Fio koupit jde", never "Fio prodává".
 - Accessibility basics: contrast AA, tap targets ≥ 44 px, labels on inputs, works without JS for the core message.
 
 ## Legal basics (needed for "launch ads tomorrow")
@@ -183,7 +191,9 @@ Events (names are a suggestion; keep them consistent and documented in README):
   concept. Otherwise pick a sensible default and note it in `docs/decisions.md`.
 - Remind me at the end of each session to run `/export ai-log/YYYY-MM-DD-<phase>.md` (it exports the whole
   conversation, not a delta; re-export overwrites). Prefer one session per phase.
-- Env: Windows; no Python; Node v26 is installed. Use Git Bash/PowerShell.
+- Env: Windows; no Python (`python -` hangs); Node v26 is installed. Use Git Bash/PowerShell.
+  Czech text: `pdftotext -raw -enc UTF-8` + `LC_ALL=C.UTF-8`; search large Czech text with Node, not UTF-8 grep
+  (slow). Write scripts/long Czech text with the Write/Edit tools, not heredocs (quoting and `\s` escapes break).
 - README language: Czech (the reviewer writes Slovak; Czech is fine). Code, comments and commit messages: English.
 
 ## Repo layout (target)

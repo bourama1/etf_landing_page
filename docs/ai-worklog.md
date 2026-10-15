@@ -311,3 +311,4 @@ because this question needed the whole act, not one grepped paragraph. The indiv
 § 16a. The citation was corrected in sources.md, NOTES.md, product-marketing.md, page.md (2×) and email.md (2×).
 The e-mail's claim that dividends "patří do samostatného základu" was also wrong (it's an option) and was
 rewritten. The conclusions built on it (≈ 15 % either way, distributing Irish is the worst) still hold.
+- 2026-10-15 — `claude-md-management:revise-claude-md`: folded Phase 2 learnings into CLAUDE.md (Phase 2 done + hand-off, ZDP part/§ 8 gotcha, 404 ≠ absence, ČNB no-CORS, Reddit/WordPress feeds, Czech-text shell quirks, claim-attribution copy rule). Approved by Matěj.
