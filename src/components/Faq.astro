@@ -1,8 +1,8 @@
 ---
-import { US, byIsin, fmtPct, fmtPctRange, SOURCES_URL } from '../lib/data.ts';
+import { US, byIsin, fmtTer, fmtTerRange, SOURCES_URL } from '../lib/data.ts';
 
 const voo = US.find((u) => u.ticker === 'VOO')!;
-const sp500Ter = fmtPctRange(voo.twins!.map((i) => byIsin.get(i)!.ter_pct));
+const sp500Ter = fmtTerRange(voo.twins!.map((i) => byIsin.get(i)!.ter_pct));
 ---
 
 <h2>Časté otázky</h2>
@@ -38,7 +38,7 @@ const sp500Ter = fmtPctRange(voo.twins!.map((i) => byIsin.get(i)!.ter_pct));
 </details>
 <details>
   <summary>Je evropská verze dražší než VOO?</summary>
-  <p>U S&amp;P 500 mají evropské fondy TER {sp500Ter} ročně, VOO {fmtPct(voo.ter_pct)}. U fondů se stejným indexem je
+  <p>U S&amp;P 500 mají evropské fondy TER {sp500Ter} ročně, VOO {fmtTer(voo.ter_pct)}. U fondů se stejným indexem je
     rozdíl malý. Víc rozhoduje, kolik zaplatíte brokerovi a za směnu měny.</p>
 </details>
 <details>

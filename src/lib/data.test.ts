@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fmtPct, fmtCzk, fmtDate, fmtPctRange, fmtCzkRange } from './data.ts';
+import { fmtPct, fmtCzk, fmtDate, fmtPctRange, fmtCzkRange, fmtTer, fmtTerRange } from './data.ts';
 
 const S = ' '; // non-breaking space, as Intl cs-CZ and fmtPct emit
 
@@ -14,4 +14,12 @@ test('ranges use an en dash and collapse when equal', () => {
   assert.equal(fmtPctRange([0.07, 0.03, 0.07]), `0,03–0,07${S}%`);
   assert.equal(fmtPctRange([0.3, 0.3]), `0,3${S}%`);
   assert.equal(fmtCzkRange(272000, 339000), `272${S}000–339${S}000${S}Kč`);
+});
+
+test('TER always has at least two decimals', () => {
+  assert.equal(fmtTer(0.3), `0,30${S}%`);
+  assert.equal(fmtTer(0.07), `0,07${S}%`);
+  assert.equal(fmtTer(0.0945), `0,0945${S}%`);
+  assert.equal(fmtTerRange([0.07, 0.03]), `0,03–0,07${S}%`);
+  assert.equal(fmtTerRange([0.3, 0.3]), `0,30${S}%`);
 });

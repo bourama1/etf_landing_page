@@ -29,17 +29,23 @@ const num = new Intl.NumberFormat('cs-CZ', { maximumFractionDigits: 4 });
 export const fmtNum = (n: number) => num.format(n);
 export const fmtPct = (n: number) => `${num.format(n)}${NBSP}%`;
 export const fmtCzk = (n: number) => `${num.format(Math.round(n))}${NBSP}Kč`;
-export const fmtPctRange = (xs: number[]) => {
+// TER is always written with two decimals, as issuers and page.md do ("0,30 %").
+const ter = new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+export const fmtTer = (n: number) => `${ter.format(n)}${NBSP}%`;
+const span = (xs: number[], nf: Intl.NumberFormat) => {
   const lo = Math.min(...xs), hi = Math.max(...xs);
-  return lo === hi ? fmtPct(hi) : `${num.format(lo)}–${fmtPct(hi)}`;
+  return lo === hi ? `${nf.format(hi)}${NBSP}%` : `${nf.format(lo)}–${nf.format(hi)}${NBSP}%`;
 };
+export const fmtPctRange = (xs: number[]) => span(xs, num);
+export const fmtTerRange = (xs: number[]) => span(xs, ter);
 export const fmtCzkRange = (lo: number, hi: number) => `${num.format(Math.round(lo))}–${fmtCzk(hi)}`;
-// Public list of every source; the repo is the project's home.
-export const SOURCES_URL = 'https://github.com/bourama1/etf_landing_page/blob/master/data/sources.md';
-export const fmtDate =(iso: string) => {
+export const fmtDate = (iso: string) => {
   const [y, m, d] = iso.split('-').map(Number);
   return `${d}. ${m}. ${y}`;
 };
+
+// Public list of every source; the repo is the project's home.
+export const SOURCES_URL = 'https://github.com/bourama1/etf_landing_page/blob/master/data/sources.md';
 
 const listing = (f: Fund, exchange: string, currency?: string) =>
   f.listings.find((l) => l.exchange.includes(exchange) && (currency == null || l.currency === currency));

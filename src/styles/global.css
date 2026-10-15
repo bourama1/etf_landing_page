@@ -127,6 +127,8 @@ details summary { min-height: 44px; display: flex; align-items: center; cursor: 
 details.how { margin: 0.5rem 0 1rem; }
 
 .result { border: 2px solid var(--ink); border-radius: 0; padding: 1rem; margin-top: 2.5rem; }
+/* Legal call-out (art. 21 objection shown separately). */
+.box { border: 2px solid var(--ink); padding: 1rem; margin: 1.5rem 0; }
 
 /* Lead form */
 .lead-form { margin-top: 1.5rem; }

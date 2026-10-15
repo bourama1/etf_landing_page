@@ -1,6 +1,6 @@
 ---
 // Shown instead of the tool when JS is off (page.md §9). Rows and order come from buildPlan (decisions §15 #6).
-import { US_TICKERS, FX, fmtPct, fmtDate } from '../lib/data.ts';
+import { US_TICKERS, FX, fmtTer, fmtDate } from '../lib/data.ts';
 import { buildPlan } from '../lib/plan.ts';
 import { parseSelection } from '../lib/selection.ts';
 
@@ -22,7 +22,7 @@ const rows = plan.groups.flatMap((g) => g.twins.map((t) => ({ us: `${g.picks.joi
             <td>{us}</td>
             <th scope="row" class="ticker">{t.xetra}</th>
             <td>{t.name}</td>
-            <td class="num">{fmtPct(t.terPct)}</td>
+            <td class="num">{fmtTer(t.terPct)}</td>
             <td>{t.distribution === 'acc' ? 'akumulační' : 'distribuční'}</td>
             <td>{t.asOf ? `${t.issuer}, ${fmtDate(t.asOf)}` : t.issuer}</td>
           </tr>

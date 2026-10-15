@@ -53,3 +53,9 @@ test('computed fee paragraphs (Fio render)', () => {
   assert.ok(!html.includes('nejvyšší z vašich dvojčat') && !html.includes('Pořadí v tabulce'));
   assert.ok(!render('t=VOO&b=xtb').html.includes('Fio kurzovou přirážku nezveřejňuje'));
 });
+
+test('TER is written with two decimals (table and fee line)', () => {
+  const { html } = render('t=QQQ');
+  assert.ok(html.includes('TER 0,30 % ročně'));
+  assert.ok(!html.includes('0,3 %'));
+});

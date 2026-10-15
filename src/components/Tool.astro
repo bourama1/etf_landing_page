@@ -19,6 +19,7 @@ import { buildPlan } from '../lib/plan.ts';
 import { parseSelection, RANGES } from '../lib/selection.ts';
 import { roundK } from '../lib/fees.ts';
 
+// Bank ranges use the same funds as compare() (those with an ongoing charge).
 // Default view = no picks → S&P 500 twins, broker "Nevím", slider defaults (decisions §15 #2, #3, #8).
 const plan = buildPlan(parseSelection(new URLSearchParams(''), US_TICKERS), FX);
 const c = plan.fees.compare;
@@ -28,6 +29,7 @@ const fxBroker = BROKERS.reduce((a, b) => ((b.fx_pct ?? 0) > (a.fx_pct ?? 0) ? b
 const dateOr = (d: string | null) => (d ? ` ${fmtDate(d)}` : '');
 const brokerLabels: Record<string, string> = { xtb: 'XTB', t212: 'Trading 212', fio: 'Fio', cs: 'Česká spořitelna' };
 const brokerShort: Record<string, string> = { ...brokerLabels, cs: 'ČS' };
+const short = (b: { id: string; name: string }) => brokerShort[b.id] ?? b.name;
 const [mMin, mMax, mStep, mDef] = RANGES.monthly;
 const [yMin, yMax, yStep, yDef] = RANGES.years;
 const [rMin, rMax, rStep, rDef] = RANGES.returnPct;
@@ -88,18 +90,18 @@ const trust = 'Nejsme broker ani banka a nic neprodáváme. U každého čísla 
     <p class="src">
       Zdroj: KID fondů {kidBanks.map((b, i) => <>{i > 0 && ' a '}{b.name} ({fmtDate(b.kid_date!)})</>)};
       ETF <span data-ter-ticker>{terTwin.xetra}</span>, factsheet <span data-ter-issuer>{terTwin.issuer}</span>, stav k <span data-ter-asof>{fmtDate(terTwin.asOf!)}</span>;
-      poplatky brokera: <span data-broker-source>ceník {brokerShort[fxBroker.id]}{fxBroker.as_of && `, stav k ${fmtDate(fxBroker.as_of)}`}</span>.
+      poplatky brokera: <span data-broker-source>ceník {short(fxBroker)}{fxBroker.as_of && `, stav k ${fmtDate(fxBroker.as_of)}`}</span>.
       <a href="#jak-pocitame">Jak počítáme</a>
     </p>
     <details id="jak-pocitame" class="how">
       <summary>Jak počítáme</summary>
       <p>Každý měsíc vložíte stejnou částku. U bankovního fondu z ní odečteme vstupní poplatek
-        ({fmtPctRange(BANKS.map((b) => b.entry_max_pct))}, maximum podle KID) a každý rok průběžné náklady
+        ({fmtPctRange(kidBanks.map((b) => b.entry_max_pct))}, maximum podle KID) a každý rok průběžné náklady
         ({fmtPctRange(kidBanks.map((b) => b.ongoing_pct!))}). U ETF odečteme poplatek fondu (TER), poplatek za obchod a
         směnu měny při nákupu i prodeji. Nepočítáme transakční náklady fondů, rozpětí cen na burze ani daně. Rozdíl je to,
         o kolik méně budete mít na konci proti investici bez poplatků.</p>
       <p class="src">Zdroje: {kidBanks.map((b) => `KID ${b.name} (${fmtDate(b.kid_date!)})`).join(', ')}, ceníky brokerů
-        ({BROKERS.map((b) => `${brokerShort[b.id]}${dateOr(b.as_of)}`).join(', ')}), factsheet fondu
+        ({BROKERS.map((b) => `${short(b)}${dateOr(b.as_of)}`).join(', ')}), factsheet fondu
         <span data-ter-ticker>{terTwin.xetra}</span>.</p>
     </details>
     <button type="button" class="btn btn-quiet" data-next="c">Ještě jedno upřesnění</button>

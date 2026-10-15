@@ -1,5 +1,5 @@
 // Plan e-mail from content/email.md (approved copy, Top + 1-5 + Footer). One block list renders to HTML and plain text.
-import { BANKS, BROKERS, fmtCzk, fmtDate, fmtNum, fmtPct } from './data.ts';
+import { BANKS, BROKERS, fmtCzk, fmtDate, fmtNum, fmtPct, fmtTer } from './data.ts';
 import { roundK } from './fees.ts';
 import type { Plan } from './plan.ts';
 import { toParams } from './selection.ts';
@@ -44,7 +44,7 @@ function groupBlocks(plan: Plan): Block[] {
         { k: 'p', s: `Evropské ETF se stejným indexem (${g.indexName}) jsme nenašli. Nejbližší dostupné jsou fondy na ${g.twins[0]?.indexName ?? 'S&P 500'}. Jde o jiný index, jen velké firmy.` }];
     const out: Block[] = [...head, {
       k: 'table', head: ['Fond', 'ISIN', 'Ticker', 'TER ročně', 'Dividendy', 'Měna fondu', 'Zdroj, stav k'],
-      rows: g.twins.map((t) => [t.name, t.isin, `${t.xetra} (Xetra, EUR)${t.london ? ` · ${t.london} (Londýn, USD)` : ''}`, fmtPct(t.terPct),
+      rows: g.twins.map((t) => [t.name, t.isin, `${t.xetra} (Xetra, EUR)${t.london ? ` · ${t.london} (Londýn, USD)` : ''}`, fmtTer(t.terPct),
         t.distribution === 'acc' ? 'akumulační' : 'distribuční', t.fundCurrency,
         `[${t.issuer}${t.asOf ? `, ${fmtDate(t.asOf)}` : ''}](${t.sourceUrl})`]),
     }, { k: 'list', mark: '•', items: [
@@ -81,7 +81,7 @@ function feeBlocks(plan: Plan, sel: Selection): Block[] {
     { k: 'p', s: 'Co je v čísle:' },
     { k: 'list', mark: '•', items: [
       `**Bankovní fond:** vstupní poplatek ${pctRange(Math.min(...entry), Math.max(...entry))} z každé platby (maximum podle KID, banka může dát slevu) a průběžné náklady ${pctRange(Math.min(...ongoing), Math.max(...ongoing))} ročně. Zdroj: ${banks.map((b) => `KID ${b.name} (${fmtDate(b.kid_date!)})`).join(', ')}.`,
-      `**ETF:** TER ${fmtPct(f.terPct)} ročně, poplatek za obchod a směna měny: ${broker}.`,
+      `**ETF:** TER ${fmtTer(f.terPct)} ročně, poplatek za obchod a směna měny: ${broker}.`,
       ...(sel.broker === 'fio' ? ['Fio kurzovou přirážku nezveřejňuje, v čísle je jen poplatek za obchod.'] : []),
       'Nepočítáme transakční náklady fondů, rozpětí cen na burze ani daně.'] },
     { k: 'p', s: `Na co si dát pozor u malých částek: pevný poplatek za obchod může být v procentech vyšší než vstupní poplatek bankovního fondu. Třeba u Fio stojí nákup na Xetře do ${fmtNum(tier.up_to_eur!)} EUR ${fmtNum(tier.fee_eur!)} EUR, při nákupu za ${eg} EUR je to ${fmtPct((tier.fee_eur! / eg) * 100)}. Zdroj: Fio, Ceník základních služeb (od ${fmtDate(fio.as_of!)}).` },
