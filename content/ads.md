@@ -140,7 +140,7 @@ Learn More (localised by Meta).
 
 - Ad B names no bank or fund, neither on the image nor in the primary text. The full source (KB Portfolio –
   Akciových indexů – Exclusive, KID 24. 4. 2026) is on the landing page (Matěj, 2026-10-15; decisions.md §14 #9).
-- `<LIVE_URL>` is filled after deploy (Phase 5).
+- `<LIVE_URL>` = https://etf-landing-page-sigma.vercel.app; final assets with full URLs in `ads/ad-a/copy.md` and `ads/ad-b/copy.md` (Phase 6).
 
 ## Measured lengths
 
