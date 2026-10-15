@@ -4645,3 +4645,9 @@ without a new IP (help 5740111683858): added to the launch checklist. Vercel def
 **Not fixed, on purpose:** `/plan` `noindex` (Lighthouse SEO 60) is deliberate; `/chyba-formulare` CLS 0.029 (under
 0.1); ad A showing the bank-fund result under the chips before a pick (approved structure; A/B idea);
 `scripts/screenshots.mjs` duplicates qa-live's page scan (`/ponytail-review` #3, nice-to-have).
+
+**Update (Matěj, 2026-10-15):** the Vercel Deploy Hook could not be created on this project ("not in free Vercel").
+Vercel's docs say Hobby allows 5 hooks per project (docs/deploy-hooks, Limits), so the cause is unconfirmed; recorded
+as such. The workflow's `schedule` is commented out so it doesn't fail every weekday without the secret, and the
+daily rebuild is a pre-launch item in `docs/readme-drafts/launch-checklist.md`. Until then each deploy fetches the
+ČNB rate and the page shows its date.

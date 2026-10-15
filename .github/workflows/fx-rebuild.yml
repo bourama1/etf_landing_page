@@ -1,9 +1,11 @@
 # Daily rebuild so data/fx.json (fetched at build by scripts/fetch-fx.mjs) carries ČNB's latest EUR rate (decisions §14 #10).
-# ČNB publishes "každý pracovní den kolem 14.30" (cnb.cz, kurzy devizového trhu); 15:17 UTC is after that in CET and CEST.
+# Not active yet: no Vercel Deploy Hook could be created on this project (Matěj, 2026-10-15). Go-live: create the hook,
+# add it as the VERCEL_DEPLOY_HOOK secret and restore the schedule below (docs/readme-drafts/launch-checklist.md).
+# Until then every deploy (each push) fetches the current rate, and the page shows the date of the rate it uses.
 name: FX rebuild
 on:
-  schedule:
-    - cron: '17 15 * * 1-5' # off the busy :00, when GitHub delays or drops scheduled runs
+  # schedule:
+  #   - cron: '17 15 * * 1-5' # ČNB publishes "každý pracovní den kolem 14.30"; 15:17 UTC is after that in CET and CEST
   workflow_dispatch:
 jobs:
   redeploy:

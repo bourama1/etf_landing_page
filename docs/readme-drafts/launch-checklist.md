@@ -56,6 +56,13 @@ pustit nejde.
 
 ## 2. Těsně před spuštěním
 
+- [ ] **Denní aktualizace kurzu ČNB.** Na tomto projektu Vercel se Deploy Hook vytvořit nepodařilo (Matěj,
+  15. 10. 2026), takže denní přestavba neběží. Kurz EUR/CZK se teď stáhne při každém nasazení (každý push) a stránka
+  ukazuje, ke kterému dni platí („kurz ČNB k …“). Před spuštěním: vytvořit Deploy Hook (Vercel → Settings → Git →
+  Deploy Hooks; podle dokumentace jich Hobby i Pro mají až 5 na projekt,
+  [Vercel](https://vercel.com/docs/deploy-hooks#limits)), uložit ho jako GitHub secret `VERCEL_DEPLOY_HOOK` a
+  v `.github/workflows/fx-rebuild.yml` vrátit řádky `schedule`. Ověřit ručním spuštěním (Actions → FX rebuild →
+  Run workflow) a druhý den datum kurzu na stránce.
 - [ ] **Vymazat testovací data v Umami.** Živé testy posílaly skutečné kampaňové UTM (`etf_dvojce_2026q4`).
   Umami umí smazat nasbíraná data a ponechat nastavení webu
   ([Reset website analytics](https://docs.umami.is/docs/api-reference/reset-website)); jinak report filtrovat
@@ -78,7 +85,7 @@ pustit nejde.
   pravidlo, nejvýš 10minutové okno;
   [Vercel](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting)). Mobilní operátoři sdílejí IP mezi
   zákazníky (CGNAT); po spuštění sledovat počet odpovědí 429 ve Firewall přehledu.
-- **Denní přestavba kvůli kurzu ČNB** (`.github/workflows/fx-rebuild.yml`): GitHub v public repozitáři vypne
+- **Denní přestavba kvůli kurzu ČNB** (`.github/workflows/fx-rebuild.yml`, až bude zapnutá): GitHub v public repozitáři vypne
   plánované workflow po 60 dnech bez aktivity
   ([GitHub Docs](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)).
   Když se v repozitáři dva měsíce nic neděje, workflow znovu zapnout v záložce Actions. Když build kurz nestáhne,
