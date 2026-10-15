@@ -5,7 +5,8 @@
 // the real handler in Brevo dry-run. Writes docs/funnel-check.log; exits 1 on any mismatch.
 // Run: node scripts/funnel-check.mjs   (needs `npx playwright install chromium` once)
 // Live: LIVE_URL=https://….vercel.app UMAMI_WEBSITE_ID=<id> node scripts/funnel-check.mjs — no build, no interception:
-// the events really go to Umami (check them in its Realtime view) and every send must be stored. Umami answers bots
+// the events really go to Umami (check them in its Realtime view) and every send must be stored. Forms are sent with the
+// honeypot filled, so the real /api/lead answers ok without storing a contact or sending an e-mail. Umami answers bots
 // (incl. the "HeadlessChrome" user agent) with 200 {"beep":"boop"} and stores nothing, so live runs use a phone UA.
 import { createServer } from 'node:http';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -72,6 +73,8 @@ async function run(label, path, steps) {
   page.on('pageerror', (e) => problems.push(`${label}: pageerror ${e.message}`));
   lines.push(`--- ${label}: ${path}`);
   await page.goto(base + path);
+  // Live: real Brevo is behind /api/lead. A filled honeypot gets the same 2xx with no contact stored and no e-mail sent.
+  if (LIVE) await page.evaluate(() => document.querySelectorAll('input[name="fld_q8"]').forEach((i) => { i.value = 'funnel-check'; }));
   await page.waitForTimeout(800);
   await steps(page, () => scriptLoaded);
   await page.waitForTimeout(800);
