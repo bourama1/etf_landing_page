@@ -4787,3 +4787,28 @@ and the agent does not edit CLAUDE.md on a subagent's suggestion).
 faux-bold fallback before Archivo loads → stands (measured CLS ≈ 0.001); no-JS 429 page → accepted platform limit;
 live funnel check skipping real Brevo → ruling stands, covered by the manual inbox test; 405/429 as "blocked" in
 check-links → stands, hand-checked; read-then-write race → existing `shortcut:`; binary artefacts → not reviewed.
+
+---
+
+## 2026-10-15 — Phase 6: ads export and README (Claude Code, Opus 5.5)
+
+**Asked (Matěj):** "is there anything else we can do before turning that project in? Also make README for project
+according to the email with the job descriptions" (the brief, quoted in full).
+
+**Gap found:** the brief requires both ad versions in the repo; they existed only as copy in `content/ads.md`.
+**Ads:** `ads/src/ads.html` (same tokens and fonts as the page) rendered by `ads/render.mjs` (Playwright) into
+`ads/ad-{a,b}/story-1080x1920.png` and `feed-1080x1350.png`, plus `copy.md` per ad with the approved text and the
+live URL with UTMs. Numbers re-checked with `node content/calc-examples.mjs` (272 000 / 22 000 Kč); bars to scale.
+Caught: the first render pushed the flap tiles out of the 9:16 frame (the script's overflow check failed, layout
+stacked), and "5 %" broke across lines (non-breaking spaces).
+
+**README:** written in Czech from `docs/decisions.md`, `docs/readme-drafts/*`, `data/benchmarks.md`, this worklog
+and the QA reports, covering every point of the brief and the e-mail (target group, offer, ask moment, section
+order, both ads, expected conversion with sources, three A/B hypotheses ranked, AI workflow with instructions,
+checks and mistakes, decisions on unclear points, what is missing, launch checklist). Every path in it was checked
+by script. Corrections caught in the agent's own draft: JS size quoted from Phase 4 (14,5 kB) instead of the
+current `npm run size` (16,7 kB); the `brainstorming` skill listed for Phase 0 although the worklog shows it was
+not loaded; a typo in the table of contents.
+
+**Left for Matěj:** the Umami funnel screenshot (`docs/umami-funnel.png`, referenced in README §6), the Phase 5/6
+conversation export into `ai-log/`, and `CLAUDE.md:123` ("daily rebuild").
