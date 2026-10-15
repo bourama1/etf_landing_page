@@ -1,0 +1,89 @@
+---
+// Privacy notice under GDPR art. 13, from data/sources.md §9 (my reading of the statute; a lawyer confirms before launch).
+// Phase 4 adds the analytics paragraph.
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base
+  title="Zásady ochrany osobních údajů | ETF Dvojče"
+  description="Jaké osobní údaje ETF Dvojče zpracovává, proč, jak dlouho a jaká máte práva."
+>
+  <main class="page legal">
+    <p class="brand"><a href="/">ETF Dvojče</a></p>
+    <h1>Zásady ochrany osobních údajů</h1>
+    <p>Tady najdete, co se děje s vaším e-mailem a dalšími údaji, když si od nás necháte poslat plán. Informace vám dáváme
+      podle čl. 13 nařízení (EU) 2016/679 (GDPR).</p>
+
+    <h2>Kdo vaše údaje zpracovává</h2>
+    <p>Správcem je <span class="todo">[DOPLNIT: jméno, IČO, sídlo, e-mail]</span> (čl. 13 odst. 1 písm. a) GDPR).
+      Na tento e-mail nám můžete psát ve všech věcech kolem vašich údajů.</p>
+
+    <h2>Jaké údaje a proč</h2>
+    <h3>Poslání plánu</h3>
+    <p>Váš e-mail použijeme, abychom vám poslali plán, o který jste si řekli. Právní základ je čl. 6 odst. 1 písm. b) GDPR:
+      plán posíláme na vaši žádost a bez e-mailu to nejde.</p>
+    <p>E-mail nám dáváte dobrovolně. Bez něj vám ale plán poslat nemůžeme (čl. 13 odst. 2 písm. e) GDPR).</p>
+
+    <h3>Váš výběr a odkud jste přišli</h3>
+    <p>K e-mailu uložíme, co jste nastavili v nástroji (vybraná ETF, částku, dobu, předpokládaný výnos, brokera a filtr
+      dividend), parametry odkazu, přes který jste přišli (UTM), a variantu reklamy. Pro poslání plánu to nutné není,
+      proto se opíráme o oprávněný zájem podle čl. 6 odst. 1 písm. f) GDPR.</p>
+    <p>Náš oprávněný zájem: vědět, která reklama přivádí zájemce o plán, neposílat vám stejný plán víckrát během 24 hodin
+      a chránit formulář před zneužitím.</p>
+
+    <h3>Novinky o ETF</h3>
+    <p>Novinky posíláme jen tehdy, když zaškrtnete políčko „Chci občas dostat novinky o ETF“. Právní základ je váš
+      souhlas podle čl. 6 odst. 1 písm. a) a čl. 7 GDPR a § 7 odst. 2 zákona č. 480/2004 Sb. Plán dostanete i bez
+      souhlasu (čl. 7 odst. 4 GDPR). Abychom souhlas uměli doložit, uložíme si, kdy a s jakým textem jste ho dali
+      (čl. 7 odst. 1 GDPR).</p>
+
+    <h2>Kdo údaje uvidí</h2>
+    <p>Údaje za nás zpracovávají tito zpracovatelé (čl. 13 odst. 1 písm. e) a čl. 28 GDPR):</p>
+    <ul>
+      <li><strong>Brevo:</strong> rozesílá e-maily a ukládá kontakt s vaším výběrem.</li>
+      <li><strong>Vercel:</strong> provozuje web a formulář a vede technické záznamy serveru.</li>
+    </ul>
+    <p>Místo zpracování a případné předání mimo EU (čl. 13 odst. 1 písm. f) GDPR):
+      <span class="todo">[DOPLNIT: ověřit místo zpracování a předávání mimo EU]</span></p>
+
+    <h2>Jak dlouho údaje držíme</h2>
+    <p>Podle čl. 13 odst. 2 písm. a) GDPR: <span class="todo">[DOPLNIT: potvrdit lhůty]</span></p>
+    <ul>
+      <li>Kontakt bez souhlasu s novinkami smažeme 12 měsíců po vaší poslední žádosti o plán.</li>
+      <li>Se souhlasem s novinkami údaje držíme, dokud se neodhlásíte. Záznam o souhlasu pak uchováme ještě 3 roky
+        jako doklad.</li>
+    </ul>
+
+    <h2>Vaše práva</h2>
+    <p>Můžete po nás chtít (čl. 13 odst. 2 písm. b) GDPR):</p>
+    <ul>
+      <li>přístup k údajům, které o vás máme (čl. 15 GDPR),</li>
+      <li>opravu nepřesných údajů (čl. 16 GDPR),</li>
+      <li>výmaz údajů (čl. 17 GDPR),</li>
+      <li>omezení zpracování (čl. 18 GDPR),</li>
+      <li>přenos údajů, které zpracováváme kvůli plánu nebo na základě souhlasu (čl. 20 GDPR).</li>
+    </ul>
+    <p>Stačí napsat na e-mail správce uvedený nahoře.</p>
+
+    <div class="result">
+      <h3>Právo vznést námitku</h3>
+      <p>Proti uložení vašeho výběru, UTM parametrů a varianty reklamy (zpracování na základě oprávněného zájmu) můžete
+        kdykoli vznést námitku. Pak tyto údaje přestaneme zpracovávat, ledaže prokážeme závažné oprávněné důvody, které
+        převažují nad vašimi zájmy, nebo je potřebujeme k právním nárokům (čl. 21 odst. 1 GDPR).</p>
+    </div>
+
+    <h3>Odvolání souhlasu</h3>
+    <p>Souhlas s novinkami můžete kdykoli odvolat jedním klikem v každém e-mailu s novinkami nebo e-mailem správci.
+      Odvolání nemá vliv na zpracování před ním (čl. 7 odst. 3 GDPR).</p>
+
+    <h3>Stížnost</h3>
+    <p>Pokud myslíte, že s vašimi údaji zacházíme špatně, můžete podat stížnost u Úřadu pro ochranu osobních údajů,
+      <a href="https://uoou.gov.cz">uoou.gov.cz</a> (čl. 13 odst. 2 písm. d) a čl. 77 GDPR).</p>
+
+    <h2>Automatizované rozhodování</h2>
+    <p>Nerozhodujeme o vás automaticky a neprofilujeme vás (čl. 13 odst. 2 písm. f) a čl. 22 GDPR). Nástroj jen filtruje
+      fondy podle toho, co si sami nastavíte.</p>
+  </main>
+  <Footer />
+</Base>
