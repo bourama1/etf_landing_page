@@ -33,7 +33,7 @@ událost, ve které je znak `@`.
 
 | Událost | Kdy | Vlastnosti | Kolikrát |
 |---|---|---|---|
-| `page_view` | zobrazení stránky (vestavěný pageview Umami, posílaný ručně jako první) | URL včetně všech `utm_*`, `tag` | jednou za načtení |
+| `page_view` | zobrazení stránky (vestavěný pageview Umami, posílaný ručně jako první) | URL jen s parametry `utm_*` (ostatní, např. `fbclid`, odstraní `keepUtm()` před odesláním), `tag` | jednou za načtení |
 | `section_view` | sekce z ≥ 50 % na obrazovce, nebo zabírá ≥ 50 % obrazovky | `section`: hero, tool, why, plan, about, faq, final | jednou za sekci |
 | `interaction_start` | první vlastní akce v nástroji (čip, posuvník, přepínač, „změnit", „Vybráno: VOO · změnit") | `step` (a/b/c), `ad_variant` | jednou |
 | `step_complete` | A: vybrané ETF; B: první změna posuvníku nebo brokera; C: první volba dividend | A `tickers`; B `monthly`, `years`, `broker`; C `dividends` | jednou za krok |

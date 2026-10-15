@@ -419,3 +419,4 @@ From `docs/superpowers/plans/2026-10-15-phase4-tracking.md` (provider check with
 | 9 | Website ID only in Vercel's Production environment; without it `track()` no-ops (logs in dev) and the loader is tree-shaken | previews and local runs send nothing |
 | 10 | `magnet_opened` is not attributed to an ad | the e-mail link carries no `utm_content` (§6a); the variant is on the Brevo contact |
 | 11 | A/B arms are assigned by the ad (own `utm_content` per arm), not on the page | no flicker, no on-page randomisation; only test 1's arms exist so far |
+| 12 | Only `utm_*` leave in the URL and referrer sent to Umami (`keepUtm()` via `data-before-send`); `form_view` is sent before `form_start` when a CTA focuses the field mid-scroll | final review: Umami stores `fbclid` as a click ID; the ordered funnel lost sticky-CTA visitors |

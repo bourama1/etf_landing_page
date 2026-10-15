@@ -4438,3 +4438,51 @@ ICE scoring were not used; see below). One fresh reviewer at the end (prompt log
 
 **Not verified:** anything on a deployed URL or in a real Umami account (needs Matěj's OK for the account and the
 deploy), a real phone, whether Umami's funnel report can filter by tag.
+
+### Phase 4 final review (fresh reviewer, Opus) and fix pass
+
+**Prompt (verbatim, the `superpowers:requesting-code-review` template filled in):**
+
+<details><summary>2026-10-15 — subagent prompt: Phase 4 whole-branch review (model: opus)</summary>
+
+````text
+[Template: superpowers 6.4.1 requesting-code-review/code-reviewer.md, sections "The spec is a vision document",
+"Declined to judge", "Read-Only Review", "You Do Not Dispatch Subagents", "What to Check", "Calibration",
+"Output Format" copied unchanged. Filled-in parts:]
+
+What Was Implemented: Phase 4 (funnel tracking) of "ETF Dvojče" … track() wrapper + Umami Cloud loader
+(src/lib/track.ts), pure helpers (src/lib/funnel.ts), DOM wiring (src/scripts/funnel.ts), consent bar
+(src/scripts/analytics.ts), server-confirmed events in forms.ts and plan-page.ts, Playwright check against the real
+Umami tracker (scripts/funnel-check.mjs), privacy section, data/sources.md §10, README drafts, sample sizes,
+decisions §12/§16. Mid-run change approved by Matěj: consent bar (§ 89(3) ZEK, EDPB 2/2023 ¶33).
+
+Requirements / Plan: docs/superpowers/plans/2026-10-15-phase4-tracking.md, decisions §11/§12/§16, CLAUDE.md
+Tracking / Legal basics / Copy & design / Stack; the executor's Ruling: lines in the ledger. Plan's Review Focus 1–5
+verbatim. Also check: no e-mail or free text can reach Umami by any path (props, URL, title — the thank-you heading
+contains the e-mail); consent honoured on every page and path (withdrawal, stored yes, private mode); honeypot, a11y,
+consent text, source labels untouched; JS budget; Czech copy doesn't overclaim; README drafts state nothing
+unverified as fact.
+
+Git range 96265f0..cc5e7c0 (package .superpowers/sdd/2026-10-15-phase4-tracking/review-96265f0..cc5e7c0.diff).
+May run npm test and node scripts/funnel-check.mjs; not npm run build (prebuild rewrites data/fx.json).
+````
+
+</details>
+
+**Verdict:** "With fixes". 0 critical, 2 important, 7 minor. The reviewer read the live tracker script and confirmed
+no e-mail can reach Umami (title never changes, thank-you heading is DOM only) and that consent gating holds.
+
+**Fixed (each with a test that failed first):**
+1. `form_start` reached Umami before `form_view` on the sticky / "Poslat plán" path (the link focuses the field
+   before the scroll ends), so the ordered funnel lost exactly the main mobile path. The lead agent's own Playwright
+   log showed it and its expectations didn't check order. Order asserts added to funnel-check (RED), `form_view`
+   sent first from the focus handler (GREEN).
+2. The full URL went to Umami: Meta's `fbclid` (which Umami stores as an ad click ID) and `/plan`'s selection params;
+   the privacy page also omitted region/city and the monthly session hash (checked in Umami's docs and source code:
+   `SALT_ROTATION || 'month'`). `keepUtm()` (unit test RED→GREEN) runs in `data-before-send`; funnel-check now sends
+   an `fbclid` and asserts it never leaves (RED→GREEN); privacy page and `data/sources.md` §10 updated.
+
+**Deferred minors** (in the ledger, for Matěj): re-consent after a withdrawal before the script loaded; unbounded
+queue when an ad blocker blocks the script; the 112 px bar covers the form heading after the sticky-CTA scroll; the
+bar is last in keyboard order; "data uložená v EU" holds only if EU is picked at signup; §10 heading still says
+"decision open".
