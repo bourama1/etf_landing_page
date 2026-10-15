@@ -24,6 +24,8 @@ pustit nejde.
   [Brevo](https://help.brevo.com/hc/en-us/articles/10415456027666)) → `BREVO_SENDER_EMAIL` na této doméně →
   vlastní doménu napojit i na Vercel a změnit `SITE_URL` → znovu poslat zkušební plán na Seznam, Gmail a Outlook.
   DNS se může propisovat až 48 hodin.
+  **Ověřeno 15. 10. 2026:** zkušební plán z adresy na email.cz skončil na Seznamu ve **spamu**, na Gmailu ve
+  složce Doručené (odesílatel přepsaný na …@…brevosend.com). Screenshoty: `docs/screenshots/email-*.png`.
 - [ ] **Vercel Hobby je jen pro nekomerční použití.** „Hobby teams are restricted to non-commercial personal use
   only.“ Za komerční se počítá i „Advertising the sale of a product or service“ a každé nasazení „used for the
   purpose of financial gain of anyone involved“ ([Vercel Fair use guidelines](https://vercel.com/docs/limits/fair-use-guidelines#commercial-usage)).
