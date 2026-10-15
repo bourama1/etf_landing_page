@@ -45,3 +45,11 @@ test('Fio note only when Fio was chosen; special groups use their own copy', () 
   const vt = render('t=VT').html;
   assert.ok(vt.includes('VGLA, VGLD sledují stejný index FTSE Global All Cap') && vt.includes('18. 8. 2026') && vt.includes('VWCE, VGWL'));
 });
+
+test('computed fee paragraphs (Fio render)', () => {
+  const { html } = render('t=VOO&b=fio');
+  for (const s of ['3,95 EUR', '3,16 %', '1,65 %', '3–5 %', '1,75–2,59 %', 'Fio kurzovou přirážku nezveřejňuje',
+    'Plán vám přišel, protože jste si ho 11. 10. 2026 vyžádali na example.cz.']) assert.ok(html.includes(s), s);
+  assert.ok(!html.includes('nejvyšší z vašich dvojčat') && !html.includes('Pořadí v tabulce'));
+  assert.ok(!render('t=VOO&b=xtb').html.includes('Fio kurzovou přirážku nezveřejňuje'));
+});

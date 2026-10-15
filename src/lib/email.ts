@@ -81,7 +81,7 @@ function feeBlocks(plan: Plan, sel: Selection): Block[] {
     { k: 'p', s: 'Co je v čísle:' },
     { k: 'list', mark: '•', items: [
       `**Bankovní fond:** vstupní poplatek ${pctRange(Math.min(...entry), Math.max(...entry))} z každé platby (maximum podle KID, banka může dát slevu) a průběžné náklady ${pctRange(Math.min(...ongoing), Math.max(...ongoing))} ročně. Zdroj: ${banks.map((b) => `KID ${b.name} (${fmtDate(b.kid_date!)})`).join(', ')}.`,
-      `**ETF:** TER ${fmtPct(f.terPct)} ročně (nejvyšší z vašich dvojčat: ${f.terTicker}), poplatek za obchod a směna měny: ${broker}.`,
+      `**ETF:** TER ${fmtPct(f.terPct)} ročně, poplatek za obchod a směna měny: ${broker}.`,
       ...(sel.broker === 'fio' ? ['Fio kurzovou přirážku nezveřejňuje, v čísle je jen poplatek za obchod.'] : []),
       'Nepočítáme transakční náklady fondů, rozpětí cen na burze ani daně.'] },
     { k: 'p', s: `Na co si dát pozor u malých částek: pevný poplatek za obchod může být v procentech vyšší než vstupní poplatek bankovního fondu. Třeba u Fio stojí nákup na Xetře do ${fmtNum(tier.up_to_eur!)} EUR ${fmtNum(tier.fee_eur!)} EUR, při nákupu za ${eg} EUR je to ${fmtPct((tier.fee_eur! / eg) * 100)}. Zdroj: Fio, Ceník základních služeb (od ${fmtDate(fio.as_of!)}).` },
@@ -102,7 +102,7 @@ function blocks(plan: Plan, sel: Selection, siteUrl: string, sentOn: Date): Bloc
     { k: 'cta', s: 'Otevřít plán online', href: link },
     { k: 'p', s: 'Obsah: 1. Vaše dvojčata · 2. Akumulační, nebo distribuční? · 3. Poplatky v korunách · 4. Daně z ETF v Česku 2026 · 5. Jak fond koupit' },
     { k: 'h', s: '1. Vaše dvojčata' }, ...groupBlocks(plan),
-    { k: 'p', s: 'Pořadí v tabulce není doporučení. Toto není doporučení. Který fond koupíte a jestli vůbec, je na vás.' },
+    { k: 'p', s: 'Toto není doporučení. Který fond koupíte a jestli vůbec, je na vás.' },
     { k: 'h', s: '2. Akumulační, nebo distribuční? (pro rezidenta ČR)' },
     { k: 'p', s: 'Platí pro americké dividendy uvnitř fondu na S&P 500 a pro investora, kterému broker uplatňuje smlouvu ČR–USA.' },
     { k: 'table', head: ['', withList('Americké ETF', picks), withList('Irské akumulační', tickersOf(plan, 'acc')), withList('Irské distribuční', tickersOf(plan, 'dist'))], rows: [
@@ -134,7 +134,7 @@ function blocks(plan: Plan, sel: Selection, siteUrl: string, sentOn: Date): Bloc
       'Pokud fond nenajdete, napište brokerovi ISIN. Nabídka se u brokerů liší.'] },
     { k: 'p', s: 'Konkrétního brokera nedoporučujeme a od žádného nemáme provizi.' },
     { k: 'hr' },
-    { k: 'p', s: `Plán vám přišel, protože jste si ${pragueDate(sentOn)} vyžádali na ${new URL(siteUrl).host}. Další e-maily posíláme, jen pokud jste zaškrtli odběr novinek. [Odhlásit se]` },
+    { k: 'p', s: `Plán vám přišel, protože jste si ho ${pragueDate(sentOn)} vyžádali na ${new URL(siteUrl).host}. Další e-maily posíláme, jen pokud jste zaškrtli odběr novinek. [Odhlásit se]` },
     { k: 'p', s: 'Co jste v nástroji vybrali a z jaké reklamy jste přišli, si ukládáme, abychom poznali, které reklamy lidem pomáhají. Proti tomu můžete kdykoli vznést námitku: stačí odpovědět na tento e-mail.' },
     { k: 'p', s: `ETF Dvojče · [DOPLNIT: provozovatel, IČO, sídlo] · [Zásady ochrany osobních údajů](${siteUrl}/ochrana-osobnich-udaju/)` },
     { k: 'p', s: 'Informace slouží jen ke vzdělávání. Nejde o investiční doporučení, investiční poradenství ani daňové poradenství. Minulá výkonnost není zárukou budoucích výnosů. Hodnota investice může klesat i stoupat a nemusí se vám vrátit celá vložená částka.' },

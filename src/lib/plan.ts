@@ -55,13 +55,13 @@ export function buildPlan(sel: Selection, fx: { rate: number; validFor: string }
     });
   }
 
-  // Highest TER among shown twins; ties go to the fund first in etfs.json order (VUAA before CSPX). Without twins: the picks' own TER.
+  // Highest TER among shown twins; ties go to the fund first in etfs.json order (VUAA before CSPX).
+  // No twins shown (e.g. SCHD only): use the S&P 500 twins, as the fallback plan does. Never a US ETF's TER.
   const shownIsins = new Set(groups.flatMap((g) => g.twins.map((t) => t.isin)));
-  const pool = UCITS.filter((f) => shownIsins.has(f.isin));
-  const top = pool.length ? pool.reduce((a, b) => (b.ter_pct > a.ter_pct ? b : a)) : null;
-  const own = US.filter((u) => picks.includes(u.ticker)).reduce((a, b) => (b.ter_pct > a.ter_pct ? b : a));
-  const terPct = top?.ter_pct ?? own.ter_pct;
-  const terTicker = top ? (xetraTicker(top) ?? top.ticker) : own.ticker;
+  if (!shownIsins.size) shown(US.find((u) => u.index_key === 'sp500')!.twins).forEach((t) => shownIsins.add(t.isin));
+  const top = UCITS.filter((f) => shownIsins.has(f.isin)).reduce((a, b) => (b.ter_pct > a.ter_pct ? b : a));
+  const terPct = top.ter_pct;
+  const terTicker = xetraTicker(top) ?? top.ticker;
 
   const inp: Inputs = { monthly: sel.monthly, years: sel.years, returnPct: sel.returnPct };
   const ctx = { brokerId: sel.broker, terPct, eurCzk: fx.rate, banks: BANKS, brokers: BROKERS };

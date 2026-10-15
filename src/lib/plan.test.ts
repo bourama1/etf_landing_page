@@ -80,3 +80,11 @@ test('twin carries the London USD ticker, ISIN and source fields from etfs.json'
   assert.equal(t.asOf, '2026-09-30');
   assert.equal(t.fundCurrency, 'USD');
 });
+
+test('no-twin plan (SCHD only) prices the ETF side with the S&P 500 twins, never a US TER', () => {
+  const p = plan('t=SCHD');
+  // S&P 500 UCITS set in etfs.json: max ter_pct 0.07 (VUAA, first in file order); SCHD's own ter_pct is 0.06.
+  assert.equal(p.fees.terPct, 0.07);
+  assert.equal(p.fees.terTicker, 'VUAA');
+  assert.equal(plan('t=SCHD&d=dist').fees.terTicker, 'VUSA');
+});
