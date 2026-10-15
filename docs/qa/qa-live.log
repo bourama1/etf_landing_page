@@ -1,0 +1,22 @@
+# node scripts/qa-live.mjs https://etf-landing-page-sigma.vercel.app — 2026-10-15T13:41:18.073Z
+# device: 412×915 Android UA, 4G 150 ms / 1.6 Mbps, CPU 4×
+[ad A] LCP 896 ms · CLS 0.001 · overflow false
+[ad B] LCP 872 ms · CLS 0.001 · overflow false
+[no UTM] LCP 872 ms · CLS 0.001 · overflow false
+[/plan] LCP 1008 ms · CLS 0.001 · overflow false
+[/dekujeme] LCP 708 ms · CLS 0.004 · overflow false
+[/chyba-formulare] LCP 744 ms · CLS 0.029 · overflow false
+[/chyba-odeslani] LCP 740 ms · CLS 0.003 · overflow false
+[privacy] LCP 756 ms · CLS 0.004 · overflow false
+
+# JavaScript off
+[ad A] h1 "Broker vám nedovolí koupit VOO? Má evropské dvojče." · lead forms 2 · tables 1 · overflow false
+[ad B] h1 "Broker vám nedovolí koupit VOO? Má evropské dvojče." · lead forms 2 · tables 1 · overflow false
+[no UTM] h1 "Broker vám nedovolí koupit VOO? Má evropské dvojče." · lead forms 2 · tables 1 · overflow false
+[/plan] h1 "Váš ETF plán" · lead forms 0 · tables 0 · overflow false
+[/dekujeme] h1 "Hotovo. Plán je na cestě." · lead forms 0 · tables 0 · overflow false
+[/chyba-formulare] h1 "Tenhle e-mail nevypadá úplně správně. Zkontrolujete ho?" · lead forms 1 · tables 0 · overflow false
+[/chyba-odeslani] h1 "Plán se nepodařilo odeslat. Zkuste to prosím za chvíli znovu." · lead forms 1 · tables 0 · overflow false
+[privacy] h1 "Zásady ochrany osobních údajů" · lead forms 0 · tables 0 · overflow false
+
+All checks passed.
