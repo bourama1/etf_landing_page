@@ -4651,3 +4651,9 @@ Vercel's docs say Hobby allows 5 hooks per project (docs/deploy-hooks, Limits), 
 as such. The workflow's `schedule` is commented out so it doesn't fail every weekday without the secret, and the
 daily rebuild is a pre-launch item in `docs/readme-drafts/launch-checklist.md`. Until then each deploy fetches the
 ČNB rate and the page shows its date.
+
+**Update (Matěj, 2026-10-15): firewall rule and public repo done.** Verified live: 12 POSTs to `/api/lead` from one
+IP → 10× 400 (invalid e-mail) then 429; in the browser the JS form shows "Příliš mnoho pokusů z jednoho místa.
+Zkuste to prosím za 10 minut." (`form_error reason=rate`). The no-JS form gets Vercel's own English "Too Many
+Requests" page: Hobby's rule can only answer 429/deny/challenge, accepted. Repo public: `data/sources.md` 200; link
+check 0 broken (`docs/qa/links.log`).

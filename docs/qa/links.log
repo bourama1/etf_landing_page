@@ -1,10 +1,9 @@
-# node scripts/check-links.mjs https://etf-landing-page-sigma.vercel.app — 2026-10-15T13:43:59.841Z
+# node scripts/check-links.mjs https://etf-landing-page-sigma.vercel.app — 2026-10-15T15:45:47.561Z
 # 6 site pages crawled, 110 unique URLs checked
 
 ## Broken (0)
 
-## Blocked to scripts: check in a browser (7)
-429  https://github.com/bourama1/etf_landing_page/blob/master/data/sources.md  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+## Blocked to scripts: check in a browser (6)
 403  https://conversionxl.com/reduce-form-fields/  ← data/benchmarks.md
 403  https://newsroom.morningstar.com/news/news-details/2026/Morningstar-Reaches-New-Milestone-in-the-CRSP-Acquisition-Rebranding-CRSP-Market-Indexes-to-Morningstar-Indexes/default.aspx  ← data/etfs.json
 406  https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/factsheet/IE00BFZXGZ54_factsheet_en.pdf  ← data/etfs.json
@@ -12,17 +11,18 @@
 406  https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/factsheet/IE0032077012_factsheet_en.pdf  ← data/etfs.json
 406  https://www.invesco.com/content/dam/invesco/emea/en/product-documents/etf/share-class/kid/IE0032077012_kid_en.pdf  ← data/etfs.json
 
-## OK (103)
+## OK (104)
 200  https://etf-landing-page-sigma.vercel.app/  ← crawl, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /ochrana-osobnich-udaju/
 200  https://etf-landing-page-sigma.vercel.app/favicon.svg  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
 200  https://etf-landing-page-sigma.vercel.app/fonts/archivo-latin.woff2  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
 200  https://etf-landing-page-sigma.vercel.app/fonts/archivo-latin-ext.woff2  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
 200  https://etf-landing-page-sigma.vercel.app/fonts/archivo-wide-800.woff2  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
-200  https://etf-landing-page-sigma.vercel.app/_astro/Footer.Dp2JbHha.css  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
+200  https://etf-landing-page-sigma.vercel.app/_astro/Footer.D5DgQkjw.css  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
 200  https://etf-landing-page-sigma.vercel.app/ochrana-osobnich-udaju/  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, crawl, /ochrana-osobnich-udaju/
 200  https://etf-landing-page-sigma.vercel.app/_astro/LeadForm.astro_astro_type_script_index_0_lang.C_DSBdKl.js  ← /, /chyba-formulare/, /chyba-odeslani/
 200  https://etf-landing-page-sigma.vercel.app/_astro/Tool.astro_astro_type_script_index_0_lang.B50xJGyE.js  ← /
 200  https://etf-landing-page-sigma.vercel.app/plan-preview.png  ← /
+200  https://github.com/bourama1/etf_landing_page/blob/master/data/sources.md  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
 200  https://etf-landing-page-sigma.vercel.app/_astro/Base.astro_astro_type_script_index_0_lang.CTDQlAVw.js  ← /, /plan/?t=VOO&m=3000&y=20, /dekujeme/, /chyba-formulare/, /chyba-odeslani/, /ochrana-osobnich-udaju/
 200  https://etf-landing-page-sigma.vercel.app/_astro/index.astro_astro_type_script_index_0_lang.BmH3iCRl.js  ← /
 200  https://etf-landing-page-sigma.vercel.app/plan/?t=VOO&m=3000&y=20  ← crawl
@@ -118,5 +118,5 @@
 200  https://docs.umami.is/docs/sessions  ← data/sources.md
 
 ## Manual follow-up (2026-10-15)
-- github.com/bourama1/etf_landing_page/blob/master/data/sources.md: earlier runs got **404**; `curl https://github.com/bourama1/etf_landing_page` → 404: **the repository is private**, so the "Zdroje" link on every page is broken for visitors until Matěj makes the repo public (the brief requires a public repo anyway). The 429 above is GitHub rate-limiting repeated checks.
-- conversionxl.com, newsroom.morningstar.com, 4× invesco.com PDFs: `curl -L` with a browser user agent → 200 for all (they refuse Node's fetch, not browsers).
+- The 6 "blocked to scripts" URLs: `curl -L` with a browser user agent → 200 for all (they refuse Node's fetch, not browsers).
+- github.com/…/data/sources.md (the "Zdroje" link on every page): 404 while the repo was private; Matěj made it public, now 200.
