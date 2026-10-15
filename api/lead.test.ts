@@ -97,7 +97,7 @@ test('logs never contain the e-mail address', async () => {
   assert.ok(logs.length > 0);
   assert.ok(!logs.join('').includes('secret'));
 });
-test('no-JS form POST: 303 to /dekujeme/ or /chyba-formulare/', async () => {
+test('no-JS form POST: 303 to /dekujeme/, /chyba-formulare/ (bad e-mail) or /chyba-odeslani/ (other failures)', async () => {
   const ok = await handleLead(form('email=a%40b.cz'), deps(fake()));
   assert.equal(ok.status, 303);
   assert.equal(ok.headers.get('location'), '/dekujeme/');
@@ -105,7 +105,11 @@ test('no-JS form POST: 303 to /dekujeme/ or /chyba-formulare/', async () => {
   assert.equal(bad.status, 303);
   assert.equal(bad.headers.get('location'), '/chyba-formulare/');
   const down = await handleLead(form('email=a%40b.cz'), deps(fake(null, { send: true })));
-  assert.equal(down.headers.get('location'), '/chyba-formulare/');
+  assert.equal(down.headers.get('location'), '/chyba-odeslani/');
+  const empty = await handleLead(form('email='), deps(fake()));
+  assert.equal(empty.headers.get('location'), '/chyba-formulare/');
+  const big = await handleLead(form('email=a%40b.cz&pad=' + 'x'.repeat(11000)), deps(fake()));
+  assert.equal(big.headers.get('location'), '/chyba-odeslani/');
 });
 test('rejects non-POST (405), malformed JSON (400) and bodies over 10 kB (413)', async () => {
   assert.equal((await handleLead(new Request('http://x/api/lead'), deps(fake()))).status, 405);

@@ -18,8 +18,9 @@ export async function handleLead(req: Request, deps: Deps, env: Env = {}): Promi
   if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405, headers: { allow: 'POST' } });
   const { brevo, now, log, siteUrl } = deps;
   const wantsJson = (req.headers.get('accept') ?? '').includes('application/json');
-  const fail = (status: number, reason: 'invalid' | 'server') =>
-    wantsJson ? Response.json({ ok: false, reason }, { status }) : redirect('/chyba-formulare/');
+  // No-JS: only a rejected e-mail goes to the 'check your e-mail' page; anything else is a send failure.
+  const fail = (status: number, reason: 'invalid' | 'server', page = '/chyba-odeslani/') =>
+    wantsJson ? Response.json({ ok: false, reason }, { status }) : redirect(page);
   const ok = () => (wantsJson ? Response.json({ ok: true }) : redirect('/dekujeme/'));
 
   const text = await req.text();
@@ -38,7 +39,7 @@ export async function handleLead(req: Request, deps: Deps, env: Env = {}): Promi
   if ((body.get('fld_q8') ?? '') !== '') { log('honeypot'); return ok(); }
 
   const e = validateEmail(body.get('email'));
-  if (!e.ok) return fail(400, 'invalid');
+  if (!e.ok) return fail(400, 'invalid', '/chyba-formulare/');
   const email = e.email;
 
   const sel = parseSelection(body, US_TICKERS);
