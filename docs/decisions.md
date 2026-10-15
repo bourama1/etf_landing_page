@@ -369,3 +369,29 @@ Taken on the agent's recommendations in `data/NOTES.md`.
 | 8 | Step C "Měna fondu" filter (2026-10-15) | **Dropped.** All twins have fund currency USD, so it filtered nothing. The twin list states the trading currency instead. |
 | 9 | Name the bank fund in ad B (2026-10-15) | **No.** The ad names no bank or fund; the landing page gives the full source. |
 | 10 | EUR/CZK rate (2026-10-15, Matěj) | **ČNB API, refreshed daily.** `GET https://api.cnb.cz/cnbapi/exrates/daily?date=YYYY-MM-DD&lang=CZ` (no key; returns `validFor` and `rate`). The API sends no CORS headers (preflight 403), so the browser can't call it: the build fetches it and writes `data/fx.json`, and a daily scheduled rebuild keeps it current (Vercel cron → deploy hook, or a GitHub Actions schedule; picked in Phase 3). If the fetch fails, the build keeps the last `data/fx.json` and the page shows its date, so launch day never breaks. Page label: "kurz ČNB k {validFor}, broker může použít jiný". Used only to convert fixed EUR broker fees. |
+
+---
+
+## 15. Phase 3 build decisions (plan approved by Matěj, 2026-10-15)
+
+From `docs/superpowers/plans/2026-10-15-phase3-build.md`. #16–17 are proposals only: nothing is set up and no account is created.
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Sliders: monthly 500–30 000 Kč step 500 (default 3 000), years 1–40 (default 20), return 0–10 % step 0,5 (default 5) | page.md left the range to Phase 3; 30 000 keeps Fio under its 1 400 EUR tier at default rate but the 4,95 EUR tier is still reachable at high EUR rates |
+| 2 | ETF side uses the **highest TER** among the visitor's shown twins (VOO → 0,07 %, labelled with that fund's ticker, VUAA first on ties in data order) | never flatters the ETF; reproduces calc-examples |
+| 3 | "Nevím" = commission 0 + the **highest published FX surcharge** computed from `brokers.json` (today XTB 0,5 %) | page.md copy |
+| 4 | ČS: 0,35 % **min. 4 EUR** per buy (the Xetra rule) + custody 0,08 % p.a. added to ongoing cost | conservative and matches the "pevný poplatek" copy for ČS; the no-minimum fractional regular order (internet banking only) would make ČS cheaper at small amounts — **flagged to Matěj** |
+| 5 | XTB 0,2 % above 100 000 EUR monthly turnover ignored | `shortcut:` comment; only matters for a sale above 100 000 EUR |
+| 6 | Twin order everywhere: accumulating first, then alphabetical by Xetra ticker | page.md §9 and result example "SPYL · SXR8 · VUAA"; "Pořadí není doporučení" stays |
+| 7 | Picks sharing an index are grouped ("VOO, SPY, IVV → S&P 500") in result, thank-you table, e-mail, `/plan` | avoids three identical tables |
+| 8 | Fallback form (no picks) → plan for VOO, SPY, IVV; subject "Váš ETF plán pro S&P 500" | page.md §7, email.md subject |
+| 9 | URL / hidden-field param names: `t` (tickers, comma), `m`, `y`, `r`, `b` (`unknown`/`xtb`/`t212`/`fio`/`cs`), `d` (`acc`/`dist`/`both`) | short `/plan` links |
+| 10 | Honeypot field name `fld_q8` | meaningless to autofill (§5) |
+| 11 | `/api/lead` order: upsert contact → send e-mail → set `PLAN_SENT_AT`. Failure in step 1–2 → 502; failure in step 3 → logged, still 200 | a failed send never blocks the visitor for 24 h |
+| 12 | Newsletter consent stored as `NEWSLETTER=true` + `NEWSLETTER_CONSENT_AT` + `CONSENT_TEXT_V=1`; an unticked box never clears an earlier consent | GDPR art. 7(1) demonstrability |
+| 13 | No-JS form: server answers form-encoded POSTs with 303 → `/dekujeme/` or `/chyba-formulare/`; JSON POSTs get JSON | §4 no-JS requirement |
+| 14 | Hero variant chosen by a ≤ 300 B inline head script (`html.js`, `data-variant`) | no flash/CLS; no-JS = variant A |
+| 15 | Without `BREVO_API_KEY` the function runs in **dry-run**: logs and writes the e-mail to `.dev/last-email.html` (gitignored) | local testing, and the source of the real e-mail screenshot for section 4 |
+| 16 | Daily FX rebuild (proposal only): **GitHub Actions `schedule` → `curl -X POST` a Vercel Deploy Hook** (hook URL as a repo secret) | no extra function; Vercel cron would need a function that calls the hook anyway. Caveat: GitHub pauses schedules after 60 days without repo activity |
+| 17 | Rate limit (proposal only): (a) Vercel WAF rate-limit rule on `/api/lead` if Hobby allows it — VERIFY; (b) Upstash Redis free tier — needs an account | decisions §6a rule 5 |
