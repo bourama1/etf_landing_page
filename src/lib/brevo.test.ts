@@ -30,3 +30,11 @@ test('a Brevo error carries its code and message, with any e-mail address masked
     return true;
   });
 });
+
+test('a URL-encoded address in a Brevo error is masked too', async () => {
+  const fakeFetch = (async () => Response.json({ code: 'document_not_found', message: 'Contact a%40b.cz not found' }, { status: 400 })) as typeof fetch;
+  await assert.rejects(brevoFromEnv({ BREVO_API_KEY: 'k' }, fakeFetch).upsertContact('a@b.cz', {}, []), (e: Error) => {
+    assert.ok(!/a%40b\.cz|a@b\.cz/.test(e.message), e.message);
+    return true;
+  });
+});

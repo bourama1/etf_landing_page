@@ -146,6 +146,7 @@ legend { font-weight: 700; padding: 0; margin-bottom: 0.25rem; }
 mark { background: var(--marker); color: var(--ink); padding: 0 0.2em; font-weight: 800; }
 details summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 650; }
 /* display:flex drops the native triangle: show that the row opens. */
+details summary::-webkit-details-marker { display: none; } /* Safari draws its own triangle */
 details summary::after { content: "+"; margin-left: auto; padding-left: 1rem; font-weight: 800; }
 details[open] > summary::after { content: "−"; }
 details.how { margin: 0.5rem 0 1rem; }

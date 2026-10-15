@@ -42,7 +42,7 @@ export function brevoFromEnv(env: Record<string, string | undefined>, fetchFn: t
     if (!res.ok && !(ok404 && res.status === 404)) {
       // Brevo's own code/message says why (bad key, blocked IP, unverified sender); addresses masked for the logs.
       const b = (await res.json().catch(() => ({}))) as { code?: string; message?: string };
-      const why = `${b.code ?? ''}: ${b.message ?? ''}`.replace(/[^\s@]+@[^\s@]+/g, '<email>').slice(0, 200);
+      const why = `${b.code ?? ''}: ${b.message ?? ''}`.replace(/[^\s@]+(@|%40)[^\s@]+/gi, '<email>').slice(0, 200);
       throw new Error(`Brevo ${init.method ?? 'GET'} ${path.split('/')[1]} failed: ${res.status} ${why}`);
     }
     return res;

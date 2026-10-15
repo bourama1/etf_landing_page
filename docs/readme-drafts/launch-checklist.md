@@ -15,7 +15,7 @@ pustit nejde.
   - copy zdroje: `content/page.md:247, 254, 311`, `content/email.md:15, 186`
   - kontrola: `grep -rn "DOPLNIT" src content` nesmí nic najít.
 - [ ] **Vlastní doména a ověřený odesílatel.** Brevo neumí ověřit adresu na bezplatné doméně (gmail.com,
-  seznam.cz …) a odesílatele v transakčních e-mailech nahradí adresou `…@<id>.t-sender-sib.com`. Brevo sám to
+  seznam.cz …) a odesílatele v transakčních e-mailech nahradí adresou `…@<id>.t-sender-sib.com` (v testu 15. 10. 2026 Gmail ukázal `…@12474095.brevosend.com`, Seznam původní adresu na email.cz). Brevo sám to
   označuje za „a stopgap measure … not a permanent solution“
   ([Brevo, 13. 10. 2026](https://help.brevo.com/hc/en-us/articles/14925263522578)). Seznam vyžaduje platné SPF a
   DKIM, jinak zprávy „mohou být doručeny do složky Spam nebo zcela zahozeny“, a důrazně doporučuje DMARC

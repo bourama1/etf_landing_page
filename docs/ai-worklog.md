@@ -4687,3 +4687,103 @@ Review Focus 1 confirmed), contact deleted afterwards. Brevo account read-only c
 - `magnet_opened` in Umami Realtime: confirmed by Matěj (the agent has no Umami access).
 - Art. 21(4) objection sentence: part of every e-mail (`src/lib/email.ts:141`, asserted in `email.test.ts`); not
   visible in the cropped screenshots.
+
+### Phase 5 final review (fresh reviewer, Opus) and fix pass
+
+**Prompt (verbatim):** `.superpowers/sdd/2026-10-15-phase5-qa/review-prompt.md` is git-ignored scratch, so it is copied here.
+
+<details><summary>2026-10-15 — subagent prompt: Phase 5 whole-branch review (model: opus)</summary>
+
+````text
+You are a Senior Code Reviewer with expertise in software architecture, design patterns, and best practices. Your job is to review completed work against its plan or requirements and identify issues before they cascade.
+
+## What Was Implemented
+
+Phase 5 (Deploy + QA) of a Czech ETF lead-magnet landing page (Astro static site + one Vercel function /api/lead -> Brevo; Umami analytics behind a consent bar). In this range: track.ts fixes (re-consent after withdrawal, blocked tracker drops its queue), consent bar prepended + scroll-padding, rate-limit copy for a Vercel WAF rule (no code), Brevo setup script + attribute schema test, Brevo errors now log Brevo's code/message with addresses masked, production without BREVO_API_KEY answers 502 instead of a silent dry-run, live funnel check submits with the honeypot filled, layout-shift fixes (font fallback metrics, ad B Step A collapsed in CSS before first paint, /plan min-height), row headers in plan tables (page + e-mail), favicon, vercel.json regions fra1, FAQ +/- marker, QA scripts (scripts/qa-live.mjs, scripts/check-links.mjs), an FX rebuild workflow whose schedule is disabled (no deploy hook), docs (decisions §17, launch checklist draft, QA reports, worklog).
+
+## Requirements / Plan
+
+- Plan: docs/superpowers/plans/2026-10-15-phase5-qa.md (read its Global Constraints and Review Focus).
+- Spec: CLAUDE.md (project rules), docs/decisions.md §6a (rules for /api/lead), §16, §17.
+- Executor's rulings (deviations from the plan, each with its cost if wrong): .superpowers/sdd/2026-10-15-phase5-qa/progress.md, lines containing "Ruling:".
+
+Plan's Review Focus (check each deliberately):
+1. PLAN_SENT_AT created as a Brevo date attribute -> dedupe broken. (Live: stored as text with full time.)
+2. Brevo blocking API calls from unknown IPs -> every lead 502s.
+3. Shared mobile IPs (CGNAT) hitting the 10/10 min rate limit.
+4. Brevo click tracking rewriting the /plan link -> utm_source=email lost, magnet_opened never fires.
+5. The scheduled FX run failing silently (now disabled; check the workflow and docs say so consistently).
+
+## Git Range to Review
+
+**Base:** c91dcad
+**Head:** 418a966
+
+A trimmed diff (Lighthouse HTML, PNGs and funnel logs excluded) is at .superpowers/sdd/2026-10-15-phase5-qa/review-code.diff; commit list at .superpowers/sdd/2026-10-15-phase5-qa/review-commits.txt. You may also run:
+git diff --stat c91dcad..418a966
+git diff c91dcad..418a966 -- <path>
+Tests: npm test (node --test). Do not run scripts/funnel-check.mjs with LIVE_URL, scripts/qa-live.mjs, scripts/check-links.mjs or scripts/brevo-setup.mjs: they hit the live site or a real Brevo account. Never read .env.local.
+
+## The spec is a vision document
+
+The spec says what the software must do. It does not enumerate every input, environment, or condition the software will meet. For behavior the spec is silent on, judge by what a reasonable person using this software would expect: a reasonable person's expectation is a requirement, and a spec's silence is not permission. Grade such findings by their effect on that person, not by whether the spec mentions the trigger.
+
+## Declined to judge
+
+Before your verdict, list every behavior you considered and set aside as outside the plan or spec, one line each, with the reason. The executor rules on each line; nothing you set aside is dropped silently. An empty list means you set nothing aside.
+
+## Read-Only Review
+
+Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way. Use tools like git show, git diff, and git log to inspect history. If you need a working copy of a different revision, check it out into a separate temporary directory — never move HEAD on this checkout.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part of the diff, and never spawn another reviewer for a second opinion. If the diff feels too large for one pass, review it in passes yourself and say so in your report.
+
+## What to Check
+
+Plan alignment (matches plan; deviations justified?; all planned functionality present?). Code quality (separation of concerns, error handling, type safety, DRY without premature abstraction, edge cases). Architecture (sound design, scalability at ~300 ad clicks/day, security, integration). Testing (real behavior not mocks, edge cases, all passing). Production readiness (docs complete, no obvious bugs). Project rules from CLAUDE.md: nothing may remove tracking events, consent/GDPR text, the honeypot, server-side validation, a11y attributes or source/date labels; no e-mail address may reach logs or analytics.
+
+## Calibration
+
+Categorize issues by actual severity. Not everything is Critical. Acknowledge what was done well before listing issues. Flag significant deviations from the plan specifically; if an issue is with the plan itself, say so.
+
+## Output Format
+
+### Strengths
+### Issues
+#### Critical (Must Fix)
+#### Important (Should Fix)
+#### Minor (Nice to Have)
+(each: file:line, what's wrong, why it matters, how to fix)
+### Declined to judge
+### Recommendations
+### Assessment
+**Ready to merge?** [Yes | No | With fixes]
+**Reasoning:** [1-2 sentences]
+
+Rules: be specific (file:line), explain why, give a clear verdict, don't review code you didn't read.
+````
+
+</details>
+
+**Verdict:** "Ready to merge: Yes". 0 critical, 0 important, 5 minor. The reviewer confirmed the screenshots are
+masked, that no protected element (tracking, consent text, honeypot, validation, a11y, source labels) was removed,
+and `npm test` 83/83.
+
+**Fixed (all five minors):**
+1. Safari could draw its own triangle next to the new "+" on FAQ rows: `summary::-webkit-details-marker { display: none }`.
+2. The address mask in Brevo error logs missed URL-encoded addresses (`a%40b.cz`): regex now matches `%40`
+   (test RED→GREEN, suite 84/84).
+3. `decisions.md` §14 #10 still said the rate refreshes daily: note that the schedule is off.
+4. §17 #2 and the launch checklist quoted only Brevo's help (`t-sender-sib.com`): observed headers added.
+5. Review Focus 4 evidence: Matěj confirmed `magnet_opened` in Umami Realtime after opening "Otevřít plán online"
+   from the test e-mails; which mail client and whether Brevo wrapped the link were not recorded.
+
+**Not changed by the agent:** `CLAUDE.md:123` also says "daily rebuild"; left for Matěj (the reviewer suggested it,
+and the agent does not edit CLAUDE.md on a subagent's suggestion).
+
+**Declined-to-judge rulings:** `magnet_opened` undercount from consent in mail-app browsers → README known limit;
+faux-bold fallback before Archivo loads → stands (measured CLS ≈ 0.001); no-JS 429 page → accepted platform limit;
+live funnel check skipping real Brevo → ruling stands, covered by the manual inbox test; 405/429 as "blocked" in
+check-links → stands, hand-checked; read-then-write race → existing `shortcut:`; binary artefacts → not reviewed.
