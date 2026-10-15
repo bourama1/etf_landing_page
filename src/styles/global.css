@@ -23,15 +23,25 @@
   font-weight: 800;
   unicode-range: U+30-39, U+41-5A;
 }
-/* Metric-matched fallback (values from Astro's generated Arial fallback for Archivo).
-   shortcut: overrides tuned for Arial, measure CLS on Android in Phase 5 */
+/* Metric-matched fallbacks: no reflow when Archivo swaps in. Measured 2026-10-15 in Chromium on the site's own text
+   (canvas width of / and /ochrana-osobnich-udaju/, weight 400): Archivo = 98.0 % of Arial, 99.7 % of Roboto; Archivo
+   ascent 0.88, descent 0.21, overrides = metric / size-adjust. Android has Roboto, not Arial; iOS and desktops have Arial. */
 @font-face {
   font-family: "Archivo fallback";
-  src: local("Arial"), local("Roboto"), local("Helvetica Neue");
+  src: local("Arial");
   font-weight: 400 800;
-  size-adjust: 130.7759%;
-  ascent-override: 67.1378%;
-  descent-override: 16.058%;
+  size-adjust: 98%;
+  ascent-override: 89.8%;
+  descent-override: 21.43%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo fallback Roboto";
+  src: local("Roboto");
+  font-weight: 400 800;
+  size-adjust: 99.7%;
+  ascent-override: 88.26%;
+  descent-override: 21.06%;
   line-gap-override: 0%;
 }
 
@@ -42,7 +52,7 @@
   --blocked: #b8361e;
   --allowed: #17704a;
   --marker: #f3dc5a;
-  --font: "Archivo", "Archivo fallback", sans-serif;
+  --font: "Archivo", "Archivo fallback", "Archivo fallback Roboto", sans-serif;
 }
 
 body {
