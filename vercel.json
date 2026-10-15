@@ -1,0 +1,5 @@
+{
+  "functions": {
+    "api/lead.ts": { "includeFiles": "{src/lib/**/*.ts,data/*.json}" }
+  }
+}
