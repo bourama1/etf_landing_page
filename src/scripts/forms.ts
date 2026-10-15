@@ -35,9 +35,11 @@ forms.forEach((f) => Object.entries(utm).forEach(([k, v]) => { (f.elements.named
 // ---- Sticky bar: after the first result, while the inline form is off screen, until a lead is sent.
 let inlineOnScreen = false;
 let sent = false;
+// Ad B lands with a result already shown: the bar waits for the first tool interaction so it never covers the first screen.
+let touched = false;
 // The error pages (/chyba-*) have only the footer form: set up what exists, submit handling below always attaches.
 const hasTool = !!(inline && result && sticky);
-const syncSticky = () => { if (hasTool) sticky.hidden = result.hidden || inlineOnScreen || sent; };
+const syncSticky = () => { if (hasTool) sticky.hidden = !touched || result.hidden || inlineOnScreen || sent; };
 const goToInline = () => {
   inline.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   q<HTMLInputElement>('input[name="email"]', inline).focus({ preventScroll: true });
@@ -46,6 +48,10 @@ if (hasTool) {
   new IntersectionObserver(([e]) => { inlineOnScreen = e.isIntersecting; syncSticky(); }).observe(inline);
   new MutationObserver(() => { syncSticky(); syncFooter(); }).observe(result, { attributes: true, attributeFilter: ['hidden'] }); // all picks removed
   q('a', sticky).addEventListener('click', (e) => { e.preventDefault(); goToInline(); });
+  const touch = (e: Event) => { if (!(e.target as Element).closest('.lead-form')) { touched = true; syncSticky(); } };
+  const tool = q('.tool');
+  tool.addEventListener('change', touch); // sliders and radios
+  tool.addEventListener('click', (e) => { if ((e.target as Element).closest('[data-ticker], [data-ret], [data-expand]')) touch(e); });
   // "Poslat plán" in "Co vám přijde e-mailem" (page.md §4): inline form if a result is shown, else the href goes to Step A.
   document.querySelectorAll<HTMLAnchorElement>('a[data-cta="plan"]').forEach((a) => a.addEventListener('click', (e) => {
     if (!result.hidden) { e.preventDefault(); goToInline(); }
