@@ -91,6 +91,13 @@ const count = (ev, name) => ev.filter((e) => (name === 'page_view' ? !e.name : e
 const find = (ev, name, pred = () => true) => ev.find((e) => e.name === name && pred(e.data ?? {}));
 function expect(label, ev, tag, counts, props = []) {
   for (const [name, n] of Object.entries(counts)) if (count(ev, name) !== n) problems.push(`${label}: ${name} ×${count(ev, name)}, expected ×${n}`);
+  // Umami funnels are ordered: each step must reach Umami after the one before it.
+  const at = (name, loc) => ev.findIndex((e) => e.name === name && (!loc || e.data?.location === loc));
+  for (const [x, y, loc] of [['interaction_start', 'interaction_complete'], ['form_view', 'form_start', 'inline'], ['form_view', 'form_start', 'footer'],
+    ['form_start', 'lead_submitted', 'inline'], ['form_start', 'lead_submitted', 'footer']]) {
+    if (at(y, loc) >= 0 && !(at(x, loc) >= 0 && at(x, loc) < at(y, loc))) problems.push(`${label}: ${y}${loc ? ' ' + loc : ''} reached Umami before ${x}`);
+  }
+  if (ev.some((e) => /fbclid|[?&](t|m|y|r|b|d)=/.test(String(e.url)))) problems.push(`${label}: URL sent with non-UTM params`);
   if (ev.length && ev[0].name) problems.push(`${label}: first send is ${ev[0].name}, expected the pageview`);
   for (const e of ev) {
     if (e.website !== ID) problems.push(`${label}: wrong website ${e.website}`);
@@ -102,7 +109,7 @@ function expect(label, ev, tag, counts, props = []) {
 const ONCE = ['interaction_start', 'interaction_complete'];
 
 // 1. Ad A: chips, sliders, broker, dividends, full scroll, why-link, sticky CTA, empty + bad e-mail, success.
-const a = await run('ad A', `/?${UTM}ad_a_blocked`, async (page, loaded) => {
+const a = await run('ad A', `/?${UTM}ad_a_blocked&fbclid=IwAR0test`, async (page, loaded) => {
   await page.click('button[data-ticker="VOO"]');
   await consent(page, 'ad A', 'yes', loaded);
   await page.click('button[data-ticker="QQQ"]');
