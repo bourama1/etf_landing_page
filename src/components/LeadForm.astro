@@ -1,6 +1,6 @@
 ---
 // The e-mail ask. Works as a plain POST without JS (303 → /dekujeme/ or /chyba-formulare/, decisions §15 #13).
-// Task 10's script fills the hidden fields from the tool and the URL, and drives the status line.
+// src/scripts/forms.ts adds the fetch flow, thank-you state and sticky bar; tool.ts fills the pick fields.
 import { RANGES } from '../lib/selection.ts';
 
 interface Props {
@@ -48,3 +48,7 @@ const def = (r: readonly number[]) => String(r[3]);
   <p class="src">Jeden e-mail s plánem. Odhlásíte se jedním klikem. <a href="/ochrana-osobnich-udaju/">Zásady ochrany osobních údajů</a></p>
   <p class="status" role="status" aria-live="polite" data-status></p>
 </form>
+
+<script>
+  import '../scripts/forms.ts';
+</script>
