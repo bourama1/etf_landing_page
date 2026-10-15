@@ -178,6 +178,11 @@ Konkrétního brokera nedoporučujeme a od žádného nemáme provizi.
 Plán vám přišel, protože jste si ho {11. 10. 2026} vyžádali na {etfdvojce…}. Další e-maily posíláme, jen pokud jste
 zaškrtli odběr novinek. [Odhlásit se]
 
+Co jste v nástroji vybrali a z jaké reklamy jste přišli, si ukládáme, abychom poznali, které reklamy lidem pomáhají.
+Proti tomu můžete kdykoli vznést námitku: stačí odpovědět na tento e-mail.
+*Poznámka:* added in Phase 3 (2026-10-15) for GDPR art. 21(4): the right to object to the art. 6(1)(f) processing
+must be shown separately in the first communication (`data/sources.md` §9). Keep it as its own paragraph.
+
 ETF Dvojče · [DOPLNIT: provozovatel, IČO, sídlo] · [Zásady ochrany osobních údajů]
 
 Informace slouží jen ke vzdělávání. Nejde o investiční doporučení, investiční poradenství ani daňové poradenství.

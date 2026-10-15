@@ -156,8 +156,9 @@ Result  shortlist + fee number  ->  inline e-mail ask
 - **E-mail** (required, `type=email`, `autocomplete=email`, `inputmode=email`). That is the only required field.
 - **Checkbox "Chci občas dostat novinky o ETF"** (optional, **not pre-ticked**). Delivering the requested plan
   doesn't need marketing consent, and making marketing consent a condition of getting the plan would not be freely
-  given (GDPR art. 7(4)). The legal basis for sending the plan and for the newsletter is **VERIFY in Phase 3**,
-  including Czech law 480/2004 Sb. on commercial communications.
+  given (GDPR art. 7(4)). **Legal bases (verified in Phase 3, `data/sources.md` §9):** the plan e-mail rests on
+  GDPR art. 6(1)(b), storing selections + UTM on art. 6(1)(f), the newsletter on prior consent under § 7(2) of
+  480/2004 Sb. with GDPR art. 7. The form stays as is; the plan e-mail footer gets one art. 21(4) objection line.
 - Text under the button: "Jeden e-mail s plánem. Odhlásíte se jedním klikem. Zásady ochrany osobních údajů."
 - **Hidden:** the selections (tickers, amount, horizon, filters), UTM params, `ad_variant`, and a honeypot field.
 - **Honeypot that autofill won't touch:** a meaningless field name (not `name`/`phone`/`email2`), `autocomplete="off"`,
