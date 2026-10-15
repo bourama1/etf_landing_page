@@ -39,7 +39,12 @@ export function brevoFromEnv(env: Record<string, string | undefined>, fetchFn: t
       headers: { 'api-key': key, 'content-type': 'application/json', accept: 'application/json' },
       signal: AbortSignal.timeout(8000),
     });
-    if (!res.ok && !(ok404 && res.status === 404)) throw new Error(`Brevo ${init.method ?? 'GET'} ${path.split('/')[1]} failed: ${res.status}`);
+    if (!res.ok && !(ok404 && res.status === 404)) {
+      // Brevo's own code/message says why (bad key, blocked IP, unverified sender); addresses masked for the logs.
+      const b = (await res.json().catch(() => ({}))) as { code?: string; message?: string };
+      const why = `${b.code ?? ''}: ${b.message ?? ''}`.replace(/[^\s@]+@[^\s@]+/g, '<email>').slice(0, 200);
+      throw new Error(`Brevo ${init.method ?? 'GET'} ${path.split('/')[1]} failed: ${res.status} ${why}`);
+    }
     return res;
   };
   const post = (path: string, body: object) => call(path, { method: 'POST', body: JSON.stringify(body) });

@@ -20,3 +20,13 @@ test('preview and local without a key stay in dry-run (200)', async () => {
     assert.equal(res.status, 200, JSON.stringify(env));
   }
 });
+
+test('a Brevo error carries its code and message, with any e-mail address masked', async () => {
+  const fakeFetch = (async () => Response.json({ code: 'unauthorized', message: 'Key not found for a@b.cz' }, { status: 401 })) as typeof fetch;
+  const brevo = brevoFromEnv({ BREVO_API_KEY: 'k' }, fakeFetch);
+  await assert.rejects(brevo.getContact('a@b.cz'), (e: Error) => {
+    assert.match(e.message, /401 unauthorized: Key not found for <email>/);
+    assert.ok(!e.message.includes('a@b.cz'));
+    return true;
+  });
+});
