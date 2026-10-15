@@ -4371,3 +4371,29 @@ Astro drops the space between a line-ending word and a following inline element 
 **Result (re-run by the lead agent):** hero B at 390×700 shows headline, sub, both sliders, return line and the full
 result line (trust line just below the fold); hero A unchanged; tnum widths equal; no console errors; 61/61 tests;
 first-load JS 13.9 kB gz.
+
+---
+
+## 2026-10-15 — Phase 4 tracking: provider check and plan (Claude Code, Opus 5.5)
+
+**Asked (Matěj):** start Phase 4: event plan with `analytics`, verify Umami Cloud with sources before anything else,
+plan with `superpowers:writing-plans`, stop before code.
+
+**Skills loaded:** `superpowers:writing-plans`, `marketing-skills:analytics` (its GA4/GTM and consent-mode parts don't
+apply; used only for the event-table format and the "no PII in properties" rule). No subagents.
+
+**Provider verification:** raw HTML/JS read with curl + text extraction (pricing, Cloud FAQ, docs, signup app string
+table, DPA, subprocessors, terms) and the tracker script measured with gzip. Table with quotes and URLs in
+`docs/superpowers/plans/2026-10-15-phase4-tracking.md`.
+
+**Caught during the check**
+1. Umami bills **every event-data property as one event**, which the pricing page alone doesn't show (Cloud FAQ does).
+   A custom `page_view` with 5 UTMs + variant would have cost 8 events per visit; the plan uses the automatic
+   pageview (URL already holds the UTMs) and `data-tag` for `ad_variant` instead.
+2. The docs only say servers are "in the US and EU". A web search returned third-party claims both ways; the
+   region choice was confirmed from the signup app's own strings ("Select your data region", "Once selected this
+   cannot be changed"), not from those claims.
+3. `umami.is/umami-dpa.pdf` (a search result) is a 404 HTML page; the current DPA is the `/dpa` web page.
+4. Open legal question flagged, not decided: EDPB Guidelines 2/2023 may treat a cookieless script's device reads as
+   "gaining access" under ePrivacy art. 5(3) (CZ: § 89(3) zákona 127/2005 Sb.). Plan Task 6 researches it and stops
+   for Matěj if consent turns out to be needed.
