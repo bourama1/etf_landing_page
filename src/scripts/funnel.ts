@@ -45,26 +45,32 @@ document.addEventListener('click', (e) => {
   if (loc) track('cta_click', { location: loc });
 });
 
-// interaction_start / step_complete: the visitor's own actions in the tool, never the ad-B preselection.
+// The visitor's own actions in the tool, never the ad-B preselection. Which step an event belongs to:
+const stepOf = (e: Event): 'a' | 'b' | 'c' | null => {
+  const t = e.target as HTMLInputElement;
+  if (e.type === 'change') return t.closest('.lead-form') ? null : t.name === 'dividends' ? 'c' : 'b';
+  return t.closest('[data-ticker], [data-expand]') ? 'a' : t.closest('[data-ret]') ? 'b' : null;
+};
+// interaction_start in the capture phase: tool.ts renders (and fires tool:result) in its own listeners, and
+// interaction_complete must see the touch and come after interaction_start (Umami funnels are ordered).
 let touched = false;
-const act = (step: 'a' | 'b' | 'c', complete: boolean) => {
+const start = (e: Event) => {
+  const step = stepOf(e);
+  if (!step) return;
   touched = true;
   if (first('interaction_start')) track('interaction_start', { step, ad_variant: variant() });
-  if (complete && first(`step_complete:${step}`)) track('step_complete', stepProps(step, current()));
 };
-tool?.addEventListener('click', (e) => {
-  const t = e.target as Element;
-  const chip = t.closest<HTMLButtonElement>('[data-ticker]');
-  // tool.ts flips aria-pressed in its listener on #step-a, an inner element, so it has already run here.
-  if (chip) act('a', chip.getAttribute('aria-pressed') === 'true' && chip.dataset.ticker !== 'other');
-  else if (t.closest('[data-ret]')) act('b', false);
-  else if (t.closest('[data-expand]')) act('a', false);
-});
-tool?.addEventListener('change', (e) => {
-  const t = e.target as HTMLInputElement;
-  if (t.closest('.lead-form')) return;
-  act(t.name === 'dividends' ? 'c' : 'b', true);
-});
+// step_complete in the bubble phase: by then tool.ts has flipped the chip's aria-pressed.
+const complete = (e: Event) => {
+  const step = stepOf(e);
+  const chip = (e.target as Element).closest<HTMLElement>('[data-ticker]');
+  const done = e.type === 'change' || (!!chip && chip.dataset.ticker !== 'other' && chip.getAttribute('aria-pressed') === 'true');
+  if (step && done && first(`step_complete:${step}`)) track('step_complete', stepProps(step, current()));
+};
+for (const type of ['click', 'change']) {
+  tool?.addEventListener(type, start, { capture: true });
+  tool?.addEventListener(type, complete);
+}
 
 // interaction_complete: the first result after a real interaction (ad B renders one on load, decisions §4).
 window.addEventListener('tool:result', ((e: CustomEvent<Selection>) => {
