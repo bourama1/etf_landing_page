@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { track, setConsent, _setup, _flush } from './track.ts';
+import { track, setConsent, _setup, _flush, _blocked } from './track.ts';
 
 type Sent = [string | undefined, object | undefined];
 const fakeUmami = (sent: Sent[]) => ({ track: (n?: string, d?: object) => sent.push([n, d]) });
@@ -61,4 +61,38 @@ test('drops an event whose props contain an e-mail', () => {
   _flush();
   track('form_error', { reason: 'jan@seznam.cz' });
   assert.deepEqual(sent, [[undefined, undefined]]);
+});
+
+test('withdrawn while the script loaded, then consent again: pageview and later events go out', () => {
+  const sent: Sent[] = [];
+  const win: { umami?: ReturnType<typeof fakeUmami> } = {};
+  _setup(win as never, 'site-id', false, null);
+  setConsent('yes'); // script requested
+  setConsent('no'); // withdrawn before it loaded
+  win.umami = fakeUmami(sent);
+  _flush(); // onload while 'no': nothing
+  track('section_view', { section: 'hero' }); // dropped: 'no'
+  setConsent('yes');
+  track('cta_click', { location: 'sticky' });
+  assert.deepEqual(sent.map(([n]) => n), [undefined, 'cta_click']);
+});
+
+test('a second _flush never sends a second pageview', () => {
+  const sent: Sent[] = [];
+  _setup({ umami: fakeUmami(sent) } as never, 'site-id', false, 'yes');
+  _flush();
+  _flush();
+  assert.deepEqual(sent.map(([n]) => n), [undefined]);
+});
+
+test('script blocked (onerror): queue dropped, nothing queued afterwards', () => {
+  const sent: Sent[] = [];
+  const win: { umami?: ReturnType<typeof fakeUmami> } = {};
+  _setup(win as never, 'site-id', false, 'yes');
+  track('section_view', { section: 'hero' });
+  _blocked();
+  for (let i = 0; i < 500; i++) track('cta_click', { location: 'sticky' });
+  win.umami = fakeUmami(sent); // never happens after onerror; proves the queue is empty
+  _flush();
+  assert.deepEqual(sent.map(([n]) => n), [undefined]);
 });

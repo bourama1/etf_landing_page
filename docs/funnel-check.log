@@ -1,4 +1,4 @@
-# node scripts/funnel-check.mjs — 2026-10-15T11:56:39.960Z
+# node scripts/funnel-check.mjs — 2026-10-15T13:15:10.171Z
 --- ad A: /?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_a_blocked&fbclid=IwAR0test
 [ad A] page_view (pageview)   tag=a url=http://localhost:4398/?utm_source=instagram&utm_medium=paid_social&utm_campaign=etf_dvojce_2026q4&utm_term=cz&utm_content=ad_a_blocked
 [ad A] section_view           tag=a {"section":"hero"}
@@ -38,8 +38,8 @@
 [ad B] form_start             tag=b {"location":"inline"}
 [ad B] cta_click              tag=b {"location":"plan"}
 [ad B] section_view           tag=b {"section":"why"}
-[ad B] section_view           tag=b {"section":"final"}
 [ad B] form_view              tag=b {"location":"footer"}
+[ad B] section_view           tag=b {"section":"final"}
 [ad B] form_start             tag=b {"location":"footer"}
 [ad B] cta_click              tag=b {"location":"footer"}
 [ad B] form_error             tag=b {"reason":"server","location":"footer"}
