@@ -156,7 +156,7 @@ brokerů ({XTB 29. 4. 2026, Trading 212, Fio 1. 7. 2026, ČS 1. 2. 2026}), facts
 - helper: Akumulační fond dividendy nevyplácí, takže je každý rok nedaníte. Distribuční je vyplácí a daníte je.
   *Slouží jako filtr. Toto není doporučení.*
   *Poznámka:* wording approved in `data/NOTES.md` (it rests on reading the statute, not a quoted rule).
-  Source line: Zdroj: zákon o daních z příjmů, § 20b a § 16a, znění k 1. 8. 2026. Informativní, nejde o daňové
+  Source line: Zdroj: zákon o daních z příjmů, § 8 odst. 4 a 8 a § 16a, znění k 1. 8. 2026. Informativní, nejde o daňové
   poradenství.
 
 *Poznámka:* the planned "Měna fondu" filter was dropped (Matěj, 2026-10-15; decisions.md §14 #8). Every twin has
@@ -273,7 +273,7 @@ vašem úmrtí vzniknout povinnost podat v USA daňové přiznání k dědictví
 Na dani z dividend neušetříte.
 Z amerických dividend se podle smlouvy s USA platí 15 % v obou případech.
 Zdroj: smlouva ČR–USA o zamezení dvojímu zdanění, čl. 10; IRS, Some nonresidents with U.S. assets must file estate
-tax returns (27. 6. 2026); zákon o daních z příjmů, § 20b. Informativní, nejde o daňové poradenství.
+tax returns (27. 6. 2026); zákon o daních z příjmů, § 8 odst. 4. Informativní, nejde o daňové poradenství.
 
 **Kdy z ETF platím daň při prodeji?**
 Zisk z prodeje je osvobozený, když mezi nákupem a prodejem uplynou víc než 3 roky. Nebo když za celý rok prodáte

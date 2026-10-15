@@ -91,7 +91,7 @@ Shrnutí: na dani z dividend irský fond neušetří. Akumulační verze ale nic
 irský fond se netýká americké dědické daně. Distribuční irský fond vychází daňově nejhůř ze všech tří.
 
 Zdroje: smlouva ČR–USA, čl. 10 odst. 2 b) a 3 (irs.gov); smlouva Irsko–USA, čl. 10 odst. 2 b) (irs.gov); Irish
-Revenue, Tax and Duty Manual 27-01A-02, §4.2.3 (leden 2026); zákon o daních z příjmů § 20b, § 16a, § 38f (znění
+Revenue, Tax and Duty Manual 27-01A-02, §4.2.3 (leden 2026); zákon o daních z příjmů § 8, § 16a, § 38f (znění
 k 1. 8. 2026); IRS, Instructions for Form 706-NA (září 2025); IRS, Some nonresidents with U.S. assets must file
 estate tax returns (27. 6. 2026). Informativní, nejde o daňové poradenství.
 
@@ -149,13 +149,12 @@ Informativní, nejde o daňové poradenství. Platí pro fyzické osoby, které 
 - [ ] **Hodnotový test.** Když za celý rok prodáte cenné papíry nejvýš za 100 000 Kč, je příjem osvobozený.
   Počítá se celá částka z prodeje, ne zisk. Když limit přesáhnete, tento test vám nepomůže pro žádný z prodejů.
   Zdroj: § 4 odst. 1 písm. t) ZDP.
-- [ ] **Dividendy z distribučního fondu** patří do samostatného základu daně se sazbou 15 %, a to včetně daně
-  sražené v zahraničí. Zdroj: § 20b odst. 1 a § 16a ZDP.
-- [ ] **Kdy podat přiznání.** Zaměstnanec s podepsaným prohlášením nemusí podávat přiznání, pokud nemá jiné příjmy
-  podle § 7 až 10 vyšší než 20 000 Kč. Zdroj: § 38g odst. 2 ZDP.
-  [OVĚŘIT: whether foreign dividends taxed in the § 20b separate base count toward this 20 000 Kč limit. Sources.md
-  §2.4 quotes § 38g(2) but does not settle it. Until sourced, add: "Jestli se do limitu počítají i zahraniční
-  dividendy, ověřte si u finančního úřadu nebo daňového poradce."]
+- [ ] **Dividendy z distribučního fondu** se daní v daňovém přiznání. Můžete je dát do samostatného základu daně se
+  sazbou 15 % (Příloha č. 4), pak tam ale musí jít všechny zahraniční dividendy za daný rok.
+  Zdroj: § 8 odst. 4 a 8 a § 16a ZDP; Příloha č. 4 k přiznání za rok 2026, ř. 401a.
+- [ ] **Kdy podat přiznání.** Zaměstnanec s podepsaným prohlášením nemusí podávat přiznání, pokud jeho ostatní
+  příjmy podle § 7 až 10 nepřesáhnou za rok 20 000 Kč. Zahraniční dividendy se do toho počítají. Když s ostatními
+  příjmy přesáhnou 20 000 Kč, přiznání podat musíte. Zdroj: § 38g odst. 2 a § 8 odst. 3 a 4 ZDP.
 - [ ] **Schovávejte potvrzení o každém nákupu** (datum a cena). Bez nich časový test těžko doložíte.
 - [ ] **Americká ETF a dědická daň.** Pokud máte v USA majetek nad 60 000 USD, může po vašem úmrtí vzniknout
   povinnost podat v USA přiznání k dědictví. Česko s USA smlouvu o dědické dani nemá. Akcie irských fondů se za

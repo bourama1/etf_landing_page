@@ -88,12 +88,33 @@ https://www.revenue.ie/en/tax-professionals/tdm/income-tax-capital-gains-tax-cor
 ### 2.4 Czech taxation of foreign dividends: **verified**
 
 Zákon č. 586/1992 Sb., o daních z příjmů, version 157 (01.08.2026 – 31.12.2026). https://www.zakonyprolidi.cz/cs/1992-586
-- § 20b(1): "Do samostatného základu daně se zahrnují veškeré příjmy z podílů na zisku … a to ve výši včetně daně
-  sražené v zahraničí, plynoucí poplatníkům … ze zdrojů v zahraničí".
+- § 8(1)(a): příjmy z kapitálového majetku jsou "podíly na zisku obchodní korporace nebo podílového fondu, je-li
+  v něm podíl představován cenným papírem".
+- § 8(3): the § 36 withholding applies only to such income "plynoucí ze zdrojů na území České republiky".
+- § 8(4): "Plynou-li příjmy uvedené v odstavci 1 písm. a) až d) a i) ze zdrojů v zahraničí, jsou nesnížené o výdaje
+  základem daně (dílčím základem daně)."
+- § 8(8): "Příjem podle odstavce 4 … plynoucí ze zdrojů v zahraničí lze zahrnout do samostatného základu daně
+  zdaňovaného sazbou daně podle § 16a. Zahrne-li se takový příjem do tohoto základu daně, zahrnou se do tohoto
+  základu daně veškeré příjmy podle věty první."
 - § 16a(1): "Sazba daně pro samostatný základ daně činí 15 %."
 - § 38f(1)–(2): double taxation is relieved under the treaty; the credit method reduces Czech tax by tax paid abroad.
-- § 38g(2): an employee with a signed prohlášení need not file a return if "nemá jiné příjmy podle § 7 až 10 vyšší
-  než 20 000 Kč" (exempt income excluded).
+- § 38g(2), full condition: an employee with a signed prohlášení need not file if, "vyjma příjmů od daně osvobozených
+  a příjmů, z nichž je vybírána daň srážkou sazbou daně podle § 36, nemá jiné příjmy podle § 7 až 10 vyšší než
+  20 000 Kč".
+
+**Correction 2026-10-15:** this section first cited § 20b(1). § 20b is in Part Two (corporate income tax, "poplatníkům
+uvedeným v § 17 odst. 3") and does not apply to individuals. The individual rules are § 8(4), § 8(8) and § 16a above.
+
+**Filing duty (resolves the § 38g(2) question):** foreign dividends are § 8 income (§ 8(4)), are not exempt, and are
+not withheld under § 36 (§ 8(3) covers Czech-source income only). So they **count toward the 20 000 Kč limit**: an
+employee whose foreign dividends plus other § 7–10 income exceed 20 000 Kč a year must file a return.
+
+Finanční správa, *Pokyny k vyplnění přiznání k dani z příjmů fyzických osob za zdaňovací období 2026*, 25 5405/1
+vzor č. 34, https://financnisprava.gov.cz/assets/tiskopisy/5405-1_34.pdf: ř. 38 takes § 8 income "ze zdrojů na
+území České republiky i … ze zdrojů v zahraničí", which "nejsou zdaněny zvláštní sazbou daně podle § 36 zákona nebo
+v režimu § 16a zákona". *Příloha č. 4* (25 5405/P4 vzor č. 13, …/5405-P4_13.pdf), ř. 401a: "Příjmy podle § 8
+odst. 1 písm. a) až f) a i) zákona plynoucí ze zdrojů v zahraničí" (the optional 15 % separate base). The
+instructions do not restate the 20 000 Kč condition, so that rests on § 38g(2) itself.
 
 ### 2.5 What this adds up to (my analysis, built only on 2.1–2.4)
 

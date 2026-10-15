@@ -113,7 +113,7 @@ recommendation ("doporučujeme koupit").
 | "Stejný index, evropská verze" | Issuer factsheets (Phase 1). Do NOT claim UCITS is cheaper than the US original |
 | "Poplatky v korunách" | Bank-fund KIDs vs. index ETF TER (Phase 1) |
 | "Daně v Česku jasně" | ZDP § 4/1/t, § 4/1/u, § 38g + Finanční správa 5. 1. 2026 (`data/sources.md` §4) |
-| "Akumulační = žádné papírování" | Treaties + ZDP § 20b (`data/sources.md` §2.5); never claim lower tax |
+| "Akumulační = žádné papírování" | Treaties + ZDP § 8 odst. 4 a 8, § 16a (`data/sources.md` §2.4–2.5); never claim lower tax |
 
 ## Goals
 **Business goal:** Collect qualified e-mail leads from paid mobile traffic at a cost that would justify running the

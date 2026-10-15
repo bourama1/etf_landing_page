@@ -293,3 +293,21 @@ undetermined. Stored in `etfs.json` (`sources.kid`, `kid_cs`), `sources.md` §8;
    was redone with the Edit tool.
 4. Several guessed SSGA/Invesco URL patterns failed before the real ones were found in the sites' own code. No
    guessed URL was recorded unless it returned a PDF with the right ISIN inside.
+
+## 2026-10-15 — § 38g(2) and foreign dividends; Phase 1 citation error found
+
+**Asked (Matěj):** fetch the sources for whether foreign dividends count toward the § 38g(2) 20 000 Kč limit.
+
+**What the agent did:** downloaded ZDP (zakonyprolidi.cz, znění 01.08.2026–31.12.2026) and read the full § 38g(2),
+§ 8 and § 16a; downloaded Finanční správa's 2026 instructions (25 5405/1 vzor č. 34) and Příloha č. 4 (vzor č. 13).
+**Answer:** foreign dividends are § 8 income (§ 8(4)), not exempt and not withheld under § 36 (§ 8(3) is Czech-source
+only), so they count toward the 20 000 Kč; above it an employee must file. The separate 15 % base is optional
+(§ 8(8) "lze"), Příloha č. 4 ř. 401a. The instructions don't restate the 20 000 Kč rule; the statute is the source.
+Quotes checked by script against the downloaded statute text (5/5).
+
+**Mistake caught (Phase 1, agent's own):** `sources.md` §2.4 cited **§ 20b(1)** for individuals' foreign dividends.
+§ 20b is in Part Two of the act (corporate income tax: "poplatníkům uvedeným v § 17 odst. 3"). It was caught only
+because this question needed the whole act, not one grepped paragraph. The individual rules are § 8(4), § 8(8) and
+§ 16a. The citation was corrected in sources.md, NOTES.md, product-marketing.md, page.md (2×) and email.md (2×).
+The e-mail's claim that dividends "patří do samostatného základu" was also wrong (it's an option) and was
+rewritten. The conclusions built on it (≈ 15 % either way, distributing Irish is the worst) still hold.

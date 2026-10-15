@@ -35,7 +35,7 @@ Snapshot retrieved 2026-10-09. Files: `etfs.json` (fund data), `bank-funds.json`
   corporations". Page wording must be "může podléhat", not "podléhá".
 - **IBKR help page:** not readable (403 / JS shell). Not cited.
 - **Accumulating funds and Czech tax:** the claim "no Czech tax while holding an accumulating fund" rests on the
-  absence of any provision taxing undistributed fund income (§ 8 and § 20b tax distributions, § 10 / § 4 tax sales).
+  absence of any provision taxing undistributed fund income (§ 8 taxes distributions, § 10 / § 4 tax sales).
   That is my reading of the statute, not a quoted rule. Wording on the page: "u akumulačního fondu nedostáváte
   dividendy, takže je nedaníte každý rok". Consider confirming with a tax adviser before launch.
 
