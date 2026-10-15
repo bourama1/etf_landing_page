@@ -58,15 +58,11 @@ Per pick, one table (rows from `data/etfs.json`, the same order as on the page, 
 
 Under each table:
 - Ticker se liší podle burzy, ISIN je pro fond jen jeden. U brokera hledejte podle ISIN.
-- Měna fondu je měna, ve které fond počítá hodnotu. Na Xetře ho koupíte v eurech, v Londýně v dolarech. Kurzové
-  riziko k dolaru nesete v obou případech. [OVĚŘIT: "kurzové riziko v obou případech" is a consequence of the
-  fund holding USD-priced US stocks; it is not quoted in `data/`. Keep as is or cut.]
+- Měna fondu je měna, ve které fond počítá hodnotu. Na Xetře ho koupíte v eurech, v Londýně v dolarech.
 
 Special cases (decisions.md §14 #4):
 - **VTI:** Evropské ETF se stejným indexem ({Morningstar US Total Market}) jsme nenašli. Nejbližší dostupné jsou
-  fondy na S&P 500. Jde o jiný index: jen velké americké firmy, bez středních a malých. {S&P 500 rows}
-  [OVĚŘIT: "bez středních a malých" — the S&P 500 is a large-cap index; `etfs.json` names the index but does not
-  describe its coverage. Source it (S&P DJI page) or say only "jiný index, jen velké firmy" as on the page.]
+  fondy na S&P 500. Jde o jiný index, jen velké firmy (decisions.md §14 #4). {S&P 500 rows}
 - **SCHD:** SCHD nemá evropské dvojče. ETF na index {Dow Jones U.S. Dividend 100} jsme v Evropě nenašli.
 - **VT:** {VGLA, VGLD} sledují stejný index {FTSE Global All Cap}. Jsou nové, obchodují se od {18. 8. 2026}.
   Podobné, ale bez malých firem: {VWCE, VGWL} (index {FTSE All-World}).
