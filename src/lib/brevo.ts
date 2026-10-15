@@ -10,6 +10,11 @@ const API = 'https://api.brevo.com/v3';
 
 export function brevoFromEnv(env: Record<string, string | undefined>, fetchFn: typeof fetch): Brevo {
   const key = env.BREVO_API_KEY;
+  // Production must never fake success: a missing key would show "Plán je na cestě" while no lead is kept.
+  if (!key && env.VERCEL_ENV === 'production') {
+    const fail = async (): Promise<never> => { throw new Error('BREVO_API_KEY missing in production'); };
+    return { getContact: fail, upsertContact: fail, sendEmail: fail };
+  }
   if (!key) {
     // Dry-run has no memory, so the 24 h dedupe is only covered by unit tests.
     const log = (m: string, d?: object) => console.log(JSON.stringify({ m, ...d }));
