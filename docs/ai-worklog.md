@@ -269,3 +269,27 @@ No subagents were spawned in this phase.
 **Open items handed to Matěj:** `[CHYBÍ ZDROJ]` KID per UCITS twin; EUR/CZK rate for fixed broker fees.
 `[OVĚŘIT]` in the e-mail: do foreign dividends count toward the § 38g(2) 20 000 Kč limit; S&P 500 coverage wording;
 the "kurzové riziko" line. `[ROZHODNUTÍ]` on the currency filter and on naming the bank fund in ad B.
+
+## 2026-10-15 — KIDs for the 13 UCITS twins, ČNB rate API, decisions 8–10
+
+**Asked (Matěj):** drop the currency filter; no bank name in ad B; use the ČNB API for daily EUR/CZK; "find all
+those KID docs yourself, you know their identification string".
+
+**What the agent did:** web search does not index KID PDFs, so it found each issuer's document route and
+requested the KIDs by ISIN: BlackRock (link on its Czech product page → `eu-priips-<slug>-<isin>-<lang>.pdf`),
+State Street (`/library-content/kids?isin=…&country=…`, found in the site's JS and confirmed by search), Invesco
+(`/content/dam/invesco/emea/en/…/<ISIN>_kid_en.pdf`), Vanguard (`fund-docs.vanguard.com/<isin>_priipskid_<lang>.pdf`).
+Each PDF was read with `pdftotext -raw` and checked for the expected ISIN and the date printed in it. Result:
+13/13 have a KID; 9 confirmed in Czech; IUSA and SPY5 have no Czech version at the issuer; Invesco's 2 are
+undetermined. Stored in `etfs.json` (`sources.kid`, `kid_cs`), `sources.md` §8; validator `OK`.
+ČNB API: tested `exrates/daily`; it has no CORS headers, so the rate is fetched at build time (decisions §14 #10).
+
+**Mistakes / traps caught**
+1. **A 404 is not proof of absence.** Invesco's Czech URL guesses all 404'd, but so did Italian, which surely
+   exists. Recorded as "not determined" rather than "no Czech KID".
+2. The first language check said every KID was "not Czech": a grep/locale encoding problem, caught because the
+   file names said `cs`. Re-run with `-enc UTF-8` and `LC_ALL=C.UTF-8`.
+3. A stray `python -` in a shell command (no Python on this machine) hung waiting for input; stopped, and the step
+   was redone with the Edit tool.
+4. Several guessed SSGA/Invesco URL patterns failed before the real ones were found in the sites' own code. No
+   guessed URL was recorded unless it returned a PDF with the right ISIN inside.

@@ -169,9 +169,11 @@ ticker instead.
 
 **Header:** Vaše evropská dvojčata
 - Per pick: ~~{VOO}~~ → **{SPYL} · {SXR8} · {VUAA}** ({3} akumulační fondy na S&P 500)
-- Same-index line: Stejný index {S&P 500}, fond sídlí v Irsku a má KID, takže ho evropský broker smí prodat
-  drobnému investorovi. [CHYBÍ ZDROJ: KID per UCITS twin. `etfs.json` doesn't record that a KID exists for each
-  fund. Before launch, add the issuer KID URL for each twin, or cut "a má KID".]
+- Same-index line: Stejný index {S&P 500}, fond sídlí v Irsku a má KID, takže ho evropští brokeři můžou nabízet
+  drobným investorům.
+- Per twin, only when `kid_cs` is true: label **KID v češtině** (link to `sources.kid.url`). Nothing shown when
+  false or null. *Poznámka:* source `etfs.json` `sources.kid` (all 13 twins have a KID, 9 confirmed in Czech;
+  `data/sources.md` §8). Some brokers have blocked funds without Czech documents (VoC theme 1, DEGIRO quote).
 - Fee line: Při {3 000 Kč} měsíčně a {20} letech vás poplatky v ETF připraví asi o **{22 000 Kč}**, v bankovním
   akciovém fondu o **{272 000–339 000 Kč}**.
 - Small print: Výnos {5 %} ročně je předpoklad, ne předpověď. Minulá výkonnost není zárukou budoucích výnosů.
