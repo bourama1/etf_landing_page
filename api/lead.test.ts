@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { handleLead } from './lead.ts';
+import { handleLead, normalizeSiteUrl } from './lead.ts';
 
 const fake = (existing: Record<string, unknown> | null = null, fail: Partial<Record<'get' | 'upsert' | 'send', boolean>> = {}) => {
   const calls: string[] = [];
@@ -134,4 +134,11 @@ test('list IDs: plan list always, newsletter list only when ticked and numeric',
   assert.deepEqual(await lists({ email: 'a@b.cz', newsletter: 'on' }, { BREVO_PLAN_LIST_ID: '3', BREVO_NEWSLETTER_LIST_ID: 'x' }), [3]);
   assert.deepEqual(await lists({ email: 'a@b.cz', newsletter: 'on' }, { BREVO_PLAN_LIST_ID: '3', BREVO_NEWSLETTER_LIST_ID: '4' }), [3, 4]);
   assert.deepEqual(await lists({ email: 'a@b.cz' }, { BREVO_PLAN_LIST_ID: '3', BREVO_NEWSLETTER_LIST_ID: '4' }), [3]);
+});
+
+test('SITE_URL trailing slash is normalised', () => {
+  assert.equal(normalizeSiteUrl('https://example.cz/'), 'https://example.cz');
+  assert.equal(normalizeSiteUrl('https://example.cz'), 'https://example.cz');
+  assert.equal(normalizeSiteUrl('nonsense'), 'http://localhost:4321');
+  assert.equal(normalizeSiteUrl(undefined), 'http://localhost:4321');
 });

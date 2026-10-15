@@ -90,9 +90,13 @@ export async function handleLead(req: Request, deps: Deps, env: Env = {}): Promi
 
 const redirect = (to: string) => new Response(null, { status: 303, headers: { location: to } });
 
+// Trailing slash off so `${siteUrl}/plan` never doubles it; invalid values fall back to localhost.
+export function normalizeSiteUrl(raw: string | undefined): string {
+  try { new URL(raw ?? ''); return raw!.replace(/\/+$/, ''); } catch { return 'http://localhost:4321'; }
+}
+
 export async function POST(request: Request): Promise<Response> {
   const log = (m: string, d?: object) => console.log(JSON.stringify({ m, ...d }));
-  let siteUrl = process.env.SITE_URL ?? 'http://localhost:4321';
-  try { new URL(siteUrl); } catch { log('invalid_site_url'); siteUrl = 'http://localhost:4321'; }
+  const siteUrl = normalizeSiteUrl(process.env.SITE_URL ?? 'http://localhost:4321');
   return handleLead(request, { brevo: brevoFromEnv(process.env, fetch), now: () => new Date(), log, siteUrl }, process.env);
 }

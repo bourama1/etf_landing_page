@@ -17,8 +17,11 @@ export function brevoFromEnv(env: Record<string, string | undefined>, fetchFn: t
       async getContact() { return null; },
       async upsertContact(_email, attributes) { log('dry-run upsert', { attributes: Object.keys(attributes) }); },
       async sendEmail(msg) {
-        await mkdir('.dev', { recursive: true });
-        await writeFile('.dev/last-email.html', msg.html);
+        // Vercel's filesystem is read-only: log only.
+        if (!process.env.VERCEL) {
+          await mkdir('.dev', { recursive: true });
+          await writeFile('.dev/last-email.html', msg.html);
+        }
         log('dry-run send', { subject: msg.subject });
       },
     };
