@@ -1,11 +1,10 @@
-/* Archivo variable (wdth 62-125, wght 400-800), self-hosted from Google Fonts v25.
-   Astro's fonts config only emits wght, so the wide ticker style needs this manual face. */
+/* Archivo wght-only variable (400-800), self-hosted from Google Fonts v25. */
 @font-face {
   font-family: "Archivo";
   src: url("/fonts/archivo-latin-ext.woff2") format("woff2");
   font-display: swap;
   font-weight: 400 800;
-  font-stretch: 62% 125%;
+  font-stretch: 100%;
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
@@ -13,13 +12,22 @@
   src: url("/fonts/archivo-latin.woff2") format("woff2");
   font-display: swap;
   font-weight: 400 800;
-  font-stretch: 62% 125%;
+  font-stretch: 100%;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* Metric-matched fallback (values from Astro's generated Arial fallback for Archivo). */
+/* Tickers: static wdth 125 / wght 800 instance, glyphs A-Z 0-9 only (Google css2 text= subset). */
+@font-face {
+  font-family: "Archivo Wide";
+  src: url("/fonts/archivo-wide-800.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 800;
+  unicode-range: U+30-39, U+41-5A;
+}
+/* Metric-matched fallback (values from Astro's generated Arial fallback for Archivo).
+   shortcut: overrides tuned for Arial, measure CLS on Android in Phase 5 */
 @font-face {
   font-family: "Archivo fallback";
-  src: local("Arial");
+  src: local("Arial"), local("Roboto"), local("Helvetica Neue");
   font-weight: 400 800;
   size-adjust: 130.7759%;
   ascent-override: 67.1378%;
@@ -45,7 +53,7 @@ body {
 }
 
 .num { font-variant-numeric: tabular-nums; }
-.ticker { font-stretch: 125%; font-weight: 800; }
+.ticker { font-family: "Archivo Wide", var(--font); font-weight: 800; }
 
 html:not(.js) .needs-js { display: none; }
 html.js .no-js { display: none; }
