@@ -396,3 +396,5 @@ From `docs/superpowers/plans/2026-10-15-phase3-build.md`. #16–17 are proposals
 | 15 | Without `BREVO_API_KEY` the function runs in **dry-run**: logs and writes the e-mail to `.dev/last-email.html` (gitignored) | local testing, and the source of the real e-mail screenshot for section 4 |
 | 16 | Daily FX rebuild (proposal only): **GitHub Actions `schedule` → `curl -X POST` a Vercel Deploy Hook** (hook URL as a repo secret) | no extra function; Vercel cron would need a function that calls the hook anyway. Caveat: GitHub pauses schedules after 60 days without repo activity |
 | 17 | Rate limit (proposal only): (a) Vercel WAF rate-limit rule on `/api/lead` if Hobby allows it — VERIFY; (b) Upstash Redis free tier — needs an account | decisions §6a rule 5 |
+| 18 | The e-mail's small-amount example uses a 125 EUR purchase (email.md, sources.md §7 worked example); it is a copy constant in `src/lib/email.ts`, the fee itself comes from `brokers.json` | approved copy; the example amount is not data |
+| 19 | A plan with no twins (SCHD only) computes the fee comparison with the S&P 500 twins | the ETF side must always be a buyable UCITS fund, never the US ETF |
