@@ -190,6 +190,15 @@ details.how { margin: 0.5rem 0 1rem; }
 .sticky > span { min-width: 0; }
 .sticky .btn { flex: none; white-space: nowrap; padding: 0 14px; hyphens: none; }
 
+/* Analytics consent (decisions §16): top edge, out of the sticky bar's way; both answers styled alike. */
+.consent {
+  position: fixed; inset: 0 0 auto 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem;
+  padding: 8px 16px; background: var(--paper); border-bottom: 2px solid var(--ink); font-size: 0.875rem;
+}
+.consent p { margin: 0; flex: 1 1 16rem; }
+.consent div { display: flex; gap: 8px; }
+.consent .btn { min-height: 44px; padding: 0 14px; }
+
 /* No-JS twin table */
 .table-wrap { overflow-x: auto; margin: 0.5rem 0; }
 table { border-collapse: collapse; width: max-content; min-width: 100%; font-size: 0.875rem; }
