@@ -4397,3 +4397,44 @@ table, DPA, subprocessors, terms) and the tracker script measured with gzip. Tab
 4. Open legal question flagged, not decided: EDPB Guidelines 2/2023 may treat a cookieless script's device reads as
    "gaining access" under ePrivacy art. 5(3) (CZ: § 89(3) zákona 127/2005 Sb.). Plan Task 6 researches it and stops
    for Matěj if consent turns out to be needed.
+
+---
+
+## 2026-10-15 — Phase 4 tracking: implementation (Claude Code, Opus 5.5, inline)
+
+**How it ran:** Matěj chose inline execution (`superpowers:executing-plans`): the lead agent implemented all 7 tasks
+itself under `superpowers:test-driven-development`, with a ledger in `.superpowers/sdd/2026-10-15-phase4-tracking/`.
+Skills loaded: `executing-plans`, `test-driven-development`, `marketing-skills:ab-testing` (its sample-size table and
+ICE scoring were not used; see below). One fresh reviewer at the end (prompt logged below).
+
+**Verified by the lead agent:** `npm test` 74/74 · `node scripts/funnel-check.mjs` "All expectations met"
+(`docs/funnel-check.log`) · first-load JS 14.5 kB gz with a website ID set, + 2.3 kB external Umami script
+(budget 60) · `node scripts/screenshots.mjs`: no console errors or overflow, hero screenshots byte-identical ·
+`node scripts/sample-size.mjs` self-check passes.
+
+**Mistakes and defects caught**
+1. **Consent (the big one).** The Phase 0 premise "cookieless → no consent banner" did not survive the legal
+   research: EDPB Guidelines 2/2023 ¶33 puts a JS tracker that makes the browser send data under ePrivacy art. 5(3)
+   (§ 89(3) ZEK), and ÚOOÚ reportedly applies that to cookieless hash-based tools (eLegal, 2025; secondary source,
+   flagged as such). Stopped as planned; Matěj chose a consent bar. Conversion denominator moved from Umami
+   pageviews to Meta link clicks as a consequence.
+2. **Bug found only by the browser:** `interaction_complete` lagged one interaction behind (reported the second
+   result, VOO,QQQ instead of VOO), because `tool.ts` fires `tool:result` inside its own listeners before the funnel
+   listener marked the visit as touched. Fixed by recording the touch in the capture phase. Unit tests could not
+   have caught it.
+3. **Plan defect:** `form_error 'empty'` could never fire: the e-mail input is `required`, so the browser blocks the
+   submit before our handler runs. Added an `invalid` listener.
+4. **Plan defect:** the plan read step props from the form's hidden fields, which `tool.ts` updates in a listener
+   whose order relative to ours isn't guaranteed. Read the tool's inputs instead.
+5. **Lead agent's own:** expected `step_complete` B = the final slider value (8 000), but the plan's own rule is
+   "first change" (3 500). The expectation was wrong, not the code.
+6. **Lead agent's own:** ran `npx astro check` without `@astrojs/check` installed; it hung on an install prompt and
+   had to be killed. Also a heredoc ate the backslashes in a regex (CLAUDE.md warns about this).
+7. **Skill table vs. formula:** the `ab-testing` skill's quick reference says ~7k per variant for 5 % at +20 %; the
+   two-proportion formula gives 8 158 (checked by hand in `scripts/sample-size.mjs`). The skill table is unsourced
+   and was not used.
+8. The A/B draft first claimed the Meta A/B split feature as a fact and implied all arms exist; corrected to "verify
+   before launch" and "only test 1's arms are built".
+
+**Not verified:** anything on a deployed URL or in a real Umami account (needs Matěj's OK for the account and the
+deploy), a real phone, whether Umami's funnel report can filter by tag.
