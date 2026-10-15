@@ -1905,3 +1905,2335 @@ Do not touch anything else. Commit as `fix: verbatim e-mail copy and UCITS-only 
 ````
 
 </details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 7 re-review round 1 (model: sonnet)</summary>
+
+````text
+You are re-reviewing one task's fix round. A previous review produced
+findings; an implementer has attempted to fix them. Your job is to
+verdict each finding and inspect the fix diff — nothing else.
+
+## The Task
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-7-brief.md
+
+## The Findings Under Verification
+
+Fix round 1 for Task 7. Fix these, re-run `node --test src/lib/plan.test.ts src/lib/email.test.ts` and then `npm test`, append a fix report to task-7-report.md, reply with the short contract.
+
+1. (Important) **email.ts footer not verbatim:** email.md says "Plán vám přišel, protože jste si ho {11. 10. 2026} vyžádali na {etfdvojce…}." — the "ho" is missing. Restore it and change the test to assert the full sentence.
+2. (Important) **Unapproved copy:** remove "(nejvyšší z vašich dvojčat: …)" from the ETF line (email.ts ~220); the line must read as email.md: "ETF: TER {0,07 %} ročně, poplatek za obchod a směna měny u {brokera} ({ceník, datum})." Also remove the added "Pořadí v tabulce není doporučení." (email.ts ~241) — email.md's own text for that spot is "Toto není doporučení. Který fond koupíte a jestli vůbec, je na vás." Approved copy only.
+3. (Important, controller ruling) **No-twin plans (SCHD only):** the fee side must never use a US ETF's TER. Ruling: when no twins are shown across all groups, `buildPlan` computes the fees with the S&P 500 twins (the same set the fallback plan uses: the twins of the first US fund with `index_key` 'sp500', filtered by `dividends`), so `terPct`/`terTicker` always name a UCITS fund. Add a plan test: `t=SCHD` → `fees.terTicker` is a UCITS Xetra ticker from the S&P 500 set and `terPct` equals that set's max TER read from etfs.json.
+4. (Minor, do it — the numbers are the riskiest part) Add assertions in email.test.ts for the computed fee paragraphs of a `t=VOO&b=fio` render: "3,95 EUR", "3,16 %", "1,65 %", "3–5 %", "1,75–2,59 %", and the Fio-only note ("Fio kurzovou přirážku nezveřejňuje") present for `b=fio` and absent for `b=xtb`. Use the exact characters the renderer emits (nbsp before %/Kč/EUR if that's what fmt* produce) — assert against the real output, don't loosen the renderer.
+
+Do not touch anything else. Commit as `fix: verbatim e-mail copy and UCITS-only TER for no-twin plans`.
+
+## The Fix
+
+Read the implementer's report (fix reports are appended at the end):
+D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-7-report.md
+
+**Fix base:** c68b876 (the head the previous review saw)
+**Head:** aedb5a7
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-c68b876..aedb5a7.diff
+
+Read the diff file once — it contains the fix commits, a stat summary,
+and the fix diff with surrounding context. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat c68b876..aedb5a7` and
+`git diff c68b876..aedb5a7`.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Scope
+
+Your scope is the findings list and the fix diff. Verdict every finding.
+Inspect the fix diff for new problems the fix itself introduced. Do NOT
+re-review code the fix did not touch: if you notice an issue entirely
+outside the fix diff, report it under Out-of-Scope Observations — it
+does not block this task and does not extend the loop. A broad
+whole-branch review happens after all tasks are complete.
+
+## Tests
+
+The implementer re-ran the tests covering the amended code and appended
+the results to the report file. Treat the report as unverified claims:
+confirm the fix report names the covering tests and shows their output,
+and verify the claims against the diff. Do not re-run the suite to
+confirm their report. Run a test only when reading the code raises a
+specific doubt that no existing run answers — and then a focused test,
+never a package-wide suite.
+
+## Output Format
+
+Your final message is the report itself: begin directly with the first
+finding's verdict. Every line is a verdict, a finding with file:line,
+or a check you ran — no preamble, no process narration.
+
+### Finding Verdicts
+
+For each finding in The Findings Under Verification, in order:
+- **[finding one-liner]** — ADDRESSED | NOT ADDRESSED, with file:line
+  evidence. "Attempted" is not addressed: the specific defect must no
+  longer exist.
+
+### New Breakage in the Fix Diff
+
+Anything the fix itself broke or introduced, with severity
+(Critical/Important/Minor) and file:line. "None" if clean.
+
+### Out-of-Scope Observations
+
+Issues you noticed entirely outside the fix diff. Non-blocking; the
+controller ledgers these for the final review. "None" if none.
+
+### Verdict
+
+**Fix round:** [All findings addressed, no new Critical/Important
+breakage | Findings remain open] — list the open ones.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 8 implementer (/api/lead) (model: sonnet)</summary>
+
+````text
+You are implementing Task 8: C:/Program Files/Git/api/lead + Brevo client + local API server (TDD) — part of Phase 3 (Build) of "ETF Dvojče", a Czech mobile-first lead-magnet landing page that compares US ETFs with their European UCITS equivalents (Astro static site + one vanilla-TS island + one Vercel function).
+
+## Task Description
+
+Read your task brief first: D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-8-brief.md
+It is your requirements, with the exact values to use verbatim.
+
+## Environment
+
+- Repo D:\etf_landing_page, Windows 11, Git Bash + PowerShell, Node v26 (runs .ts files natively via type stripping: use only erasable TS syntax — no enums, namespaces, parameter properties), npm 11. NO Python: never run `python`.
+- Branch `master`; commit directly to it. Commit messages in English, conventional prefix, ending with a blank line and `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Only dependency allowed: `astro@7.3.8` (installed). Never add a package; if you think one is needed, report NEEDS_CONTEXT.
+- Tests: `node --test <file>` (node:test + node:assert/strict). Full suite: `npm test`.
+- Project rules: D:\etf_landing_page\CLAUDE.md (read "Data rules", "Copy & design rules", and "Overrides" in the Plugins table). Never type a data number by hand: figures come from data/*.json.
+- Write long Czech text with your file Write/Edit tools, not shell heredocs.
+
+## Context and controller rulings
+
+- This is the only endpoint that accepts internet input and sends e-mail in our name. Read docs/decisions.md §6 and §6a (rules 1–6) and §15 #10–13, #15 before writing code; they are binding.
+- Already in the repo (use as-is):
+  - `src/lib/selection.ts`: `parseSelection(params: URLSearchParams, knownTickers)`, `validateEmail(raw)`, `sanitizeUtm(params)`, `adVariant(utmContent)`, `toParams`. For JSON bodies, build a `URLSearchParams` from the object's string values before calling these (non-string values → ignore).
+  - `src/lib/data.ts`: `US_TICKERS`, `FX`.
+  - `src/lib/plan.ts`: `buildPlan(sel, fx)`.
+  - `src/lib/email.ts`: `renderEmail(plan, sel, siteUrl, sentOn?) => { subject, html, text }`.
+- Request parsing: accept `application/json` and `application/x-www-form-urlencoded`. Read the body as text once, reject > 10 000 bytes with 413 before parsing (use the byte length of the text, `new TextEncoder().encode(t).length`, or check `content-length` first and still check the text). Malformed JSON → 400 `{ok:false, reason:'invalid'}`. Response type: JSON when the `accept` header includes `application/json`, else 303 redirects (`/dekujeme/` success, `/chyba-formulare/` failure of any kind incl. server errors).
+- Honeypot field `fld_q8` (§15 #10): non-empty → `log` once, fake success, zero Brevo calls.
+- Newsletter checkbox field name `newsletter`; ticked = value `on` or `true` (string). Attributes per §15 #12: `NEWSLETTER: true`, `NEWSLETTER_CONSENT_AT: now ISO`, `CONSENT_TEXT_V: 1`; unticked → none of these keys present (never clear an earlier consent).
+- Attribute names exactly as the brief lists (Brevo attributes are uppercase). `TICKERS` = comma-joined allowed tickers (empty string when none). `LAST_REQUEST_AT` = now ISO on every accepted request.
+- Lists: env `BREVO_PLAN_LIST_ID` always, `BREVO_NEWSLETTER_LIST_ID` only when ticked (parse to numbers; missing/NaN → omit that list).
+- Dedupe (§6a rule 3): `getContact` → if `PLAN_SENT_AT` exists and `now - PLAN_SENT_AT < 24 h` → upsert attributes, no send, 200. Sequence when sending (§15 #11): upsert (without PLAN_SENT_AT) → sendEmail → upsert `{ PLAN_SENT_AT }` only (a failure of that last call is logged and still returns 200). Failures of getContact, the first upsert, or sendEmail → 502 `{ok:false, reason:'server'}`.
+- Logging: `log(message, data?)` must never include the e-mail address in clear (GDPR data minimisation in Vercel logs): log reason codes only (`honeypot`, `brevo_error`, `plan_sent_at_update_failed`) plus non-personal context.
+- Brevo REST v3 (`https://api.brevo.com/v3`, header `api-key`, `content-type: application/json`, `accept: application/json`):
+  - `GET /contacts/{encodeURIComponent(email)}` → 200 `{ attributes: {...} }` | 404 → null.
+  - `POST /contacts` body `{ email, attributes, listIds, updateEnabled: true }` → 201/204.
+  - `POST /smtp/email` body `{ sender: { name, email }, to: [{ email }], replyTo: { email }, subject, htmlContent, textContent }` → 201. (Omit `replyTo` when the env var is empty.)
+  - `AbortSignal.timeout(8000)` on every call; non-2xx (except the 404 case) → throw an Error whose message has the status but not the address.
+- Dry-run (§15 #15): `brevoFromEnv(env, fetch)` without `BREVO_API_KEY` returns a client whose getContact returns null, upsert logs "dry-run upsert" (attribute keys only), sendEmail writes `.dev/last-email.html` (mkdir -p `.dev`) and logs the subject. Dry-run has no memory, so dedupe is only covered by the unit tests — that is expected.
+- `export async function POST(request: Request)` in api/lead.ts wires real deps: `brevoFromEnv(process.env, fetch)`, `now: () => new Date()`, `log: (m, d) => console.log(JSON.stringify({ m, ...d }))`, `siteUrl: process.env.SITE_URL ?? 'http://localhost:4321'`. This is the Vercel Node.js runtime's Web-standard handler signature; whether Vercel resolves the `.ts`-extension imports in api/ is a known Phase 5 risk — don't try to solve it now.
+- `scripts/dev.mjs`: `node:http` server on 127.0.0.1:8787 that builds a `Request` from the Node request (method, headers, full body buffer), calls `POST` (only for path `/api/lead`; other paths 404), and writes status, headers and body back; then `spawn` `npx astro dev` with `{ stdio: 'inherit', shell: true }` (Windows needs `shell: true` for npx) and kills it on SIGINT/exit. The Astro config already proxies `/api` to :8787 in dev (Task 1) — confirm that in astro.config.mjs.
+- After tests pass, do the manual check in the brief Step 4 (start `node scripts/dev.mjs` in the background, curl the JSON POST and a form POST, confirm `{"ok":true}`, the 303, and `.dev/last-email.html`), then stop the server. Include the curl outputs in the report.
+- No rate limiting in code (decisions §15 #17 is a proposal for the platform layer). The client handles 429 later.
+- Files: `api/lead.ts`, `api/lead.test.ts`, `src/lib/brevo.ts`, `scripts/dev.mjs`. Add `.dev/` is already gitignored.
+- Parked from Task 7 review (pointer: ledger "Task 7: review 1"): `renderEmail` calls `new URL(siteUrl).host`, which throws on a malformed SITE_URL. In `POST`, validate SITE_URL once (try `new URL`) and fall back to `http://localhost:4321` with a logged warning, so a bad env var cannot turn every request into a 500.
+- Parked from Task 5 review: `brokerFor` assumes a valid BrokerId; `parseSelection` already guarantees that — always pass the parsed selection, never raw input.
+
+## Before You Begin
+
+If anything in the requirements or approach is unclear, ask now (status NEEDS_CONTEXT) instead of guessing.
+
+## Your Job
+
+1. Implement exactly what the task specifies (TDD where the brief says: show the RED failure before implementing)
+2. Verify it works; run the full suite once before committing
+3. Commit (small commits, one logical change each)
+4. Self-review your diff: completeness, minimalism (no unrequested abstraction or options), tests verify behaviour
+5. Report back
+
+Keep it minimal. Never remove or weaken: a11y attributes, consent/GDPR text, the honeypot, server-side validation, source/date labels. No analytics code.
+
+## You Do Not Dispatch Subagents
+
+Do all of this task's work yourself. Never spawn a subagent or a reviewer — review is the controller's job.
+
+## When You're in Over Your Head
+
+It is always OK to stop and report BLOCKED or NEEDS_CONTEXT with specifics. Bad work is worse than no work.
+
+## After Review Findings
+
+If resumed with findings: fix them, re-run the covering tests, append a fix report (changes, command, output) to your report file, reply with the short contract.
+
+## Report Format
+
+Write your full report to D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-8-report.md: what you implemented; TDD evidence (RED: command + failing output; GREEN: command + passing output) where TDD applies; other verification with command output; files changed; self-review findings; concerns.
+
+Then reply with ONLY (under 15 lines): Status (DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT), commits (short SHA + subject), one-line test summary, concerns, the report file path.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 8 reviewer (model: opus)</summary>
+
+````text
+You are reviewing one task's implementation: first whether it matches its
+requirements, then whether it is well-built. This is a task-scoped gate,
+not a merge review — a broad whole-branch review happens separately after
+all tasks are complete.
+
+## What Was Requested
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-8-brief.md
+
+Global constraints from the spec/design that bind this task:
+- Only dependency: `astro`. Anything else (Playwright, Vercel CLI, adapters, fontkit) → ask Matěj first.
+- JS on first load < 60 kB gzipped; LCP < 2.0 s throttled 4G (measured in Phase 5); no font CLS.
+- All copy verbatim from `content/page.md` / `content/email.md`. Every `{…}` is computed from `data/` at build or
+  run time. No number typed by hand in `src/` (exceptions: UI ranges and the 2 % fixed-fee note threshold, which are
+  product decisions recorded in decisions §15, not data).
+- `[DOPLNIT …]` placeholders stay visible and marked; they are listed in the README later.
+- Vykání, lowercase "vy/vám". Never "ETF z NYSE", never "lower tax", never "twin is cheaper", never "Fio prodává".
+- Design: decisions §10 tokens (`paper #F1F3EE`, `ink #1A2421`, `muted #5A6762`, `blocked #B8361E`, `allowed #17704A`,
+  `marker #F3DC5A`), Archivo self-hosted, single column 16 px gutter / 36rem desktop, chips pill, result block square
+  with 2 px ink rule, one user-triggered animation, `prefers-reduced-motion` respected. Banned list in §10.
+- a11y: AA contrast, tap targets ≥ 44 px, labels on inputs, `aria-live` on the result, focus visible.
+- `/api/lead` follows decisions §6a rules 1–6 exactly. Secrets only in env; `.env.example` committed.
+- Ponytail must not remove: a11y attributes, consent text, honeypot, server validation, source/date labels.
+- No analytics code (Phase 4). Leave `data-section` attributes on sections so Phase 4 can hook in without markup edits.
+- Commits: small, English, conventional prefix, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Every subagent prompt is logged verbatim in `docs/ai-worklog.md` before dispatch; every review finding after.
+
+## Decisions this plan takes (go to `docs/decisions.md` §15 in Task 1)
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Sliders: monthly 500–30 000 Kč step 500 (default 3 000), years 1–40 (default 20), return 0–10 % step 0,5 (default 5) | page.md left the range to Phase 3; 30 000 keeps Fio under its 1 400 EUR tier at default rate but the 4,95 EUR tier is still reachable at high EUR rates |
+| 2 | ETF side uses the **highest TER** among the visitor's shown twins (VOO → 0,07 %, labelled with that fund's ticker, VUAA first on ties in data order) | never flatters the ETF; reproduces calc-examples |
+| 3 | "Nevím" = commission 0 + the **highest published FX surcharge** computed from `brokers.json` (today XTB 0,5 %) | page.md copy |
+| 4 | ČS: 0,35 % **min. 4 EUR** per buy (the Xetra rule) + custody 0,08 % p.a. added to ongoing cost | conservative and matches the "pevný poplatek" copy for ČS; the no-minimum fractional regular order (internet banking only) would make ČS cheaper at small amounts — **flagged to Matěj** |
+| 5 | XTB 0,2 % above 100 000 EUR monthly turnover ignored | `shortcut:` comment; only matters for a sale above 100 000 EUR |
+| 6 | Twin order everywhere: accumulating first, then alphabetical by Xetra ticker | page.md §9 and result example "SPYL · SXR8 · VUAA"; "Pořadí není doporučení" stays |
+| 7 | Picks sharing an index are grouped ("VOO, SPY, IVV → S&P 500") in result, thank-you table, e-mail, `/plan` | avoids three identical tables |
+| 8 | Fallback form (no picks) → plan for VOO, SPY, IVV; subject "Váš ETF plán pro S&P 500" | page.md §7, email.md subject |
+| 9 | URL / hidden-field param names: `t` (tickers, comma), `m`, `y`, `r`, `b` (`unknown`/`xtb`/`t212`/`fio`/`cs`), `d` (`acc`/`dist`/`both`) | short `/plan` links |
+| 10 | Honeypot field name `fld_q8` | meaningless to autofill (§5) |
+| 11 | `/api/lead` order: upsert contact → send e-mail → set `PLAN_SENT_AT`. Failure in step 1–2 → 502; failure in step 3 → logged, still 200 | a failed send never blocks the visitor for 24 h |
+| 12 | Newsletter consent stored as `NEWSLETTER=true` + `NEWSLETTER_CONSENT_AT` + `CONSENT_TEXT_V=1`; an unticked box never clears an earlier consent | GDPR art. 7(1) demonstrability |
+| 13 | No-JS form: server answers form-encoded POSTs with 303 → `/dekujeme/` or `/chyba-formulare/`; JSON POSTs get JSON | §4 no-JS requirement |
+| 14 | Hero variant chosen by a ≤ 300 B inline head script (`html.js`, `data-variant`) | no flash/CLS; no-JS = variant A |
+| 15 | Without `BREVO_API_KEY` the function runs in **dry-run**: logs and writes the e-mail to `.dev/last-email.html` (gitignored) | local testing, and the source of the real e-mail screenshot for section 4 |
+| 16 | Daily FX rebuild (proposal only): **GitHub Actions `schedule` → `curl -X POST` a Vercel Deploy Hook** (hook URL as a repo secret) | no extra function; Vercel cron would need a function that calls the hook anyway. Caveat: GitHub pauses schedules after 60 days without repo activity |
+| 17 | Rate limit (proposal only): (a) Vercel WAF rate-limit rule on `/api/lead` if Hobby allows it — VERIFY; (b) Upstash Redis free tier — needs an account | decisions §6a rule 5 |
+
+Controller rulings that bind this task:
+- This is the only endpoint that accepts internet input and sends e-mail in our name. Read docs/decisions.md §6 and §6a (rules 1–6) and §15 #10–13, #15 before writing code; they are binding.
+- Already in the repo (use as-is):
+  - `src/lib/selection.ts`: `parseSelection(params: URLSearchParams, knownTickers)`, `validateEmail(raw)`, `sanitizeUtm(params)`, `adVariant(utmContent)`, `toParams`. For JSON bodies, build a `URLSearchParams` from the object's string values before calling these (non-string values → ignore).
+  - `src/lib/data.ts`: `US_TICKERS`, `FX`.
+  - `src/lib/plan.ts`: `buildPlan(sel, fx)`.
+  - `src/lib/email.ts`: `renderEmail(plan, sel, siteUrl, sentOn?) => { subject, html, text }`.
+- Request parsing: accept `application/json` and `application/x-www-form-urlencoded`. Read the body as text once, reject > 10 000 bytes with 413 before parsing (use the byte length of the text, `new TextEncoder().encode(t).length`, or check `content-length` first and still check the text). Malformed JSON → 400 `{ok:false, reason:'invalid'}`. Response type: JSON when the `accept` header includes `application/json`, else 303 redirects (`/dekujeme/` success, `/chyba-formulare/` failure of any kind incl. server errors).
+- Honeypot field `fld_q8` (§15 #10): non-empty → `log` once, fake success, zero Brevo calls.
+- Newsletter checkbox field name `newsletter`; ticked = value `on` or `true` (string). Attributes per §15 #12: `NEWSLETTER: true`, `NEWSLETTER_CONSENT_AT: now ISO`, `CONSENT_TEXT_V: 1`; unticked → none of these keys present (never clear an earlier consent).
+- Attribute names exactly as the brief lists (Brevo attributes are uppercase). `TICKERS` = comma-joined allowed tickers (empty string when none). `LAST_REQUEST_AT` = now ISO on every accepted request.
+- Lists: env `BREVO_PLAN_LIST_ID` always, `BREVO_NEWSLETTER_LIST_ID` only when ticked (parse to numbers; missing/NaN → omit that list).
+- Dedupe (§6a rule 3): `getContact` → if `PLAN_SENT_AT` exists and `now - PLAN_SENT_AT < 24 h` → upsert attributes, no send, 200. Sequence when sending (§15 #11): upsert (without PLAN_SENT_AT) → sendEmail → upsert `{ PLAN_SENT_AT }` only (a failure of that last call is logged and still returns 200). Failures of getContact, the first upsert, or sendEmail → 502 `{ok:false, reason:'server'}`.
+- Logging: `log(message, data?)` must never include the e-mail address in clear (GDPR data minimisation in Vercel logs): log reason codes only (`honeypot`, `brevo_error`, `plan_sent_at_update_failed`) plus non-personal context.
+- Brevo REST v3 (`https://api.brevo.com/v3`, header `api-key`, `content-type: application/json`, `accept: application/json`):
+  - `GET /contacts/{encodeURIComponent(email)}` → 200 `{ attributes: {...} }` | 404 → null.
+  - `POST /contacts` body `{ email, attributes, listIds, updateEnabled: true }` → 201/204.
+  - `POST /smtp/email` body `{ sender: { name, email }, to: [{ email }], replyTo: { email }, subject, htmlContent, textContent }` → 201. (Omit `replyTo` when the env var is empty.)
+  - `AbortSignal.timeout(8000)` on every call; non-2xx (except the 404 case) → throw an Error whose message has the status but not the address.
+- Dry-run (§15 #15): `brevoFromEnv(env, fetch)` without `BREVO_API_KEY` returns a client whose getContact returns null, upsert logs "dry-run upsert" (attribute keys only), sendEmail writes `.dev/last-email.html` (mkdir -p `.dev`) and logs the subject. Dry-run has no memory, so dedupe is only covered by the unit tests — that is expected.
+- `export async function POST(request: Request)` in api/lead.ts wires real deps: `brevoFromEnv(process.env, fetch)`, `now: () => new Date()`, `log: (m, d) => console.log(JSON.stringify({ m, ...d }))`, `siteUrl: process.env.SITE_URL ?? 'http://localhost:4321'`. This is the Vercel Node.js runtime's Web-standard handler signature; whether Vercel resolves the `.ts`-extension imports in api/ is a known Phase 5 risk — don't try to solve it now.
+- `scripts/dev.mjs`: `node:http` server on 127.0.0.1:8787 that builds a `Request` from the Node request (method, headers, full body buffer), calls `POST` (only for path `/api/lead`; other paths 404), and writes status, headers and body back; then `spawn` `npx astro dev` with `{ stdio: 'inherit', shell: true }` (Windows needs `shell: true` for npx) and kills it on SIGINT/exit. The Astro config already proxies `/api` to :8787 in dev (Task 1) — confirm that in astro.config.mjs.
+- After tests pass, do the manual check in the brief Step 4 (start `node scripts/dev.mjs` in the background, curl the JSON POST and a form POST, confirm `{"ok":true}`, the 303, and `.dev/last-email.html`), then stop the server. Include the curl outputs in the report.
+- No rate limiting in code (decisions §15 #17 is a proposal for the platform layer). The client handles 429 later.
+- Files: `api/lead.ts`, `api/lead.test.ts`, `src/lib/brevo.ts`, `scripts/dev.mjs`. Add `.dev/` is already gitignored.
+- Parked from Task 7 review (pointer: ledger "Task 7: review 1"): `renderEmail` calls `new URL(siteUrl).host`, which throws on a malformed SITE_URL. In `POST`, validate SITE_URL once (try `new URL`) and fall back to `http://localhost:4321` with a logged warning, so a bad env var cannot turn every request into a 500.
+- Parked from Task 5 review: `brokerFor` assumes a valid BrokerId; `parseSelection` already guarantees that — always pass the parsed selection, never raw input.
+
+## What the Implementer Claims They Built
+
+Read the implementer's report: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-8-report.md
+
+## Diff Under Review
+
+**Base:** 03940a0
+**Head:** ae06615
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-03940a0..ae06615.diff
+
+Read the diff file once — it contains the commit list, a stat summary,
+and the full diff with surrounding context, and it is your view of the
+change. The diff's context lines ARE the changed files: do not Read a
+changed file separately unless a hunk you must judge is cut off
+mid-function — and say so in your report. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat 03940a0..ae06615` and `git diff 03940a0..ae06615`.
+Do not crawl the broader codebase. Inspect code outside the diff only
+to evaluate a concrete risk you can name — one focused check per named
+risk, and name both the risk and what you checked in your report.
+Cross-cutting changes are legitimate named risks: if the diff changes
+lock ordering, a function or API contract, or shared mutable state,
+checking the call sites is the right method.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Do Not Trust the Report
+
+Treat the implementer's report as unverified claims about the code. It
+may be incomplete, inaccurate, or optimistic. Verify the claims against
+the diff. Design rationales in the report are claims too: "left it per
+YAGNI," "kept it simple deliberately," or any other justification is the
+implementer grading their own work. Judge the code on its merits — a
+stated rationale never downgrades a finding's severity.
+
+## Tests
+
+The implementer already ran the tests and reported results with TDD
+evidence for exactly this code. Do not re-run the suite to confirm their
+report. Run a test only when reading the code raises a specific doubt
+that no existing run answers — and then a focused test, never a
+package-wide suite, race detector run, or repeated/high-count loop. If
+heavy validation seems warranted, recommend it in your report instead of
+running it. If you cannot run commands in this environment, name the
+test you would run.
+
+Warnings or other noise in the implementer's reported test output are
+findings — test output should be pristine.
+
+Evidence you cannot see is not evidence that doesn't exist. If the
+report or its test evidence looks truncated, or you cannot locate the
+results it claims, re-read the file at its stated path — and if it is
+genuinely missing or garbled, report that as a gap for the controller.
+Re-running the suite to regenerate what you failed to read is not
+verification; illegibility of the evidence is not invalidation of it.
+
+## Part 1: Spec Compliance
+
+Compare the diff against What Was Requested:
+
+- **Missing:** requirements they skipped, missed, or claimed without
+  implementing
+- **Extra:** features that weren't requested, over-engineering, unneeded
+  "nice to haves"
+- **Misunderstood:** right feature built the wrong way, wrong problem
+  solved
+
+If the brief lists several files each with its own change (a batched
+dispatch), check the diff against that list file by file: every listed
+file must have its corresponding hunk. A listed file the diff never
+touches is a Missing finding, no matter how clean the rest of the
+batch looks.
+
+If a requirement cannot be verified from this diff alone (it lives in
+unchanged code or spans tasks), report it as a ⚠️ item instead of
+broadening your search.
+
+## Part 2: Code Quality
+
+**Code quality:**
+- Clean separation of concerns?
+- Proper error handling?
+- DRY without premature abstraction?
+- Edge cases handled?
+
+**Tests:**
+- Do the new and changed tests verify real behavior, not mocks?
+- Are the task's edge cases covered?
+
+**Structure:**
+- Does each file have one clear responsibility with a well-defined interface?
+- Are units decomposed so they can be understood and tested independently?
+- Is the implementation following the file structure from the plan?
+- Did this change create new files that are already large, or
+  significantly grow existing files? (Don't flag pre-existing file
+  sizes — focus on what this change contributed.)
+
+Your report should point at evidence: file:line references for every
+finding and for any check you would otherwise answer with a bare
+"yes." A tight report that cites lines gives the controller everything
+it needs.
+
+Your final message is the report itself: begin directly with the
+spec-compliance verdict. Every line is a verdict, a finding with
+file:line, or a check you ran — no preamble, no process narration,
+no closing summary.
+
+## Calibration
+
+Categorize issues by actual severity. Not everything is Critical.
+Important means this task cannot be trusted until it is fixed: incorrect
+or fragile behavior, a missed requirement, or maintainability damage you
+would block a merge over — verbatim duplication of a logic block,
+swallowed errors, tests that assert nothing. "Coverage could be broader"
+and polish suggestions are Minor.
+If the plan or brief explicitly mandates something this rubric calls a
+defect (a test that asserts nothing, verbatim duplication of a logic
+block), that IS a finding — report it as Important, labeled
+plan-mandated. The plan's authorship does not grade its own work; the
+human decides.
+Acknowledge what was done well before listing issues — accurate praise
+helps the implementer trust the rest of the feedback.
+
+## Output Format
+
+### Spec Compliance
+
+- ✅ Spec compliant | ❌ Issues found: [what's missing/extra/misunderstood,
+  with file:line references]
+- ⚠️ Cannot verify from diff: [requirements you could not verify from the
+  diff alone, and what the controller should check — report alongside the
+  ✅/❌ verdict for everything you could verify]
+
+### Strengths
+[What's well done? Be specific.]
+
+### Issues
+
+#### Critical (Must Fix)
+#### Important (Should Fix)
+#### Minor (Nice to Have)
+
+For each issue: file:line, what's wrong, why it matters, how to fix
+(if not obvious).
+
+### Assessment
+
+**Task quality:** [Approved | Needs fixes]
+
+**Reasoning:** [1-2 sentence technical assessment]
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 8 fix round 1 (model: sonnet)</summary>
+
+````text
+Fix round 1 for Task 8. Fix these, re-run `node --test api/lead.test.ts` then `npm test`, append a fix report to task-8-report.md (include the raw command output), reply with the short contract.
+
+1. (Important) **lead.ts ~216 and ~222 swallow the error cause.** Log it without personal data: `catch (err) { log('brevo_error', { error: String((err as Error)?.message ?? err).slice(0, 200) }); … }` and the same for `plan_sent_at_update_failed`. Rename the first code to something that doesn't claim Brevo when render/plan throws (e.g. `lead_failed`, with the message showing the cause), or wrap only the Brevo calls — your choice, keep it small. Add a test: a failing upsert whose Error message is `brevo 400 /contacts` → the logged data contains that message and still no e-mail address (the existing "no e-mail in logs" test must stay green).
+2. (Minor, do it) Add the list-ID test: `handleLead(json({ email: 'a@b.cz', newsletter: 'on' }), deps(f), { BREVO_PLAN_LIST_ID: '3', BREVO_NEWSLETTER_LIST_ID: 'x' })` → lists `[3]`; ticked with both valid → `[3, 4]`; unticked with both valid → `[3]`.
+3. (Minor, do it) One-line comment above the dedupe read: `// shortcut: read-then-write on Brevo; two submits within ms can both send. Acceptable at this volume; a shared lock would fix it.`
+4. (Minor, do it) scripts/dev.mjs: bind the server to the same host the Astro proxy targets (`localhost` in astro.config.mjs), and on win32 kill the astro process tree with `taskkill /pid <pid> /T /F` (spawnSync) instead of `child.kill()`, so Ctrl+C doesn't leave `astro dev` holding :4321. Re-run the manual JSON POST through :4321 to confirm, and confirm port 4321 is free after stopping.
+
+Nothing else. Commit as `fix: log lead failure causes, test list IDs, dev server cleanup`.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 8 re-review round 1 (model: sonnet)</summary>
+
+````text
+You are re-reviewing one task's fix round. A previous review produced
+findings; an implementer has attempted to fix them. Your job is to
+verdict each finding and inspect the fix diff — nothing else.
+
+## The Task
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-8-brief.md
+
+## The Findings Under Verification
+
+Fix round 1 for Task 8. Fix these, re-run `node --test api/lead.test.ts` then `npm test`, append a fix report to task-8-report.md (include the raw command output), reply with the short contract.
+
+1. (Important) **lead.ts ~216 and ~222 swallow the error cause.** Log it without personal data: `catch (err) { log('brevo_error', { error: String((err as Error)?.message ?? err).slice(0, 200) }); … }` and the same for `plan_sent_at_update_failed`. Rename the first code to something that doesn't claim Brevo when render/plan throws (e.g. `lead_failed`, with the message showing the cause), or wrap only the Brevo calls — your choice, keep it small. Add a test: a failing upsert whose Error message is `brevo 400 /contacts` → the logged data contains that message and still no e-mail address (the existing "no e-mail in logs" test must stay green).
+2. (Minor, do it) Add the list-ID test: `handleLead(json({ email: 'a@b.cz', newsletter: 'on' }), deps(f), { BREVO_PLAN_LIST_ID: '3', BREVO_NEWSLETTER_LIST_ID: 'x' })` → lists `[3]`; ticked with both valid → `[3, 4]`; unticked with both valid → `[3]`.
+3. (Minor, do it) One-line comment above the dedupe read: `// shortcut: read-then-write on Brevo; two submits within ms can both send. Acceptable at this volume; a shared lock would fix it.`
+4. (Minor, do it) scripts/dev.mjs: bind the server to the same host the Astro proxy targets (`localhost` in astro.config.mjs), and on win32 kill the astro process tree with `taskkill /pid <pid> /T /F` (spawnSync) instead of `child.kill()`, so Ctrl+C doesn't leave `astro dev` holding :4321. Re-run the manual JSON POST through :4321 to confirm, and confirm port 4321 is free after stopping.
+
+Nothing else. Commit as `fix: log lead failure causes, test list IDs, dev server cleanup`.
+
+## The Fix
+
+Read the implementer's report (fix reports are appended at the end):
+D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-8-report.md
+
+**Fix base:** ae06615 (the head the previous review saw)
+**Head:** 9d731cf
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-ae06615..9d731cf.diff
+
+Read the diff file once — it contains the fix commits, a stat summary,
+and the fix diff with surrounding context. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat ae06615..9d731cf` and
+`git diff ae06615..9d731cf`.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Scope
+
+Your scope is the findings list and the fix diff. Verdict every finding.
+Inspect the fix diff for new problems the fix itself introduced. Do NOT
+re-review code the fix did not touch: if you notice an issue entirely
+outside the fix diff, report it under Out-of-Scope Observations — it
+does not block this task and does not extend the loop. A broad
+whole-branch review happens after all tasks are complete.
+
+## Tests
+
+The implementer re-ran the tests covering the amended code and appended
+the results to the report file. Treat the report as unverified claims:
+confirm the fix report names the covering tests and shows their output,
+and verify the claims against the diff. Do not re-run the suite to
+confirm their report. Run a test only when reading the code raises a
+specific doubt that no existing run answers — and then a focused test,
+never a package-wide suite.
+
+## Output Format
+
+Your final message is the report itself: begin directly with the first
+finding's verdict. Every line is a verdict, a finding with file:line,
+or a check you ran — no preamble, no process narration.
+
+### Finding Verdicts
+
+For each finding in The Findings Under Verification, in order:
+- **[finding one-liner]** — ADDRESSED | NOT ADDRESSED, with file:line
+  evidence. "Attempted" is not addressed: the specific defect must no
+  longer exist.
+
+### New Breakage in the Fix Diff
+
+Anything the fix itself broke or introduced, with severity
+(Critical/Important/Minor) and file:line. "None" if clean.
+
+### Out-of-Scope Observations
+
+Issues you noticed entirely outside the fix diff. Non-blocking; the
+controller ledgers these for the final review. "None" if none.
+
+### Verdict
+
+**Fix round:** [All findings addressed, no new Critical/Important
+breakage | Findings remain open] — list the open ones.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 9 implementer (static page, design) (model: opus)</summary>
+
+````text
+You are implementing Task 9: Static page, sections, no-JS table, legal and static pages — part of Phase 3 (Build) of "ETF Dvojče", a Czech mobile-first lead-magnet landing page that compares US ETFs with their European UCITS equivalents (Astro static site + one vanilla-TS island + one Vercel function).
+
+## Task Description
+
+Read your task brief first: D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-9-brief.md
+It is your requirements, with the exact values to use verbatim.
+
+## Environment
+
+- Repo D:\etf_landing_page, Windows 11, Git Bash + PowerShell, Node v26 (runs .ts files natively via type stripping: use only erasable TS syntax — no enums, namespaces, parameter properties), npm 11. NO Python: never run `python`.
+- Branch `master`; commit directly to it. Commit messages in English, conventional prefix, ending with a blank line and `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Only dependency allowed: `astro@7.3.8` (installed). Never add a package; if you think one is needed, report NEEDS_CONTEXT.
+- Tests: `node --test <file>` (node:test + node:assert/strict). Full suite: `npm test`.
+- Project rules: D:\etf_landing_page\CLAUDE.md (read "Data rules", "Copy & design rules", and "Overrides" in the Plugins table). Never type a data number by hand: figures come from data/*.json.
+- Write long Czech text with your file Write/Edit tools, not shell heredocs.
+
+## Context and controller rulings
+
+- **Invoke the `frontend-design:frontend-design` skill (Skill tool) before writing any markup or CSS.** Its guidance applies within the fixed visual direction of docs/decisions.md §10 (read §10 fully, incl. the "Avoided on purpose" list) and CLAUDE.md "Copy & design rules". The page must not look like default AI output.
+- Copy source: content/page.md, **verbatim** (sections 0–9). `*Poznámka:*` lines are build notes, never page text. `[DOPLNIT …]` placeholders stay visible (style them as an obvious placeholder, e.g. a dotted-underlined muted span) — they are listed in the README later. `[CHYBÍ ZDROJ]` must not appear (there are none left; grep to confirm). `[Jak počítáme]`, `[Zásady ochrany osobních údajů]`, `[Zdroje dat]`, `[Najít své dvojče]`, `[změnit]` are links/buttons, not literal bracket text.
+- Already built (use, don't redefine):
+  - `src/layouts/Base.astro` (props `title, description, noindex?, ogTitle?, ogDescription?`), `src/styles/global.css` (tokens `--paper --ink --muted --blocked --allowed --marker --font`; `.num` tabular; `.ticker` uses the "Archivo Wide" face which only has A–Z0–9 — use `.ticker` only on uppercase tickers; `html.js .no-js{display:none}`, `html:not(.js) .needs-js{display:none}`, `[data-variant] .only-a/.only-b`; `<html data-variant="a">` default).
+  - `src/lib/data.ts`: `US`, `UCITS`, `US_TICKERS`, `byIsin`, `DATA_DATE`, `FX`, `BANKS`, `BROKERS`, `fmtPct`, `fmtCzk`, `fmtDate`, `fmtNum`, `xetraTicker`, `usdLondonTicker`.
+  - `src/lib/plan.ts`: `buildPlan(sel, fx)` → groups with sorted twins (decisions §15 #6) — use it for the no-JS table (`buildPlan(parseSelection(new URLSearchParams('t=VOO,SPY,IVV,QQQ'), US_TICKERS), FX)`) so the order rule lives in one place.
+  - `src/lib/fees.ts`: `compare`, `roundK`; `src/lib/selection.ts`: `RANGES`.
+- Every `{…}` from page.md is computed at build time from these modules: counts ({6}/{3}/{2}/{7}), TER ranges (FAQ "{0,03–0,07 %}", VOO "{0,03 %}"), dates ("stav k …", "Data k {9. 10. 2026}" = `DATA_DATE`, VGLA inception), the hero B / Step B default numbers (`compare` with RANGES defaults, brokerId 'unknown', the S&P 500 max TER) — these default numbers are also the no-JS-visible values in hero B's static markup, and Task 10 updates them live. Fixed source lines in page.md that already contain dates (§3 facts, FAQ sources, KID dates of the bank funds) are approved copy and stay as written — but the bank KID dates and broker price-list dates should be rendered from `BANKS[].kid_date` / `BROKERS[].as_of` where page.md wraps them in `{…}`.
+- **Controller ruling D (section order inside the first screen):** `Hero.astro` renders headline + sub only (both 1A and 1B texts, `.only-a` / `.only-b`). `Tool.astro` follows immediately and renders the trust line right after the entry step's controls: after the Step A chips for variant a, after the Step B result line for variant b (use `.only-a` / `.only-b` on two copies of the trust line).
+- **Controller ruling E (split with Task 10):** this task renders the tool's complete **static skeleton** in `Tool.astro` (class `needs-js`): Step A heading/label/helper + 8 chip `<button type="button" aria-pressed="false" data-ticker="…">` (VOO SPY IVV VTI QQQ VT SCHD + "Jiné" with `data-ticker="other"`), an empty `<div data-twins aria-live="polite">`, the "Pokračovat na poplatky" button; Step B with three `<input type="range">` (min/max/step/value from `RANGES`) each with a `<label>` and `<output>`, the return note + UBS source + past-performance line, the broker radio group (XTB · Trading 212 · Fio · Česká spořitelna · Nevím, default Nevím, values = broker ids incl. `unknown`) with its helper, an empty `<p data-broker-note>`, the result line markup with default numbers, the source line, a `<details>` "Jak počítáme" with the page.md text; Step C radio group (acc / dist / both, default both) + helper + source line; the Result block container (`data-result`, square corners, 2 px ink rule) containing an empty `data-result-body` and the inline `LeadForm location="inline"`; the sticky bar markup (`data-sticky`, `hidden`). Use stable `data-*` hooks and ids; document them in a short comment at the top of Tool.astro for Task 10. **No client script in this task** — Task 10 writes `src/scripts/tool.ts`. Variant b: Step A shown collapsed is Task 10's job; just render both steps.
+- `LeadForm.astro` per the brief (props `location`, `heading`, `body`). Hidden inputs `t m y r b d` get the defaults from `RANGES` (t empty), plus `utm_source utm_medium utm_campaign utm_content utm_term` empty. Honeypot exactly as the brief shows. Status `<p role="status" aria-live="polite">`. Checkbox label "Chci občas dostat novinky o ETF (nepovinné)". Microcopy line with the privacy link. Tap targets ≥ 44 px. Visible focus styles.
+- Final form (page.md §7) uses LeadForm `location="footer"`; works without JS as a plain POST (`action="/api/lead"`, `method="post"`); the API answers 303 → `/dekujeme/` or `/chyba-formulare/` (built in Task 8).
+- Section 4 image: `<img src="/plan-preview.png" width="…" height="…" loading="lazy" alt="…">` — the file doesn't exist yet (Task 13). Pick width/height 600×800 placeholder dimensions and say so in a comment; alt text describes the e-mail.
+- "Zdroje dat" link: GitHub `https://github.com/bourama1/etf_landing_page/blob/master/data/sources.md` (the repo is the project's public home; keep it a single constant).
+- **Privacy page** `/ochrana-osobnich-udaju/`: write it from data/sources.md §9 (legal bases: plan e-mail art. 6(1)(b); selections + UTM + ad variant art. 6(1)(f) — name the legitimate interest; newsletter consent art. 6(1)(a) + § 7(2) zákona 480/2004 Sb.), art. 13 contents (controller `[DOPLNIT: jméno, IČO, sídlo, e-mail]`, purposes, bases, recipients/processors: Brevo (e-mail delivery and contact storage) and Vercel (hosting, server logs) with `[DOPLNIT: ověřit místo zpracování a předávání mimo EU]`, retention as proposed in §9.2 point 5 but marked `[DOPLNIT: potvrdit lhůty]`, rights incl. access/rectification/erasure/restriction/portability/objection (art. 21 — the objection to the (f) processing explicitly and separately), withdrawal of consent, complaint to ÚOOÚ (uoou.gov.cz), no automated decision-making or profiling, providing the e-mail is voluntary but needed to send the plan). No analytics paragraph yet (Phase 4 adds it). Czech, vykání, plain language, short paragraphs. Cite articles. `noindex` is not needed for this page.
+- `/dekujeme/` and `/chyba-formulare/`: `noindex`; copy from page.md §8 (heading without the address: "Hotovo. Plán je na cestě." + the spam hint + a link back to the home page) and the Invalid e-mail state text + the footer form again.
+- Accessibility: one `<h1>` (the hero headline; with two variants, both are `<h1>` but only one is displayed — acceptable since the other is display:none; or use one h1 with two spans, your choice), logical heading order, AA contrast (check `--muted` on `--paper` and `--paper` on `--blocked`/`--allowed` if used as backgrounds), labels on every input, `lang="cs"`.
+- Responsive: single column, 16 px gutter on mobile, ~36rem centred on desktop. First screen (390×844, ~700 px usable in the Instagram in-app browser): headline ≤ 3 lines, sub ≤ 2 lines, then the interactive element, then the trust line. Keep the hero compact — no illustration.
+- Verification (brief Step 4): `npx astro build` (not `npm run build`; it works too, prebuild just refreshes data/fx.json — if fx.json changes, don't commit that change); grep `dist/index.html` for leftover `{` placeholders, `[CHYBÍ`, `undefined`, `NaN`. Check JS-off behaviour by reading the built HTML (the tool is `needs-js`, the table `no-js`). Report the size of dist/index.html (raw and gzip).
+- Commit in 3–4 logical commits as the brief suggests.
+
+## Before You Begin
+
+If anything in the requirements or approach is unclear, ask now (status NEEDS_CONTEXT) instead of guessing.
+
+## Your Job
+
+1. Implement exactly what the task specifies (TDD where the brief says: show the RED failure before implementing)
+2. Verify it works; run the full suite once before committing
+3. Commit (small commits, one logical change each)
+4. Self-review your diff: completeness, minimalism (no unrequested abstraction or options), tests verify behaviour
+5. Report back
+
+Keep it minimal. Never remove or weaken: a11y attributes, consent/GDPR text, the honeypot, server-side validation, source/date labels. No analytics code.
+
+## You Do Not Dispatch Subagents
+
+Do all of this task's work yourself. Never spawn a subagent or a reviewer — review is the controller's job.
+
+## When You're in Over Your Head
+
+It is always OK to stop and report BLOCKED or NEEDS_CONTEXT with specifics. Bad work is worse than no work.
+
+## After Review Findings
+
+If resumed with findings: fix them, re-run the covering tests, append a fix report (changes, command, output) to your report file, reply with the short contract.
+
+## Report Format
+
+Write your full report to D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-9-report.md: what you implemented; TDD evidence (RED: command + failing output; GREEN: command + passing output) where TDD applies; other verification with command output; files changed; self-review findings; concerns.
+
+Then reply with ONLY (under 15 lines): Status (DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT), commits (short SHA + subject), one-line test summary, concerns, the report file path.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 9 reviewer (model: opus)</summary>
+
+````text
+You are reviewing one task's implementation: first whether it matches its
+requirements, then whether it is well-built. This is a task-scoped gate,
+not a merge review — a broad whole-branch review happens separately after
+all tasks are complete.
+
+## What Was Requested
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-9-brief.md
+
+Global constraints from the spec/design that bind this task:
+- Only dependency: `astro`. Anything else (Playwright, Vercel CLI, adapters, fontkit) → ask Matěj first.
+- JS on first load < 60 kB gzipped; LCP < 2.0 s throttled 4G (measured in Phase 5); no font CLS.
+- All copy verbatim from `content/page.md` / `content/email.md`. Every `{…}` is computed from `data/` at build or
+  run time. No number typed by hand in `src/` (exceptions: UI ranges and the 2 % fixed-fee note threshold, which are
+  product decisions recorded in decisions §15, not data).
+- `[DOPLNIT …]` placeholders stay visible and marked; they are listed in the README later.
+- Vykání, lowercase "vy/vám". Never "ETF z NYSE", never "lower tax", never "twin is cheaper", never "Fio prodává".
+- Design: decisions §10 tokens (`paper #F1F3EE`, `ink #1A2421`, `muted #5A6762`, `blocked #B8361E`, `allowed #17704A`,
+  `marker #F3DC5A`), Archivo self-hosted, single column 16 px gutter / 36rem desktop, chips pill, result block square
+  with 2 px ink rule, one user-triggered animation, `prefers-reduced-motion` respected. Banned list in §10.
+- a11y: AA contrast, tap targets ≥ 44 px, labels on inputs, `aria-live` on the result, focus visible.
+- `/api/lead` follows decisions §6a rules 1–6 exactly. Secrets only in env; `.env.example` committed.
+- Ponytail must not remove: a11y attributes, consent text, honeypot, server validation, source/date labels.
+- No analytics code (Phase 4). Leave `data-section` attributes on sections so Phase 4 can hook in without markup edits.
+- Commits: small, English, conventional prefix, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Every subagent prompt is logged verbatim in `docs/ai-worklog.md` before dispatch; every review finding after.
+
+## Decisions this plan takes (go to `docs/decisions.md` §15 in Task 1)
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Sliders: monthly 500–30 000 Kč step 500 (default 3 000), years 1–40 (default 20), return 0–10 % step 0,5 (default 5) | page.md left the range to Phase 3; 30 000 keeps Fio under its 1 400 EUR tier at default rate but the 4,95 EUR tier is still reachable at high EUR rates |
+| 2 | ETF side uses the **highest TER** among the visitor's shown twins (VOO → 0,07 %, labelled with that fund's ticker, VUAA first on ties in data order) | never flatters the ETF; reproduces calc-examples |
+| 3 | "Nevím" = commission 0 + the **highest published FX surcharge** computed from `brokers.json` (today XTB 0,5 %) | page.md copy |
+| 4 | ČS: 0,35 % **min. 4 EUR** per buy (the Xetra rule) + custody 0,08 % p.a. added to ongoing cost | conservative and matches the "pevný poplatek" copy for ČS; the no-minimum fractional regular order (internet banking only) would make ČS cheaper at small amounts — **flagged to Matěj** |
+| 5 | XTB 0,2 % above 100 000 EUR monthly turnover ignored | `shortcut:` comment; only matters for a sale above 100 000 EUR |
+| 6 | Twin order everywhere: accumulating first, then alphabetical by Xetra ticker | page.md §9 and result example "SPYL · SXR8 · VUAA"; "Pořadí není doporučení" stays |
+| 7 | Picks sharing an index are grouped ("VOO, SPY, IVV → S&P 500") in result, thank-you table, e-mail, `/plan` | avoids three identical tables |
+| 8 | Fallback form (no picks) → plan for VOO, SPY, IVV; subject "Váš ETF plán pro S&P 500" | page.md §7, email.md subject |
+| 9 | URL / hidden-field param names: `t` (tickers, comma), `m`, `y`, `r`, `b` (`unknown`/`xtb`/`t212`/`fio`/`cs`), `d` (`acc`/`dist`/`both`) | short `/plan` links |
+| 10 | Honeypot field name `fld_q8` | meaningless to autofill (§5) |
+| 11 | `/api/lead` order: upsert contact → send e-mail → set `PLAN_SENT_AT`. Failure in step 1–2 → 502; failure in step 3 → logged, still 200 | a failed send never blocks the visitor for 24 h |
+| 12 | Newsletter consent stored as `NEWSLETTER=true` + `NEWSLETTER_CONSENT_AT` + `CONSENT_TEXT_V=1`; an unticked box never clears an earlier consent | GDPR art. 7(1) demonstrability |
+| 13 | No-JS form: server answers form-encoded POSTs with 303 → `/dekujeme/` or `/chyba-formulare/`; JSON POSTs get JSON | §4 no-JS requirement |
+| 14 | Hero variant chosen by a ≤ 300 B inline head script (`html.js`, `data-variant`) | no flash/CLS; no-JS = variant A |
+| 15 | Without `BREVO_API_KEY` the function runs in **dry-run**: logs and writes the e-mail to `.dev/last-email.html` (gitignored) | local testing, and the source of the real e-mail screenshot for section 4 |
+| 16 | Daily FX rebuild (proposal only): **GitHub Actions `schedule` → `curl -X POST` a Vercel Deploy Hook** (hook URL as a repo secret) | no extra function; Vercel cron would need a function that calls the hook anyway. Caveat: GitHub pauses schedules after 60 days without repo activity |
+| 17 | Rate limit (proposal only): (a) Vercel WAF rate-limit rule on `/api/lead` if Hobby allows it — VERIFY; (b) Upstash Redis free tier — needs an account | decisions §6a rule 5 |
+
+Controller rulings that bind this task:
+- **Invoke the `frontend-design:frontend-design` skill (Skill tool) before writing any markup or CSS.** Its guidance applies within the fixed visual direction of docs/decisions.md §10 (read §10 fully, incl. the "Avoided on purpose" list) and CLAUDE.md "Copy & design rules". The page must not look like default AI output.
+- Copy source: content/page.md, **verbatim** (sections 0–9). `*Poznámka:*` lines are build notes, never page text. `[DOPLNIT …]` placeholders stay visible (style them as an obvious placeholder, e.g. a dotted-underlined muted span) — they are listed in the README later. `[CHYBÍ ZDROJ]` must not appear (there are none left; grep to confirm). `[Jak počítáme]`, `[Zásady ochrany osobních údajů]`, `[Zdroje dat]`, `[Najít své dvojče]`, `[změnit]` are links/buttons, not literal bracket text.
+- Already built (use, don't redefine):
+  - `src/layouts/Base.astro` (props `title, description, noindex?, ogTitle?, ogDescription?`), `src/styles/global.css` (tokens `--paper --ink --muted --blocked --allowed --marker --font`; `.num` tabular; `.ticker` uses the "Archivo Wide" face which only has A–Z0–9 — use `.ticker` only on uppercase tickers; `html.js .no-js{display:none}`, `html:not(.js) .needs-js{display:none}`, `[data-variant] .only-a/.only-b`; `<html data-variant="a">` default).
+  - `src/lib/data.ts`: `US`, `UCITS`, `US_TICKERS`, `byIsin`, `DATA_DATE`, `FX`, `BANKS`, `BROKERS`, `fmtPct`, `fmtCzk`, `fmtDate`, `fmtNum`, `xetraTicker`, `usdLondonTicker`.
+  - `src/lib/plan.ts`: `buildPlan(sel, fx)` → groups with sorted twins (decisions §15 #6) — use it for the no-JS table (`buildPlan(parseSelection(new URLSearchParams('t=VOO,SPY,IVV,QQQ'), US_TICKERS), FX)`) so the order rule lives in one place.
+  - `src/lib/fees.ts`: `compare`, `roundK`; `src/lib/selection.ts`: `RANGES`.
+- Every `{…}` from page.md is computed at build time from these modules: counts ({6}/{3}/{2}/{7}), TER ranges (FAQ "{0,03–0,07 %}", VOO "{0,03 %}"), dates ("stav k …", "Data k {9. 10. 2026}" = `DATA_DATE`, VGLA inception), the hero B / Step B default numbers (`compare` with RANGES defaults, brokerId 'unknown', the S&P 500 max TER) — these default numbers are also the no-JS-visible values in hero B's static markup, and Task 10 updates them live. Fixed source lines in page.md that already contain dates (§3 facts, FAQ sources, KID dates of the bank funds) are approved copy and stay as written — but the bank KID dates and broker price-list dates should be rendered from `BANKS[].kid_date` / `BROKERS[].as_of` where page.md wraps them in `{…}`.
+- **Controller ruling D (section order inside the first screen):** `Hero.astro` renders headline + sub only (both 1A and 1B texts, `.only-a` / `.only-b`). `Tool.astro` follows immediately and renders the trust line right after the entry step's controls: after the Step A chips for variant a, after the Step B result line for variant b (use `.only-a` / `.only-b` on two copies of the trust line).
+- **Controller ruling E (split with Task 10):** this task renders the tool's complete **static skeleton** in `Tool.astro` (class `needs-js`): Step A heading/label/helper + 8 chip `<button type="button" aria-pressed="false" data-ticker="…">` (VOO SPY IVV VTI QQQ VT SCHD + "Jiné" with `data-ticker="other"`), an empty `<div data-twins aria-live="polite">`, the "Pokračovat na poplatky" button; Step B with three `<input type="range">` (min/max/step/value from `RANGES`) each with a `<label>` and `<output>`, the return note + UBS source + past-performance line, the broker radio group (XTB · Trading 212 · Fio · Česká spořitelna · Nevím, default Nevím, values = broker ids incl. `unknown`) with its helper, an empty `<p data-broker-note>`, the result line markup with default numbers, the source line, a `<details>` "Jak počítáme" with the page.md text; Step C radio group (acc / dist / both, default both) + helper + source line; the Result block container (`data-result`, square corners, 2 px ink rule) containing an empty `data-result-body` and the inline `LeadForm location="inline"`; the sticky bar markup (`data-sticky`, `hidden`). Use stable `data-*` hooks and ids; document them in a short comment at the top of Tool.astro for Task 10. **No client script in this task** — Task 10 writes `src/scripts/tool.ts`. Variant b: Step A shown collapsed is Task 10's job; just render both steps.
+- `LeadForm.astro` per the brief (props `location`, `heading`, `body`). Hidden inputs `t m y r b d` get the defaults from `RANGES` (t empty), plus `utm_source utm_medium utm_campaign utm_content utm_term` empty. Honeypot exactly as the brief shows. Status `<p role="status" aria-live="polite">`. Checkbox label "Chci občas dostat novinky o ETF (nepovinné)". Microcopy line with the privacy link. Tap targets ≥ 44 px. Visible focus styles.
+- Final form (page.md §7) uses LeadForm `location="footer"`; works without JS as a plain POST (`action="/api/lead"`, `method="post"`); the API answers 303 → `/dekujeme/` or `/chyba-formulare/` (built in Task 8).
+- Section 4 image: `<img src="/plan-preview.png" width="…" height="…" loading="lazy" alt="…">` — the file doesn't exist yet (Task 13). Pick width/height 600×800 placeholder dimensions and say so in a comment; alt text describes the e-mail.
+- "Zdroje dat" link: GitHub `https://github.com/bourama1/etf_landing_page/blob/master/data/sources.md` (the repo is the project's public home; keep it a single constant).
+- **Privacy page** `/ochrana-osobnich-udaju/`: write it from data/sources.md §9 (legal bases: plan e-mail art. 6(1)(b); selections + UTM + ad variant art. 6(1)(f) — name the legitimate interest; newsletter consent art. 6(1)(a) + § 7(2) zákona 480/2004 Sb.), art. 13 contents (controller `[DOPLNIT: jméno, IČO, sídlo, e-mail]`, purposes, bases, recipients/processors: Brevo (e-mail delivery and contact storage) and Vercel (hosting, server logs) with `[DOPLNIT: ověřit místo zpracování a předávání mimo EU]`, retention as proposed in §9.2 point 5 but marked `[DOPLNIT: potvrdit lhůty]`, rights incl. access/rectification/erasure/restriction/portability/objection (art. 21 — the objection to the (f) processing explicitly and separately), withdrawal of consent, complaint to ÚOOÚ (uoou.gov.cz), no automated decision-making or profiling, providing the e-mail is voluntary but needed to send the plan). No analytics paragraph yet (Phase 4 adds it). Czech, vykání, plain language, short paragraphs. Cite articles. `noindex` is not needed for this page.
+- `/dekujeme/` and `/chyba-formulare/`: `noindex`; copy from page.md §8 (heading without the address: "Hotovo. Plán je na cestě." + the spam hint + a link back to the home page) and the Invalid e-mail state text + the footer form again.
+- Accessibility: one `<h1>` (the hero headline; with two variants, both are `<h1>` but only one is displayed — acceptable since the other is display:none; or use one h1 with two spans, your choice), logical heading order, AA contrast (check `--muted` on `--paper` and `--paper` on `--blocked`/`--allowed` if used as backgrounds), labels on every input, `lang="cs"`.
+- Responsive: single column, 16 px gutter on mobile, ~36rem centred on desktop. First screen (390×844, ~700 px usable in the Instagram in-app browser): headline ≤ 3 lines, sub ≤ 2 lines, then the interactive element, then the trust line. Keep the hero compact — no illustration.
+- Verification (brief Step 4): `npx astro build` (not `npm run build`; it works too, prebuild just refreshes data/fx.json — if fx.json changes, don't commit that change); grep `dist/index.html` for leftover `{` placeholders, `[CHYBÍ`, `undefined`, `NaN`. Check JS-off behaviour by reading the built HTML (the tool is `needs-js`, the table `no-js`). Report the size of dist/index.html (raw and gzip).
+- Commit in 3–4 logical commits as the brief suggests.
+
+## What the Implementer Claims They Built
+
+Read the implementer's report: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-9-report.md
+
+## Diff Under Review
+
+**Base:** 9d731cf
+**Head:** 846d762
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-9d731cf..846d762.diff
+
+Read the diff file once — it contains the commit list, a stat summary,
+and the full diff with surrounding context, and it is your view of the
+change. The diff's context lines ARE the changed files: do not Read a
+changed file separately unless a hunk you must judge is cut off
+mid-function — and say so in your report. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat 9d731cf..846d762` and `git diff 9d731cf..846d762`.
+Do not crawl the broader codebase. Inspect code outside the diff only
+to evaluate a concrete risk you can name — one focused check per named
+risk, and name both the risk and what you checked in your report.
+Cross-cutting changes are legitimate named risks: if the diff changes
+lock ordering, a function or API contract, or shared mutable state,
+checking the call sites is the right method.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Do Not Trust the Report
+
+Treat the implementer's report as unverified claims about the code. It
+may be incomplete, inaccurate, or optimistic. Verify the claims against
+the diff. Design rationales in the report are claims too: "left it per
+YAGNI," "kept it simple deliberately," or any other justification is the
+implementer grading their own work. Judge the code on its merits — a
+stated rationale never downgrades a finding's severity.
+
+## Tests
+
+The implementer already ran the tests and reported results with TDD
+evidence for exactly this code. Do not re-run the suite to confirm their
+report. Run a test only when reading the code raises a specific doubt
+that no existing run answers — and then a focused test, never a
+package-wide suite, race detector run, or repeated/high-count loop. If
+heavy validation seems warranted, recommend it in your report instead of
+running it. If you cannot run commands in this environment, name the
+test you would run.
+
+Warnings or other noise in the implementer's reported test output are
+findings — test output should be pristine.
+
+Evidence you cannot see is not evidence that doesn't exist. If the
+report or its test evidence looks truncated, or you cannot locate the
+results it claims, re-read the file at its stated path — and if it is
+genuinely missing or garbled, report that as a gap for the controller.
+Re-running the suite to regenerate what you failed to read is not
+verification; illegibility of the evidence is not invalidation of it.
+
+## Part 1: Spec Compliance
+
+Compare the diff against What Was Requested:
+
+- **Missing:** requirements they skipped, missed, or claimed without
+  implementing
+- **Extra:** features that weren't requested, over-engineering, unneeded
+  "nice to haves"
+- **Misunderstood:** right feature built the wrong way, wrong problem
+  solved
+
+If the brief lists several files each with its own change (a batched
+dispatch), check the diff against that list file by file: every listed
+file must have its corresponding hunk. A listed file the diff never
+touches is a Missing finding, no matter how clean the rest of the
+batch looks.
+
+If a requirement cannot be verified from this diff alone (it lives in
+unchanged code or spans tasks), report it as a ⚠️ item instead of
+broadening your search.
+
+## Part 2: Code Quality
+
+**Code quality:**
+- Clean separation of concerns?
+- Proper error handling?
+- DRY without premature abstraction?
+- Edge cases handled?
+
+**Tests:**
+- Do the new and changed tests verify real behavior, not mocks?
+- Are the task's edge cases covered?
+
+**Structure:**
+- Does each file have one clear responsibility with a well-defined interface?
+- Are units decomposed so they can be understood and tested independently?
+- Is the implementation following the file structure from the plan?
+- Did this change create new files that are already large, or
+  significantly grow existing files? (Don't flag pre-existing file
+  sizes — focus on what this change contributed.)
+
+Your report should point at evidence: file:line references for every
+finding and for any check you would otherwise answer with a bare
+"yes." A tight report that cites lines gives the controller everything
+it needs.
+
+Your final message is the report itself: begin directly with the
+spec-compliance verdict. Every line is a verdict, a finding with
+file:line, or a check you ran — no preamble, no process narration,
+no closing summary.
+
+## Calibration
+
+Categorize issues by actual severity. Not everything is Critical.
+Important means this task cannot be trusted until it is fixed: incorrect
+or fragile behavior, a missed requirement, or maintainability damage you
+would block a merge over — verbatim duplication of a logic block,
+swallowed errors, tests that assert nothing. "Coverage could be broader"
+and polish suggestions are Minor.
+If the plan or brief explicitly mandates something this rubric calls a
+defect (a test that asserts nothing, verbatim duplication of a logic
+block), that IS a finding — report it as Important, labeled
+plan-mandated. The plan's authorship does not grade its own work; the
+human decides.
+Acknowledge what was done well before listing issues — accurate praise
+helps the implementer trust the rest of the feedback.
+
+## Output Format
+
+### Spec Compliance
+
+- ✅ Spec compliant | ❌ Issues found: [what's missing/extra/misunderstood,
+  with file:line references]
+- ⚠️ Cannot verify from diff: [requirements you could not verify from the
+  diff alone, and what the controller should check — report alongside the
+  ✅/❌ verdict for everything you could verify]
+
+### Strengths
+[What's well done? Be specific.]
+
+### Issues
+
+#### Critical (Must Fix)
+#### Important (Should Fix)
+#### Minor (Nice to Have)
+
+For each issue: file:line, what's wrong, why it matters, how to fix
+(if not obvious).
+
+### Assessment
+
+**Task quality:** [Approved | Needs fixes]
+
+**Reasoning:** [1-2 sentence technical assessment]
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 9 fix round 1 (model: opus)</summary>
+
+````text
+Fix round 1 for Task 9. Fix these, re-run the covering tests (`node --test api/lead.test.ts src/lib/data.test.ts src/lib/email.test.ts`), then `npm test` and `npx astro build` (grep dist again for `{`, `[CHYB`, `undefined`, `NaN`), append a fix report to task-9-report.md with the raw output, reply with the short contract.
+
+1. (Important) **No-JS failures all say "e-mail looks wrong".** Add a static page `src/pages/chyba-odeslani.astro` (`noindex`) with page.md's Server-error copy ("Plán se nepodařilo odeslat. Zkuste to prosím za chvíli znovu.") and the footer form again, laid out like `/chyba-formulare/`. In `api/lead.ts`, 303-redirect `empty`/`invalid` to `/chyba-formulare/` and every other failure (server, 413, malformed body) to `/chyba-odeslani/`. Update/add the tests in api/lead.test.ts (`down` → `/chyba-odeslani/`, invalid e-mail → `/chyba-formulare/`). Page title: "Plán se nepodařilo odeslat | ETF Dvojče".
+2. (Controller ruling) **TER always with two decimals**, as page.md writes it ("0,30 %", "0,07 %", "0,03 %"): add `fmtTer` in src/lib/data.ts (`minimumFractionDigits: 2, maximumFractionDigits: 4`, nbsp + %), test it (`0.3 → "0,30 %"`, `0.07 → "0,07 %"`, `0.0945 → "0,0945 %"`), and use it for every TER on the page (no-JS table, FAQ range "0,03–0,07 %", VOO "0,03 %", default result source line) and in src/lib/email.ts wherever a TER is rendered. Other percentages keep `fmtPct`.
+3. (Minor, do it) **Bank ranges over one fund list:** the entry-fee range in Tool.astro must use the same `ongoing_pct != null` funds as the calculator (`kidBanks`), not all of BANKS.
+4. (Minor, do it) **Broker label maps:** fall back to `b.name` when an id is missing from `brokerShort` (or the other map), so a new broker can never render "undefined".
+5. (Minor, do it) data.ts `fmtDate =(iso` formatting slip; keep the formatter exports grouped together.
+6. (Minor, do it) The privacy page's objection box must not reuse the tool's `.result` class: give it its own small class (e.g. `.box`) in global.css.
+
+Leave for Task 10 (do not do now): aria-live on the result body, opening "Jak počítáme" on link click. Leave for Task 13: /plan-preview.png.
+Commit as `fix: server-error page for no-JS form, two-decimal TER, consistent bank ranges` (or 2 commits: API+page, formatting/minors).
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 9 re-review round 1 (model: sonnet)</summary>
+
+````text
+You are re-reviewing one task's fix round. A previous review produced
+findings; an implementer has attempted to fix them. Your job is to
+verdict each finding and inspect the fix diff — nothing else.
+
+## The Task
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-9-brief.md
+
+## The Findings Under Verification
+
+Fix round 1 for Task 9. Fix these, re-run the covering tests (`node --test api/lead.test.ts src/lib/data.test.ts src/lib/email.test.ts`), then `npm test` and `npx astro build` (grep dist again for `{`, `[CHYB`, `undefined`, `NaN`), append a fix report to task-9-report.md with the raw output, reply with the short contract.
+
+1. (Important) **No-JS failures all say "e-mail looks wrong".** Add a static page `src/pages/chyba-odeslani.astro` (`noindex`) with page.md's Server-error copy ("Plán se nepodařilo odeslat. Zkuste to prosím za chvíli znovu.") and the footer form again, laid out like `/chyba-formulare/`. In `api/lead.ts`, 303-redirect `empty`/`invalid` to `/chyba-formulare/` and every other failure (server, 413, malformed body) to `/chyba-odeslani/`. Update/add the tests in api/lead.test.ts (`down` → `/chyba-odeslani/`, invalid e-mail → `/chyba-formulare/`). Page title: "Plán se nepodařilo odeslat | ETF Dvojče".
+2. (Controller ruling) **TER always with two decimals**, as page.md writes it ("0,30 %", "0,07 %", "0,03 %"): add `fmtTer` in src/lib/data.ts (`minimumFractionDigits: 2, maximumFractionDigits: 4`, nbsp + %), test it (`0.3 → "0,30 %"`, `0.07 → "0,07 %"`, `0.0945 → "0,0945 %"`), and use it for every TER on the page (no-JS table, FAQ range "0,03–0,07 %", VOO "0,03 %", default result source line) and in src/lib/email.ts wherever a TER is rendered. Other percentages keep `fmtPct`.
+3. (Minor, do it) **Bank ranges over one fund list:** the entry-fee range in Tool.astro must use the same `ongoing_pct != null` funds as the calculator (`kidBanks`), not all of BANKS.
+4. (Minor, do it) **Broker label maps:** fall back to `b.name` when an id is missing from `brokerShort` (or the other map), so a new broker can never render "undefined".
+5. (Minor, do it) data.ts `fmtDate =(iso` formatting slip; keep the formatter exports grouped together.
+6. (Minor, do it) The privacy page's objection box must not reuse the tool's `.result` class: give it its own small class (e.g. `.box`) in global.css.
+
+Leave for Task 10 (do not do now): aria-live on the result body, opening "Jak počítáme" on link click. Leave for Task 13: /plan-preview.png.
+Commit as `fix: server-error page for no-JS form, two-decimal TER, consistent bank ranges` (or 2 commits: API+page, formatting/minors).
+
+## The Fix
+
+Read the implementer's report (fix reports are appended at the end):
+D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-9-report.md
+
+**Fix base:** 846d762 (the head the previous review saw)
+**Head:** 2fbd870
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-846d762..2fbd870.diff
+
+Read the diff file once — it contains the fix commits, a stat summary,
+and the fix diff with surrounding context. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat 846d762..2fbd870` and
+`git diff 846d762..2fbd870`.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Scope
+
+Your scope is the findings list and the fix diff. Verdict every finding.
+Inspect the fix diff for new problems the fix itself introduced. Do NOT
+re-review code the fix did not touch: if you notice an issue entirely
+outside the fix diff, report it under Out-of-Scope Observations — it
+does not block this task and does not extend the loop. A broad
+whole-branch review happens after all tasks are complete.
+
+## Tests
+
+The implementer re-ran the tests covering the amended code and appended
+the results to the report file. Treat the report as unverified claims:
+confirm the fix report names the covering tests and shows their output,
+and verify the claims against the diff. Do not re-run the suite to
+confirm their report. Run a test only when reading the code raises a
+specific doubt that no existing run answers — and then a focused test,
+never a package-wide suite.
+
+## Output Format
+
+Your final message is the report itself: begin directly with the first
+finding's verdict. Every line is a verdict, a finding with file:line,
+or a check you ran — no preamble, no process narration.
+
+### Finding Verdicts
+
+For each finding in The Findings Under Verification, in order:
+- **[finding one-liner]** — ADDRESSED | NOT ADDRESSED, with file:line
+  evidence. "Attempted" is not addressed: the specific defect must no
+  longer exist.
+
+### New Breakage in the Fix Diff
+
+Anything the fix itself broke or introduced, with severity
+(Critical/Important/Minor) and file:line. "None" if clean.
+
+### Out-of-Scope Observations
+
+Issues you noticed entirely outside the fix diff. Non-blocking; the
+controller ledgers these for the final review. "None" if none.
+
+### Verdict
+
+**Fix round:** [All findings addressed, no new Critical/Important
+breakage | Findings remain open] — list the open ones.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 10 implementer (tool island) (model: opus)</summary>
+
+````text
+You are implementing Task 10: Tool island — steps A/B/C, result, animation, ad entry — part of Phase 3 (Build) of "ETF Dvojče", a Czech mobile-first lead-magnet landing page that compares US ETFs with their European UCITS equivalents (Astro static site + one vanilla-TS island + one Vercel function).
+
+## Task Description
+
+Read your task brief first: D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-10-brief.md
+It is your requirements, with the exact values to use verbatim.
+
+## Environment
+
+- Repo D:\etf_landing_page, Windows 11, Git Bash + PowerShell, Node v26 (runs .ts files natively via type stripping: use only erasable TS syntax — no enums, namespaces, parameter properties), npm 11. NO Python: never run `python`.
+- Branch `master`; commit directly to it. Commit messages in English, conventional prefix, ending with a blank line and `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Only dependency allowed: `astro@7.3.8` (installed). Never add a package; if you think one is needed, report NEEDS_CONTEXT.
+- Tests: `node --test <file>` (node:test + node:assert/strict). Full suite: `npm test`.
+- Project rules: D:\etf_landing_page\CLAUDE.md (read "Data rules", "Copy & design rules", and "Overrides" in the Plugins table). Never type a data number by hand: figures come from data/*.json.
+- Write long Czech text with your file Write/Edit tools, not shell heredocs.
+
+## Context and controller rulings
+
+- **Controller ruling E:** `src/components/Tool.astro` already renders the complete static skeleton (controls, labels, default numbers, empty `data-twins` / `data-result-body` / `data-broker-note` containers, the inline LeadForm, the hidden sticky bar). Its top-of-file comment documents the `data-*` hooks — read it first and use those hooks. This task adds behaviour (`src/scripts/tool.ts`, imported by a `<script>` in Tool.astro) and only the minimal markup/CSS changes the behaviour needs (e.g. animation classes). Do not restyle the page.
+- **Controller ruling C:** there is **no** `<script type="application/json" id="tool-data">` element. The island imports `src/lib/plan.ts`, `fees.ts`, `selection.ts`, `data.ts` directly; Vite bundles the data JSON (~6.4 kB gz). Ignore the brief's tool-data instruction.
+- Logic to reuse (never reimplement): `buildPlan(sel, FX)` (groups, twins in display order, special cases via `kind` = `same`/`nearest`/`none`, `similar`, `fees.terPct/terTicker`), `compare(inp, ctx)` (live fee numbers; `fixedFeePct` for the fixed-fee note), `roundK`, formatters `fmtCzk`, `fmtCzkRange` (if present), `fmtTer` (TER, 2 decimals — added in Task 9's fix), `fmtPct`, `fmtDate`, `xetraTicker`; `RANGES`, `toParams`, `parseSelection`.
+- Copy: page.md §2 (Step A after-tap texts, the per-group headers with counts, VTI/SCHD/Jiné texts, KID label only where `kidCs` is true with a link to the KID url, ticker note "Na každé burze má fond jiný ticker…", "Pořadí není doporučení."; Step B broker notes incl. the default "Nevím" note "počítáme s nejvyšší zveřejněnou přirážkou za směnu, {0,5 %}"; the fixed-fee note with the ČNB rate label "Přepočet kurzem ČNB k {validFor}, broker může použít jiný."; the Result block texts; the sticky bar "~~{VOO}~~ → {3} dvojčata · [Poslat plán e-mailem]"). Verbatim. Build every text node with `createElement` + `textContent` (no innerHTML).
+- Deferred from the Task 9 review (do them here): (a) put `aria-live="polite"` on the result body (or move focus to the result heading when it first appears) — the global constraint requires a live result; (b) the "Jak počítáme" link (`href="#jak-pocitame"`) must open its `<details>` when clicked.
+- Hidden form fields: keep `t m y r b d` of **every** `.lead-form` in sync with the current selection (use `toParams` values) on every change. Leave `utm_*` to Task 11.
+- Event: dispatch `window.dispatchEvent(new CustomEvent('tool:result', { detail: sel }))` whenever the result is (re)rendered with at least one pick; Task 11 listens to it (sticky bar visibility, final-form heading).
+- Ad entry (decisions §4, page.md §2 note): `document.documentElement.dataset.variant === 'b'` → VOO preselected, Step A collapsed to "Vybráno: VOO · změnit" (a button that re-expands Step A), Step B open and focused-visible in the first screen; otherwise Step A open. The variant was set by the head script before paint, so read it from `dataset`, not the URL.
+- "Jiné" chip: shows the page.md "Jiné" text only; it is not a ticker and never goes into `t`.
+- Slider updates: update `<output>` and the result numbers on `input` throttled with `requestAnimationFrame`; the `aria-live` region updates on `change` only (avoid screen-reader spam while dragging).
+- Animation (decisions §10 + brief Step 6): strike-through draws on the US ticker then the twin rows slide/fade in (staggered, max 6), only on user-triggered chip activation, never on load for the preselected VOO. `@media (prefers-reduced-motion: reduce)` → no animation. CSS-only transitions/keyframes triggered by a class.
+- Budget: the island + bundled data must stay well under 60 kB gz. After building, report the gzip size of every JS file referenced by dist/index.html.
+- Manual verification (no browser on this machine): `npx astro build`, then confirm by reading dist that the script tag is emitted, and run a quick DOM-free sanity check of the pure functions you call if you added any helper with logic. If you add a non-trivial pure helper (e.g. text-building for a group), add a small node test for it. Report clearly what you could not verify without a browser — the controller will do the visual check.
+
+## Before You Begin
+
+If anything in the requirements or approach is unclear, ask now (status NEEDS_CONTEXT) instead of guessing.
+
+## Your Job
+
+1. Implement exactly what the task specifies (TDD where the brief says: show the RED failure before implementing)
+2. Verify it works; run the full suite once before committing
+3. Commit (small commits, one logical change each)
+4. Self-review your diff: completeness, minimalism (no unrequested abstraction or options), tests verify behaviour
+5. Report back
+
+Keep it minimal. Never remove or weaken: a11y attributes, consent/GDPR text, the honeypot, server-side validation, source/date labels. No analytics code.
+
+## You Do Not Dispatch Subagents
+
+Do all of this task's work yourself. Never spawn a subagent or a reviewer — review is the controller's job.
+
+## When You're in Over Your Head
+
+It is always OK to stop and report BLOCKED or NEEDS_CONTEXT with specifics. Bad work is worse than no work.
+
+## After Review Findings
+
+If resumed with findings: fix them, re-run the covering tests, append a fix report (changes, command, output) to your report file, reply with the short contract.
+
+## Report Format
+
+Write your full report to D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-10-report.md: what you implemented; TDD evidence (RED: command + failing output; GREEN: command + passing output) where TDD applies; other verification with command output; files changed; self-review findings; concerns.
+
+Then reply with ONLY (under 15 lines): Status (DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT), commits (short SHA + subject), one-line test summary, concerns, the report file path.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 10 reviewer (model: opus)</summary>
+
+````text
+You are reviewing one task's implementation: first whether it matches its
+requirements, then whether it is well-built. This is a task-scoped gate,
+not a merge review — a broad whole-branch review happens separately after
+all tasks are complete.
+
+## What Was Requested
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-10-brief.md
+
+Global constraints from the spec/design that bind this task:
+- Only dependency: `astro`. Anything else (Playwright, Vercel CLI, adapters, fontkit) → ask Matěj first.
+- JS on first load < 60 kB gzipped; LCP < 2.0 s throttled 4G (measured in Phase 5); no font CLS.
+- All copy verbatim from `content/page.md` / `content/email.md`. Every `{…}` is computed from `data/` at build or
+  run time. No number typed by hand in `src/` (exceptions: UI ranges and the 2 % fixed-fee note threshold, which are
+  product decisions recorded in decisions §15, not data).
+- `[DOPLNIT …]` placeholders stay visible and marked; they are listed in the README later.
+- Vykání, lowercase "vy/vám". Never "ETF z NYSE", never "lower tax", never "twin is cheaper", never "Fio prodává".
+- Design: decisions §10 tokens (`paper #F1F3EE`, `ink #1A2421`, `muted #5A6762`, `blocked #B8361E`, `allowed #17704A`,
+  `marker #F3DC5A`), Archivo self-hosted, single column 16 px gutter / 36rem desktop, chips pill, result block square
+  with 2 px ink rule, one user-triggered animation, `prefers-reduced-motion` respected. Banned list in §10.
+- a11y: AA contrast, tap targets ≥ 44 px, labels on inputs, `aria-live` on the result, focus visible.
+- `/api/lead` follows decisions §6a rules 1–6 exactly. Secrets only in env; `.env.example` committed.
+- Ponytail must not remove: a11y attributes, consent text, honeypot, server validation, source/date labels.
+- No analytics code (Phase 4). Leave `data-section` attributes on sections so Phase 4 can hook in without markup edits.
+- Commits: small, English, conventional prefix, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Every subagent prompt is logged verbatim in `docs/ai-worklog.md` before dispatch; every review finding after.
+
+## Decisions this plan takes (go to `docs/decisions.md` §15 in Task 1)
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Sliders: monthly 500–30 000 Kč step 500 (default 3 000), years 1–40 (default 20), return 0–10 % step 0,5 (default 5) | page.md left the range to Phase 3; 30 000 keeps Fio under its 1 400 EUR tier at default rate but the 4,95 EUR tier is still reachable at high EUR rates |
+| 2 | ETF side uses the **highest TER** among the visitor's shown twins (VOO → 0,07 %, labelled with that fund's ticker, VUAA first on ties in data order) | never flatters the ETF; reproduces calc-examples |
+| 3 | "Nevím" = commission 0 + the **highest published FX surcharge** computed from `brokers.json` (today XTB 0,5 %) | page.md copy |
+| 4 | ČS: 0,35 % **min. 4 EUR** per buy (the Xetra rule) + custody 0,08 % p.a. added to ongoing cost | conservative and matches the "pevný poplatek" copy for ČS; the no-minimum fractional regular order (internet banking only) would make ČS cheaper at small amounts — **flagged to Matěj** |
+| 5 | XTB 0,2 % above 100 000 EUR monthly turnover ignored | `shortcut:` comment; only matters for a sale above 100 000 EUR |
+| 6 | Twin order everywhere: accumulating first, then alphabetical by Xetra ticker | page.md §9 and result example "SPYL · SXR8 · VUAA"; "Pořadí není doporučení" stays |
+| 7 | Picks sharing an index are grouped ("VOO, SPY, IVV → S&P 500") in result, thank-you table, e-mail, `/plan` | avoids three identical tables |
+| 8 | Fallback form (no picks) → plan for VOO, SPY, IVV; subject "Váš ETF plán pro S&P 500" | page.md §7, email.md subject |
+| 9 | URL / hidden-field param names: `t` (tickers, comma), `m`, `y`, `r`, `b` (`unknown`/`xtb`/`t212`/`fio`/`cs`), `d` (`acc`/`dist`/`both`) | short `/plan` links |
+| 10 | Honeypot field name `fld_q8` | meaningless to autofill (§5) |
+| 11 | `/api/lead` order: upsert contact → send e-mail → set `PLAN_SENT_AT`. Failure in step 1–2 → 502; failure in step 3 → logged, still 200 | a failed send never blocks the visitor for 24 h |
+| 12 | Newsletter consent stored as `NEWSLETTER=true` + `NEWSLETTER_CONSENT_AT` + `CONSENT_TEXT_V=1`; an unticked box never clears an earlier consent | GDPR art. 7(1) demonstrability |
+| 13 | No-JS form: server answers form-encoded POSTs with 303 → `/dekujeme/` or `/chyba-formulare/`; JSON POSTs get JSON | §4 no-JS requirement |
+| 14 | Hero variant chosen by a ≤ 300 B inline head script (`html.js`, `data-variant`) | no flash/CLS; no-JS = variant A |
+| 15 | Without `BREVO_API_KEY` the function runs in **dry-run**: logs and writes the e-mail to `.dev/last-email.html` (gitignored) | local testing, and the source of the real e-mail screenshot for section 4 |
+| 16 | Daily FX rebuild (proposal only): **GitHub Actions `schedule` → `curl -X POST` a Vercel Deploy Hook** (hook URL as a repo secret) | no extra function; Vercel cron would need a function that calls the hook anyway. Caveat: GitHub pauses schedules after 60 days without repo activity |
+| 17 | Rate limit (proposal only): (a) Vercel WAF rate-limit rule on `/api/lead` if Hobby allows it — VERIFY; (b) Upstash Redis free tier — needs an account | decisions §6a rule 5 |
+
+Controller rulings that bind this task:
+- **Controller ruling E:** `src/components/Tool.astro` already renders the complete static skeleton (controls, labels, default numbers, empty `data-twins` / `data-result-body` / `data-broker-note` containers, the inline LeadForm, the hidden sticky bar). Its top-of-file comment documents the `data-*` hooks — read it first and use those hooks. This task adds behaviour (`src/scripts/tool.ts`, imported by a `<script>` in Tool.astro) and only the minimal markup/CSS changes the behaviour needs (e.g. animation classes). Do not restyle the page.
+- **Controller ruling C:** there is **no** `<script type="application/json" id="tool-data">` element. The island imports `src/lib/plan.ts`, `fees.ts`, `selection.ts`, `data.ts` directly; Vite bundles the data JSON (~6.4 kB gz). Ignore the brief's tool-data instruction.
+- Logic to reuse (never reimplement): `buildPlan(sel, FX)` (groups, twins in display order, special cases via `kind` = `same`/`nearest`/`none`, `similar`, `fees.terPct/terTicker`), `compare(inp, ctx)` (live fee numbers; `fixedFeePct` for the fixed-fee note), `roundK`, formatters `fmtCzk`, `fmtCzkRange` (if present), `fmtTer` (TER, 2 decimals — added in Task 9's fix), `fmtPct`, `fmtDate`, `xetraTicker`; `RANGES`, `toParams`, `parseSelection`.
+- Copy: page.md §2 (Step A after-tap texts, the per-group headers with counts, VTI/SCHD/Jiné texts, KID label only where `kidCs` is true with a link to the KID url, ticker note "Na každé burze má fond jiný ticker…", "Pořadí není doporučení."; Step B broker notes incl. the default "Nevím" note "počítáme s nejvyšší zveřejněnou přirážkou za směnu, {0,5 %}"; the fixed-fee note with the ČNB rate label "Přepočet kurzem ČNB k {validFor}, broker může použít jiný."; the Result block texts; the sticky bar "~~{VOO}~~ → {3} dvojčata · [Poslat plán e-mailem]"). Verbatim. Build every text node with `createElement` + `textContent` (no innerHTML).
+- Deferred from the Task 9 review (do them here): (a) put `aria-live="polite"` on the result body (or move focus to the result heading when it first appears) — the global constraint requires a live result; (b) the "Jak počítáme" link (`href="#jak-pocitame"`) must open its `<details>` when clicked.
+- Hidden form fields: keep `t m y r b d` of **every** `.lead-form` in sync with the current selection (use `toParams` values) on every change. Leave `utm_*` to Task 11.
+- Event: dispatch `window.dispatchEvent(new CustomEvent('tool:result', { detail: sel }))` whenever the result is (re)rendered with at least one pick; Task 11 listens to it (sticky bar visibility, final-form heading).
+- Ad entry (decisions §4, page.md §2 note): `document.documentElement.dataset.variant === 'b'` → VOO preselected, Step A collapsed to "Vybráno: VOO · změnit" (a button that re-expands Step A), Step B open and focused-visible in the first screen; otherwise Step A open. The variant was set by the head script before paint, so read it from `dataset`, not the URL.
+- "Jiné" chip: shows the page.md "Jiné" text only; it is not a ticker and never goes into `t`.
+- Slider updates: update `<output>` and the result numbers on `input` throttled with `requestAnimationFrame`; the `aria-live` region updates on `change` only (avoid screen-reader spam while dragging).
+- Animation (decisions §10 + brief Step 6): strike-through draws on the US ticker then the twin rows slide/fade in (staggered, max 6), only on user-triggered chip activation, never on load for the preselected VOO. `@media (prefers-reduced-motion: reduce)` → no animation. CSS-only transitions/keyframes triggered by a class.
+- Budget: the island + bundled data must stay well under 60 kB gz. After building, report the gzip size of every JS file referenced by dist/index.html.
+- Manual verification (no browser on this machine): `npx astro build`, then confirm by reading dist that the script tag is emitted, and run a quick DOM-free sanity check of the pure functions you call if you added any helper with logic. If you add a non-trivial pure helper (e.g. text-building for a group), add a small node test for it. Report clearly what you could not verify without a browser — the controller will do the visual check.
+- The " · " separators in twin rows come from page.md (approved copy), which outranks the decisions §10 style note on middot meta strings.
+- No browser exists on this machine; visual/interaction checks happen at the controller checkpoint. Review the code paths for them instead.
+
+## What the Implementer Claims They Built
+
+Read the implementer's report: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-10-report.md
+
+## Diff Under Review
+
+**Base:** 2fbd870
+**Head:** 5fd779c
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-2fbd870..5fd779c.diff
+
+Read the diff file once — it contains the commit list, a stat summary,
+and the full diff with surrounding context, and it is your view of the
+change. The diff's context lines ARE the changed files: do not Read a
+changed file separately unless a hunk you must judge is cut off
+mid-function — and say so in your report. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat 2fbd870..5fd779c` and `git diff 2fbd870..5fd779c`.
+Do not crawl the broader codebase. Inspect code outside the diff only
+to evaluate a concrete risk you can name — one focused check per named
+risk, and name both the risk and what you checked in your report.
+Cross-cutting changes are legitimate named risks: if the diff changes
+lock ordering, a function or API contract, or shared mutable state,
+checking the call sites is the right method.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Do Not Trust the Report
+
+Treat the implementer's report as unverified claims about the code. It
+may be incomplete, inaccurate, or optimistic. Verify the claims against
+the diff. Design rationales in the report are claims too: "left it per
+YAGNI," "kept it simple deliberately," or any other justification is the
+implementer grading their own work. Judge the code on its merits — a
+stated rationale never downgrades a finding's severity.
+
+## Tests
+
+The implementer already ran the tests and reported results with TDD
+evidence for exactly this code. Do not re-run the suite to confirm their
+report. Run a test only when reading the code raises a specific doubt
+that no existing run answers — and then a focused test, never a
+package-wide suite, race detector run, or repeated/high-count loop. If
+heavy validation seems warranted, recommend it in your report instead of
+running it. If you cannot run commands in this environment, name the
+test you would run.
+
+Warnings or other noise in the implementer's reported test output are
+findings — test output should be pristine.
+
+Evidence you cannot see is not evidence that doesn't exist. If the
+report or its test evidence looks truncated, or you cannot locate the
+results it claims, re-read the file at its stated path — and if it is
+genuinely missing or garbled, report that as a gap for the controller.
+Re-running the suite to regenerate what you failed to read is not
+verification; illegibility of the evidence is not invalidation of it.
+
+## Part 1: Spec Compliance
+
+Compare the diff against What Was Requested:
+
+- **Missing:** requirements they skipped, missed, or claimed without
+  implementing
+- **Extra:** features that weren't requested, over-engineering, unneeded
+  "nice to haves"
+- **Misunderstood:** right feature built the wrong way, wrong problem
+  solved
+
+If the brief lists several files each with its own change (a batched
+dispatch), check the diff against that list file by file: every listed
+file must have its corresponding hunk. A listed file the diff never
+touches is a Missing finding, no matter how clean the rest of the
+batch looks.
+
+If a requirement cannot be verified from this diff alone (it lives in
+unchanged code or spans tasks), report it as a ⚠️ item instead of
+broadening your search.
+
+## Part 2: Code Quality
+
+**Code quality:**
+- Clean separation of concerns?
+- Proper error handling?
+- DRY without premature abstraction?
+- Edge cases handled?
+
+**Tests:**
+- Do the new and changed tests verify real behavior, not mocks?
+- Are the task's edge cases covered?
+
+**Structure:**
+- Does each file have one clear responsibility with a well-defined interface?
+- Are units decomposed so they can be understood and tested independently?
+- Is the implementation following the file structure from the plan?
+- Did this change create new files that are already large, or
+  significantly grow existing files? (Don't flag pre-existing file
+  sizes — focus on what this change contributed.)
+
+Your report should point at evidence: file:line references for every
+finding and for any check you would otherwise answer with a bare
+"yes." A tight report that cites lines gives the controller everything
+it needs.
+
+Your final message is the report itself: begin directly with the
+spec-compliance verdict. Every line is a verdict, a finding with
+file:line, or a check you ran — no preamble, no process narration,
+no closing summary.
+
+## Calibration
+
+Categorize issues by actual severity. Not everything is Critical.
+Important means this task cannot be trusted until it is fixed: incorrect
+or fragile behavior, a missed requirement, or maintainability damage you
+would block a merge over — verbatim duplication of a logic block,
+swallowed errors, tests that assert nothing. "Coverage could be broader"
+and polish suggestions are Minor.
+If the plan or brief explicitly mandates something this rubric calls a
+defect (a test that asserts nothing, verbatim duplication of a logic
+block), that IS a finding — report it as Important, labeled
+plan-mandated. The plan's authorship does not grade its own work; the
+human decides.
+Acknowledge what was done well before listing issues — accurate praise
+helps the implementer trust the rest of the feedback.
+
+## Output Format
+
+### Spec Compliance
+
+- ✅ Spec compliant | ❌ Issues found: [what's missing/extra/misunderstood,
+  with file:line references]
+- ⚠️ Cannot verify from diff: [requirements you could not verify from the
+  diff alone, and what the controller should check — report alongside the
+  ✅/❌ verdict for everything you could verify]
+
+### Strengths
+[What's well done? Be specific.]
+
+### Issues
+
+#### Critical (Must Fix)
+#### Important (Should Fix)
+#### Minor (Nice to Have)
+
+For each issue: file:line, what's wrong, why it matters, how to fix
+(if not obvious).
+
+### Assessment
+
+**Task quality:** [Approved | Needs fixes]
+
+**Reasoning:** [1-2 sentence technical assessment]
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 11 implementer (forms, thank-you) (model: sonnet)</summary>
+
+````text
+You are implementing Task 11: Forms, sticky bar, thank-you state — part of Phase 3 (Build) of "ETF Dvojče", a Czech mobile-first lead-magnet landing page that compares US ETFs with their European UCITS equivalents (Astro static site + one vanilla-TS island + one Vercel function).
+
+## Task Description
+
+Read your task brief first: D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-11-brief.md
+It is your requirements, with the exact values to use verbatim.
+
+## Environment
+
+- Repo D:\etf_landing_page, Windows 11, Git Bash + PowerShell, Node v26 (runs .ts files natively via type stripping: use only erasable TS syntax — no enums, namespaces, parameter properties), npm 11. NO Python: never run `python`.
+- Branch `master`; commit directly to it. Commit messages in English, conventional prefix, ending with a blank line and `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Only dependency allowed: `astro@7.3.8` (installed). Never add a package; if you think one is needed, report NEEDS_CONTEXT.
+- Tests: `node --test <file>` (node:test + node:assert/strict). Full suite: `npm test`.
+- Project rules: D:\etf_landing_page\CLAUDE.md (read "Data rules", "Copy & design rules", and "Overrides" in the Plugins table). Never type a data number by hand: figures come from data/*.json.
+- Write long Czech text with your file Write/Edit tools, not shell heredocs.
+
+## Context and controller rulings
+
+- Already built: `src/components/LeadForm.astro` (`form.lead-form[data-location]` with id `lead-<location>`, fields `email`, `newsletter`, honeypot `fld_q8`, hidden `t m y r b d` (kept in sync by tool.ts) and `utm_source … utm_term` (empty — **this task fills them from `location.search`**), status `<p role="status" aria-live="polite">`); `src/components/Tool.astro` + `src/scripts/tool.ts` (read tool.ts first: it dispatches `window` `tool:result` with `detail: Selection` on **every** render incl. each slider frame and on load for ad B — your listener must be idempotent and cheap; it renders the sticky bar summary into `[data-sticky-summary]`; check what it already does with `[data-sticky]` and don't duplicate it); `/api/lead` returns JSON `{ok:true}` / `{ok:false, reason:'empty'|'invalid'|'server'}` with 200/400/413/502 when `accept: application/json`; a platform rate limit may return 429 with any body.
+- Shared logic to reuse: `validateEmail` (selection.ts) for the client check, `buildPlan` + formatters (`fmtTer`, `fmtDate`, `xetraTicker`…) for the thank-you table. Read the Selection for the thank-you table from the submitted form's hidden fields via `parseSelection(new URLSearchParams(new FormData(form)), US_TICKERS)` so it always matches what the server got.
+- Copy (verbatim): page.md §2 "States" (Sending/Empty/Invalid/Server error/Rate limit), §8 thank-you (heading "Hotovo. Plán je na cestě na {vas@email.cz}." with the address via textContent, body, "Překlep v adrese? [Zadat znovu]", "Celá tabulka pro váš výběr, i s ISIN.", the table columns, "Daňový checklist a postup nákupu najdete v e-mailu.", share line "Znáte někoho, kdo taky chtěl VOO? [Poslat odkaz]"), §7 final-form switch ("Poslat plán e-mailem" / "Pošleme vám plán pro {VOO, QQQ}."). Fallback form with no picks: the thank-you table shows the fallback plan (VOO, SPY, IVV), consistent with what the e-mail sends.
+- "Odkaz zkopírován" (copy confirmation) is not in page.md: it is a controller-approved microcopy addition for the clipboard fallback; keep it exactly that.
+- Share link: `location.origin + location.pathname + '?utm_source=share'` — no personal data, no selection params.
+- Forms on the page: `#lead-inline` (inside the result block), `#lead-footer` (final form). The sticky bar is not a form (it scrolls to `#lead-inline` and focuses its e-mail field; it never opens a modal).
+- Success state replaces the **submitted** form's block only; hide the sticky bar after any success. "Zadat znovu" restores that form (keep the typed address in the field) and moves focus to the e-mail input.
+- Errors: set `aria-invalid="true"` + `aria-describedby` → the status `<p>` on the e-mail input for Empty/Invalid; clear on the next input. Button disabled + "Posíláme…" while sending; re-enabled on every failure. Timeout 10 s via `AbortSignal.timeout(10000)` → Server error copy.
+- Analytics are Phase 4: no tracking calls; just keep handlers in one place so Phase 4 can hook in.
+- Keep `forms.ts` small; reuse helpers from tool.ts only if tool.ts exports them already — do not refactor tool.ts. If a tiny DOM helper (`h()`) is needed in both, duplicating 5 lines is fine; note it in the report.
+- Budget: after `astro build`, report the gzip size of every JS file referenced by dist/index.html (total must stay well under 60 kB).
+- Manual verification without a browser: run `node scripts/dev.mjs` in the background, and use curl against :4321 to confirm the page and `/api/lead` still respond; read the built JS to confirm the fetch headers. Stop the server afterwards (confirm ports 4321/8787 free). Report what could not be verified without a browser.
+- Deferred minor from Task 10 that touches your listener: `tool:result` fires every rAF frame — do not attach listeners or re-create DOM per event.
+
+## Before You Begin
+
+If anything in the requirements or approach is unclear, ask now (status NEEDS_CONTEXT) instead of guessing.
+
+## Your Job
+
+1. Implement exactly what the task specifies (TDD where the brief says: show the RED failure before implementing)
+2. Verify it works; run the full suite once before committing
+3. Commit (small commits, one logical change each)
+4. Self-review your diff: completeness, minimalism (no unrequested abstraction or options), tests verify behaviour
+5. Report back
+
+Keep it minimal. Never remove or weaken: a11y attributes, consent/GDPR text, the honeypot, server-side validation, source/date labels. No analytics code.
+
+## You Do Not Dispatch Subagents
+
+Do all of this task's work yourself. Never spawn a subagent or a reviewer — review is the controller's job.
+
+## When You're in Over Your Head
+
+It is always OK to stop and report BLOCKED or NEEDS_CONTEXT with specifics. Bad work is worse than no work.
+
+## After Review Findings
+
+If resumed with findings: fix them, re-run the covering tests, append a fix report (changes, command, output) to your report file, reply with the short contract.
+
+## Report Format
+
+Write your full report to D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-11-report.md: what you implemented; TDD evidence (RED: command + failing output; GREEN: command + passing output) where TDD applies; other verification with command output; files changed; self-review findings; concerns.
+
+Then reply with ONLY (under 15 lines): Status (DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT), commits (short SHA + subject), one-line test summary, concerns, the report file path.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 11 reviewer (model: sonnet)</summary>
+
+````text
+You are reviewing one task's implementation: first whether it matches its
+requirements, then whether it is well-built. This is a task-scoped gate,
+not a merge review — a broad whole-branch review happens separately after
+all tasks are complete.
+
+## What Was Requested
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-11-brief.md
+
+Global constraints from the spec/design that bind this task:
+- Only dependency: `astro`. Anything else (Playwright, Vercel CLI, adapters, fontkit) → ask Matěj first.
+- JS on first load < 60 kB gzipped; LCP < 2.0 s throttled 4G (measured in Phase 5); no font CLS.
+- All copy verbatim from `content/page.md` / `content/email.md`. Every `{…}` is computed from `data/` at build or
+  run time. No number typed by hand in `src/` (exceptions: UI ranges and the 2 % fixed-fee note threshold, which are
+  product decisions recorded in decisions §15, not data).
+- `[DOPLNIT …]` placeholders stay visible and marked; they are listed in the README later.
+- Vykání, lowercase "vy/vám". Never "ETF z NYSE", never "lower tax", never "twin is cheaper", never "Fio prodává".
+- Design: decisions §10 tokens (`paper #F1F3EE`, `ink #1A2421`, `muted #5A6762`, `blocked #B8361E`, `allowed #17704A`,
+  `marker #F3DC5A`), Archivo self-hosted, single column 16 px gutter / 36rem desktop, chips pill, result block square
+  with 2 px ink rule, one user-triggered animation, `prefers-reduced-motion` respected. Banned list in §10.
+- a11y: AA contrast, tap targets ≥ 44 px, labels on inputs, `aria-live` on the result, focus visible.
+- `/api/lead` follows decisions §6a rules 1–6 exactly. Secrets only in env; `.env.example` committed.
+- Ponytail must not remove: a11y attributes, consent text, honeypot, server validation, source/date labels.
+- No analytics code (Phase 4). Leave `data-section` attributes on sections so Phase 4 can hook in without markup edits.
+- Commits: small, English, conventional prefix, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Every subagent prompt is logged verbatim in `docs/ai-worklog.md` before dispatch; every review finding after.
+
+## Decisions this plan takes (go to `docs/decisions.md` §15 in Task 1)
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Sliders: monthly 500–30 000 Kč step 500 (default 3 000), years 1–40 (default 20), return 0–10 % step 0,5 (default 5) | page.md left the range to Phase 3; 30 000 keeps Fio under its 1 400 EUR tier at default rate but the 4,95 EUR tier is still reachable at high EUR rates |
+| 2 | ETF side uses the **highest TER** among the visitor's shown twins (VOO → 0,07 %, labelled with that fund's ticker, VUAA first on ties in data order) | never flatters the ETF; reproduces calc-examples |
+| 3 | "Nevím" = commission 0 + the **highest published FX surcharge** computed from `brokers.json` (today XTB 0,5 %) | page.md copy |
+| 4 | ČS: 0,35 % **min. 4 EUR** per buy (the Xetra rule) + custody 0,08 % p.a. added to ongoing cost | conservative and matches the "pevný poplatek" copy for ČS; the no-minimum fractional regular order (internet banking only) would make ČS cheaper at small amounts — **flagged to Matěj** |
+| 5 | XTB 0,2 % above 100 000 EUR monthly turnover ignored | `shortcut:` comment; only matters for a sale above 100 000 EUR |
+| 6 | Twin order everywhere: accumulating first, then alphabetical by Xetra ticker | page.md §9 and result example "SPYL · SXR8 · VUAA"; "Pořadí není doporučení" stays |
+| 7 | Picks sharing an index are grouped ("VOO, SPY, IVV → S&P 500") in result, thank-you table, e-mail, `/plan` | avoids three identical tables |
+| 8 | Fallback form (no picks) → plan for VOO, SPY, IVV; subject "Váš ETF plán pro S&P 500" | page.md §7, email.md subject |
+| 9 | URL / hidden-field param names: `t` (tickers, comma), `m`, `y`, `r`, `b` (`unknown`/`xtb`/`t212`/`fio`/`cs`), `d` (`acc`/`dist`/`both`) | short `/plan` links |
+| 10 | Honeypot field name `fld_q8` | meaningless to autofill (§5) |
+| 11 | `/api/lead` order: upsert contact → send e-mail → set `PLAN_SENT_AT`. Failure in step 1–2 → 502; failure in step 3 → logged, still 200 | a failed send never blocks the visitor for 24 h |
+| 12 | Newsletter consent stored as `NEWSLETTER=true` + `NEWSLETTER_CONSENT_AT` + `CONSENT_TEXT_V=1`; an unticked box never clears an earlier consent | GDPR art. 7(1) demonstrability |
+| 13 | No-JS form: server answers form-encoded POSTs with 303 → `/dekujeme/` or `/chyba-formulare/`; JSON POSTs get JSON | §4 no-JS requirement |
+| 14 | Hero variant chosen by a ≤ 300 B inline head script (`html.js`, `data-variant`) | no flash/CLS; no-JS = variant A |
+| 15 | Without `BREVO_API_KEY` the function runs in **dry-run**: logs and writes the e-mail to `.dev/last-email.html` (gitignored) | local testing, and the source of the real e-mail screenshot for section 4 |
+| 16 | Daily FX rebuild (proposal only): **GitHub Actions `schedule` → `curl -X POST` a Vercel Deploy Hook** (hook URL as a repo secret) | no extra function; Vercel cron would need a function that calls the hook anyway. Caveat: GitHub pauses schedules after 60 days without repo activity |
+| 17 | Rate limit (proposal only): (a) Vercel WAF rate-limit rule on `/api/lead` if Hobby allows it — VERIFY; (b) Upstash Redis free tier — needs an account | decisions §6a rule 5 |
+
+Controller rulings that bind this task:
+- Already built: `src/components/LeadForm.astro` (`form.lead-form[data-location]` with id `lead-<location>`, fields `email`, `newsletter`, honeypot `fld_q8`, hidden `t m y r b d` (kept in sync by tool.ts) and `utm_source … utm_term` (empty — **this task fills them from `location.search`**), status `<p role="status" aria-live="polite">`); `src/components/Tool.astro` + `src/scripts/tool.ts` (read tool.ts first: it dispatches `window` `tool:result` with `detail: Selection` on **every** render incl. each slider frame and on load for ad B — your listener must be idempotent and cheap; it renders the sticky bar summary into `[data-sticky-summary]`; check what it already does with `[data-sticky]` and don't duplicate it); `/api/lead` returns JSON `{ok:true}` / `{ok:false, reason:'empty'|'invalid'|'server'}` with 200/400/413/502 when `accept: application/json`; a platform rate limit may return 429 with any body.
+- Shared logic to reuse: `validateEmail` (selection.ts) for the client check, `buildPlan` + formatters (`fmtTer`, `fmtDate`, `xetraTicker`…) for the thank-you table. Read the Selection for the thank-you table from the submitted form's hidden fields via `parseSelection(new URLSearchParams(new FormData(form)), US_TICKERS)` so it always matches what the server got.
+- Copy (verbatim): page.md §2 "States" (Sending/Empty/Invalid/Server error/Rate limit), §8 thank-you (heading "Hotovo. Plán je na cestě na {vas@email.cz}." with the address via textContent, body, "Překlep v adrese? [Zadat znovu]", "Celá tabulka pro váš výběr, i s ISIN.", the table columns, "Daňový checklist a postup nákupu najdete v e-mailu.", share line "Znáte někoho, kdo taky chtěl VOO? [Poslat odkaz]"), §7 final-form switch ("Poslat plán e-mailem" / "Pošleme vám plán pro {VOO, QQQ}."). Fallback form with no picks: the thank-you table shows the fallback plan (VOO, SPY, IVV), consistent with what the e-mail sends.
+- "Odkaz zkopírován" (copy confirmation) is not in page.md: it is a controller-approved microcopy addition for the clipboard fallback; keep it exactly that.
+- Share link: `location.origin + location.pathname + '?utm_source=share'` — no personal data, no selection params.
+- Forms on the page: `#lead-inline` (inside the result block), `#lead-footer` (final form). The sticky bar is not a form (it scrolls to `#lead-inline` and focuses its e-mail field; it never opens a modal).
+- Success state replaces the **submitted** form's block only; hide the sticky bar after any success. "Zadat znovu" restores that form (keep the typed address in the field) and moves focus to the e-mail input.
+- Errors: set `aria-invalid="true"` + `aria-describedby` → the status `<p>` on the e-mail input for Empty/Invalid; clear on the next input. Button disabled + "Posíláme…" while sending; re-enabled on every failure. Timeout 10 s via `AbortSignal.timeout(10000)` → Server error copy.
+- Analytics are Phase 4: no tracking calls; just keep handlers in one place so Phase 4 can hook in.
+- Keep `forms.ts` small; reuse helpers from tool.ts only if tool.ts exports them already — do not refactor tool.ts. If a tiny DOM helper (`h()`) is needed in both, duplicating 5 lines is fine; note it in the report.
+- Budget: after `astro build`, report the gzip size of every JS file referenced by dist/index.html (total must stay well under 60 kB).
+- Manual verification without a browser: run `node scripts/dev.mjs` in the background, and use curl against :4321 to confirm the page and `/api/lead` still respond; read the built JS to confirm the fetch headers. Stop the server afterwards (confirm ports 4321/8787 free). Report what could not be verified without a browser.
+- Deferred minor from Task 10 that touches your listener: `tool:result` fires every rAF frame — do not attach listeners or re-create DOM per event.
+
+## What the Implementer Claims They Built
+
+Read the implementer's report: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-11-report.md
+
+## Diff Under Review
+
+**Base:** 5fd779c
+**Head:** da7e7e0
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-5fd779c..da7e7e0.diff
+
+Read the diff file once — it contains the commit list, a stat summary,
+and the full diff with surrounding context, and it is your view of the
+change. The diff's context lines ARE the changed files: do not Read a
+changed file separately unless a hunk you must judge is cut off
+mid-function — and say so in your report. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat 5fd779c..da7e7e0` and `git diff 5fd779c..da7e7e0`.
+Do not crawl the broader codebase. Inspect code outside the diff only
+to evaluate a concrete risk you can name — one focused check per named
+risk, and name both the risk and what you checked in your report.
+Cross-cutting changes are legitimate named risks: if the diff changes
+lock ordering, a function or API contract, or shared mutable state,
+checking the call sites is the right method.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Do Not Trust the Report
+
+Treat the implementer's report as unverified claims about the code. It
+may be incomplete, inaccurate, or optimistic. Verify the claims against
+the diff. Design rationales in the report are claims too: "left it per
+YAGNI," "kept it simple deliberately," or any other justification is the
+implementer grading their own work. Judge the code on its merits — a
+stated rationale never downgrades a finding's severity.
+
+## Tests
+
+The implementer already ran the tests and reported results with TDD
+evidence for exactly this code. Do not re-run the suite to confirm their
+report. Run a test only when reading the code raises a specific doubt
+that no existing run answers — and then a focused test, never a
+package-wide suite, race detector run, or repeated/high-count loop. If
+heavy validation seems warranted, recommend it in your report instead of
+running it. If you cannot run commands in this environment, name the
+test you would run.
+
+Warnings or other noise in the implementer's reported test output are
+findings — test output should be pristine.
+
+Evidence you cannot see is not evidence that doesn't exist. If the
+report or its test evidence looks truncated, or you cannot locate the
+results it claims, re-read the file at its stated path — and if it is
+genuinely missing or garbled, report that as a gap for the controller.
+Re-running the suite to regenerate what you failed to read is not
+verification; illegibility of the evidence is not invalidation of it.
+
+## Part 1: Spec Compliance
+
+Compare the diff against What Was Requested:
+
+- **Missing:** requirements they skipped, missed, or claimed without
+  implementing
+- **Extra:** features that weren't requested, over-engineering, unneeded
+  "nice to haves"
+- **Misunderstood:** right feature built the wrong way, wrong problem
+  solved
+
+If the brief lists several files each with its own change (a batched
+dispatch), check the diff against that list file by file: every listed
+file must have its corresponding hunk. A listed file the diff never
+touches is a Missing finding, no matter how clean the rest of the
+batch looks.
+
+If a requirement cannot be verified from this diff alone (it lives in
+unchanged code or spans tasks), report it as a ⚠️ item instead of
+broadening your search.
+
+## Part 2: Code Quality
+
+**Code quality:**
+- Clean separation of concerns?
+- Proper error handling?
+- DRY without premature abstraction?
+- Edge cases handled?
+
+**Tests:**
+- Do the new and changed tests verify real behavior, not mocks?
+- Are the task's edge cases covered?
+
+**Structure:**
+- Does each file have one clear responsibility with a well-defined interface?
+- Are units decomposed so they can be understood and tested independently?
+- Is the implementation following the file structure from the plan?
+- Did this change create new files that are already large, or
+  significantly grow existing files? (Don't flag pre-existing file
+  sizes — focus on what this change contributed.)
+
+Your report should point at evidence: file:line references for every
+finding and for any check you would otherwise answer with a bare
+"yes." A tight report that cites lines gives the controller everything
+it needs.
+
+Your final message is the report itself: begin directly with the
+spec-compliance verdict. Every line is a verdict, a finding with
+file:line, or a check you ran — no preamble, no process narration,
+no closing summary.
+
+## Calibration
+
+Categorize issues by actual severity. Not everything is Critical.
+Important means this task cannot be trusted until it is fixed: incorrect
+or fragile behavior, a missed requirement, or maintainability damage you
+would block a merge over — verbatim duplication of a logic block,
+swallowed errors, tests that assert nothing. "Coverage could be broader"
+and polish suggestions are Minor.
+If the plan or brief explicitly mandates something this rubric calls a
+defect (a test that asserts nothing, verbatim duplication of a logic
+block), that IS a finding — report it as Important, labeled
+plan-mandated. The plan's authorship does not grade its own work; the
+human decides.
+Acknowledge what was done well before listing issues — accurate praise
+helps the implementer trust the rest of the feedback.
+
+## Output Format
+
+### Spec Compliance
+
+- ✅ Spec compliant | ❌ Issues found: [what's missing/extra/misunderstood,
+  with file:line references]
+- ⚠️ Cannot verify from diff: [requirements you could not verify from the
+  diff alone, and what the controller should check — report alongside the
+  ✅/❌ verdict for everything you could verify]
+
+### Strengths
+[What's well done? Be specific.]
+
+### Issues
+
+#### Critical (Must Fix)
+#### Important (Should Fix)
+#### Minor (Nice to Have)
+
+For each issue: file:line, what's wrong, why it matters, how to fix
+(if not obvious).
+
+### Assessment
+
+**Task quality:** [Approved | Needs fixes]
+
+**Reasoning:** [1-2 sentence technical assessment]
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 11 fix round 1 (model: sonnet)</summary>
+
+````text
+Fix round 1 for Task 11. Fix these, rebuild (`npx astro build`), run `npm test`, append a fix report to task-11-report.md, reply with the short contract.
+
+1. (Important) **"Zadat znovu" restores a dead form:** after success the button stays disabled with "Posíláme…" and the status still says "Posíláme…". When restoring, re-enable the button, restore its label, and clear the status; focus the e-mail input (address kept).
+2. (Minor, do it) `shareNote` live region: insert it empty together with the thank-you block (before any copy action), then set its text on copy, so "Odkaz zkopírován" is announced.
+3. (Minor, do it) Replace `footH.nextElementSibling` with explicit `data-` hooks on the final form's heading and body in the markup (FinalForm/LeadForm, whichever renders them), and revert the footer heading/body to the page.md §7 default texts when the selection has no picks again.
+4. (Check) Diff the thank-you texts and table column headers in forms.ts against content/page.md §8 character by character and fix any deviation; say in the report that you did.
+
+Nothing else. Commit as `fix: usable form after "Zadat znovu", announced share note, explicit final-form hooks`.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 11 re-review round 1 (model: haiku)</summary>
+
+````text
+You are re-reviewing one task's fix round. A previous review produced
+findings; an implementer has attempted to fix them. Your job is to
+verdict each finding and inspect the fix diff — nothing else.
+
+## The Task
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-11-brief.md
+
+## The Findings Under Verification
+
+Fix round 1 for Task 11. Fix these, rebuild (`npx astro build`), run `npm test`, append a fix report to task-11-report.md, reply with the short contract.
+
+1. (Important) **"Zadat znovu" restores a dead form:** after success the button stays disabled with "Posíláme…" and the status still says "Posíláme…". When restoring, re-enable the button, restore its label, and clear the status; focus the e-mail input (address kept).
+2. (Minor, do it) `shareNote` live region: insert it empty together with the thank-you block (before any copy action), then set its text on copy, so "Odkaz zkopírován" is announced.
+3. (Minor, do it) Replace `footH.nextElementSibling` with explicit `data-` hooks on the final form's heading and body in the markup (FinalForm/LeadForm, whichever renders them), and revert the footer heading/body to the page.md §7 default texts when the selection has no picks again.
+4. (Check) Diff the thank-you texts and table column headers in forms.ts against content/page.md §8 character by character and fix any deviation; say in the report that you did.
+
+Nothing else. Commit as `fix: usable form after "Zadat znovu", announced share note, explicit final-form hooks`.
+
+## The Fix
+
+Read the implementer's report (fix reports are appended at the end):
+D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-11-report.md
+
+**Fix base:** da7e7e0 (the head the previous review saw)
+**Head:** d97292f
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-da7e7e0..d97292f.diff
+
+Read the diff file once — it contains the fix commits, a stat summary,
+and the fix diff with surrounding context. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat da7e7e0..d97292f` and
+`git diff da7e7e0..d97292f`.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Scope
+
+Your scope is the findings list and the fix diff. Verdict every finding.
+Inspect the fix diff for new problems the fix itself introduced. Do NOT
+re-review code the fix did not touch: if you notice an issue entirely
+outside the fix diff, report it under Out-of-Scope Observations — it
+does not block this task and does not extend the loop. A broad
+whole-branch review happens after all tasks are complete.
+
+## Tests
+
+The implementer re-ran the tests covering the amended code and appended
+the results to the report file. Treat the report as unverified claims:
+confirm the fix report names the covering tests and shows their output,
+and verify the claims against the diff. Do not re-run the suite to
+confirm their report. Run a test only when reading the code raises a
+specific doubt that no existing run answers — and then a focused test,
+never a package-wide suite.
+
+## Output Format
+
+Your final message is the report itself: begin directly with the first
+finding's verdict. Every line is a verdict, a finding with file:line,
+or a check you ran — no preamble, no process narration.
+
+### Finding Verdicts
+
+For each finding in The Findings Under Verification, in order:
+- **[finding one-liner]** — ADDRESSED | NOT ADDRESSED, with file:line
+  evidence. "Attempted" is not addressed: the specific defect must no
+  longer exist.
+
+### New Breakage in the Fix Diff
+
+Anything the fix itself broke or introduced, with severity
+(Critical/Important/Minor) and file:line. "None" if clean.
+
+### Out-of-Scope Observations
+
+Issues you noticed entirely outside the fix diff. Non-blocking; the
+controller ledgers these for the final review. "None" if none.
+
+### Verdict
+
+**Fix round:** [All findings addressed, no new Critical/Important
+breakage | Findings remain open] — list the open ones.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 12 implementer (/plan page) (model: sonnet)</summary>
+
+````text
+You are implementing Task 12: C:/Program Files/Git/plan page — part of Phase 3 (Build) of "ETF Dvojče", a Czech mobile-first lead-magnet landing page that compares US ETFs with their European UCITS equivalents (Astro static site + one vanilla-TS island + one Vercel function).
+
+## Task Description
+
+Read your task brief first: D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-12-brief.md
+It is your requirements, with the exact values to use verbatim.
+
+## Environment
+
+- Repo D:\etf_landing_page, Windows 11, Git Bash + PowerShell, Node v26 (runs .ts files natively via type stripping: use only erasable TS syntax — no enums, namespaces, parameter properties), npm 11. NO Python: never run `python`.
+- Branch `master`; commit directly to it. Commit messages in English, conventional prefix, ending with a blank line and `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Only dependency allowed: `astro@7.3.8` (installed). Never add a package; if you think one is needed, report NEEDS_CONTEXT.
+- Tests: `node --test <file>` (node:test + node:assert/strict). Full suite: `npm test`.
+- Project rules: D:\etf_landing_page\CLAUDE.md (read "Data rules", "Copy & design rules", and "Overrides" in the Plugins table). Never type a data number by hand: figures come from data/*.json.
+- Write long Czech text with your file Write/Edit tools, not shell heredocs.
+
+## Context and controller rulings
+
+- `/plan` is the "Otevřít plán online" target of the plan e-mail (decisions §6 point 3). The link is `${siteUrl}/plan?t=…&m=…&y=…&r=…&b=…&d=…&utm_source=email` built by src/lib/email.ts from `toParams`. The page renders the same plan as the e-mail from those URL params, with **no database lookup** and **no innerHTML anywhere** (`createElement` + `textContent` / `append(string)` only; the reviewer greps the file and the built JS).
+- Reuse: `parseSelection(new URLSearchParams(location.search), US_TICKERS)` (allow-list + clamps, decisions §6a rule 1), `buildPlan(sel, FX)`, formatters in `src/lib/data.ts` (`fmtTer`, `fmtCzk`, `fmtCzkRange`, `fmtDate`, …), `roundK`. The e-mail renderer `src/lib/email.ts` already builds a `Block[]` model (headings, paragraphs, tables) that feeds both its HTML and text parts — read it: if it exposes (or can expose with a one-line `export`) a function that returns that block list for `(plan, sel, siteUrl, sentOn)`, render those blocks into DOM nodes on /plan so the page and the e-mail cannot drift. That export is the only change allowed in email.ts; its tests must stay green. If the block model is not reusable without restructuring, stop and report NEEDS_CONTEXT instead of duplicating the e-mail copy.
+- Page-only adjustments: no "Dobrý den" greeting, no "Otevřít plán online" link and no e-mail footer sentence "Plán vám přišel, protože…" / the art. 21(4) paragraph (those are e-mail-only); keep the disclaimers, sources and "Toto není doporučení". If the block model can't distinguish these, filter by a simple block marker you add in email.ts (minimal) — say what you did.
+- Layout: `Base.astro` with `noindex`, title "Váš ETF plán | ETF Dvojče", the existing global.css (tables, `.num`, `.ticker` only for uppercase tickers), header link back to `/`, the `Footer` component. A `<noscript>`/`no-js` message for visitors without JS: "Plán se zobrazí jen se zapnutým JavaScriptem. Celý ho máte i v e-mailu." plus a link to the home page (controller-approved microcopy, not in page.md).
+- Analytics (`magnet_opened`) is Phase 4 — no tracking now.
+- Verification: `npx astro build`; grep `dist/plan/index.html` and the JS it loads for `innerHTML` (must be absent); a node test is only needed if you add a helper with logic. Without a browser, run a small node script that imports your block→DOM-free part (if any) or `buildPlan` with `t=<img src=x onerror=alert(1)>,VOO&m=9e9` and show the selection is `['VOO']` / 30000 (brief's manual check, done at the logic level). Report the JS gzip size added to /plan.
+
+## Before You Begin
+
+If anything in the requirements or approach is unclear, ask now (status NEEDS_CONTEXT) instead of guessing.
+
+## Your Job
+
+1. Implement exactly what the task specifies (TDD where the brief says: show the RED failure before implementing)
+2. Verify it works; run the full suite once before committing
+3. Commit (small commits, one logical change each)
+4. Self-review your diff: completeness, minimalism (no unrequested abstraction or options), tests verify behaviour
+5. Report back
+
+Keep it minimal. Never remove or weaken: a11y attributes, consent/GDPR text, the honeypot, server-side validation, source/date labels. No analytics code.
+
+## You Do Not Dispatch Subagents
+
+Do all of this task's work yourself. Never spawn a subagent or a reviewer — review is the controller's job.
+
+## When You're in Over Your Head
+
+It is always OK to stop and report BLOCKED or NEEDS_CONTEXT with specifics. Bad work is worse than no work.
+
+## After Review Findings
+
+If resumed with findings: fix them, re-run the covering tests, append a fix report (changes, command, output) to your report file, reply with the short contract.
+
+## Report Format
+
+Write your full report to D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\task-12-report.md: what you implemented; TDD evidence (RED: command + failing output; GREEN: command + passing output) where TDD applies; other verification with command output; files changed; self-review findings; concerns.
+
+Then reply with ONLY (under 15 lines): Status (DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT), commits (short SHA + subject), one-line test summary, concerns, the report file path.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Task 12 reviewer (model: sonnet)</summary>
+
+````text
+You are reviewing one task's implementation: first whether it matches its
+requirements, then whether it is well-built. This is a task-scoped gate,
+not a merge review — a broad whole-branch review happens separately after
+all tasks are complete.
+
+## What Was Requested
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-12-brief.md
+
+Global constraints from the spec/design that bind this task:
+- Only dependency: `astro`. Anything else (Playwright, Vercel CLI, adapters, fontkit) → ask Matěj first.
+- JS on first load < 60 kB gzipped; LCP < 2.0 s throttled 4G (measured in Phase 5); no font CLS.
+- All copy verbatim from `content/page.md` / `content/email.md`. Every `{…}` is computed from `data/` at build or
+  run time. No number typed by hand in `src/` (exceptions: UI ranges and the 2 % fixed-fee note threshold, which are
+  product decisions recorded in decisions §15, not data).
+- `[DOPLNIT …]` placeholders stay visible and marked; they are listed in the README later.
+- Vykání, lowercase "vy/vám". Never "ETF z NYSE", never "lower tax", never "twin is cheaper", never "Fio prodává".
+- Design: decisions §10 tokens (`paper #F1F3EE`, `ink #1A2421`, `muted #5A6762`, `blocked #B8361E`, `allowed #17704A`,
+  `marker #F3DC5A`), Archivo self-hosted, single column 16 px gutter / 36rem desktop, chips pill, result block square
+  with 2 px ink rule, one user-triggered animation, `prefers-reduced-motion` respected. Banned list in §10.
+- a11y: AA contrast, tap targets ≥ 44 px, labels on inputs, `aria-live` on the result, focus visible.
+- `/api/lead` follows decisions §6a rules 1–6 exactly. Secrets only in env; `.env.example` committed.
+- Ponytail must not remove: a11y attributes, consent text, honeypot, server validation, source/date labels.
+- No analytics code (Phase 4). Leave `data-section` attributes on sections so Phase 4 can hook in without markup edits.
+- Commits: small, English, conventional prefix, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- Every subagent prompt is logged verbatim in `docs/ai-worklog.md` before dispatch; every review finding after.
+
+## Decisions this plan takes (go to `docs/decisions.md` §15 in Task 1)
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Sliders: monthly 500–30 000 Kč step 500 (default 3 000), years 1–40 (default 20), return 0–10 % step 0,5 (default 5) | page.md left the range to Phase 3; 30 000 keeps Fio under its 1 400 EUR tier at default rate but the 4,95 EUR tier is still reachable at high EUR rates |
+| 2 | ETF side uses the **highest TER** among the visitor's shown twins (VOO → 0,07 %, labelled with that fund's ticker, VUAA first on ties in data order) | never flatters the ETF; reproduces calc-examples |
+| 3 | "Nevím" = commission 0 + the **highest published FX surcharge** computed from `brokers.json` (today XTB 0,5 %) | page.md copy |
+| 4 | ČS: 0,35 % **min. 4 EUR** per buy (the Xetra rule) + custody 0,08 % p.a. added to ongoing cost | conservative and matches the "pevný poplatek" copy for ČS; the no-minimum fractional regular order (internet banking only) would make ČS cheaper at small amounts — **flagged to Matěj** |
+| 5 | XTB 0,2 % above 100 000 EUR monthly turnover ignored | `shortcut:` comment; only matters for a sale above 100 000 EUR |
+| 6 | Twin order everywhere: accumulating first, then alphabetical by Xetra ticker | page.md §9 and result example "SPYL · SXR8 · VUAA"; "Pořadí není doporučení" stays |
+| 7 | Picks sharing an index are grouped ("VOO, SPY, IVV → S&P 500") in result, thank-you table, e-mail, `/plan` | avoids three identical tables |
+| 8 | Fallback form (no picks) → plan for VOO, SPY, IVV; subject "Váš ETF plán pro S&P 500" | page.md §7, email.md subject |
+| 9 | URL / hidden-field param names: `t` (tickers, comma), `m`, `y`, `r`, `b` (`unknown`/`xtb`/`t212`/`fio`/`cs`), `d` (`acc`/`dist`/`both`) | short `/plan` links |
+| 10 | Honeypot field name `fld_q8` | meaningless to autofill (§5) |
+| 11 | `/api/lead` order: upsert contact → send e-mail → set `PLAN_SENT_AT`. Failure in step 1–2 → 502; failure in step 3 → logged, still 200 | a failed send never blocks the visitor for 24 h |
+| 12 | Newsletter consent stored as `NEWSLETTER=true` + `NEWSLETTER_CONSENT_AT` + `CONSENT_TEXT_V=1`; an unticked box never clears an earlier consent | GDPR art. 7(1) demonstrability |
+| 13 | No-JS form: server answers form-encoded POSTs with 303 → `/dekujeme/` or `/chyba-formulare/`; JSON POSTs get JSON | §4 no-JS requirement |
+| 14 | Hero variant chosen by a ≤ 300 B inline head script (`html.js`, `data-variant`) | no flash/CLS; no-JS = variant A |
+| 15 | Without `BREVO_API_KEY` the function runs in **dry-run**: logs and writes the e-mail to `.dev/last-email.html` (gitignored) | local testing, and the source of the real e-mail screenshot for section 4 |
+| 16 | Daily FX rebuild (proposal only): **GitHub Actions `schedule` → `curl -X POST` a Vercel Deploy Hook** (hook URL as a repo secret) | no extra function; Vercel cron would need a function that calls the hook anyway. Caveat: GitHub pauses schedules after 60 days without repo activity |
+| 17 | Rate limit (proposal only): (a) Vercel WAF rate-limit rule on `/api/lead` if Hobby allows it — VERIFY; (b) Upstash Redis free tier — needs an account | decisions §6a rule 5 |
+
+Controller rulings that bind this task:
+- `/plan` is the "Otevřít plán online" target of the plan e-mail (decisions §6 point 3). The link is `${siteUrl}/plan?t=…&m=…&y=…&r=…&b=…&d=…&utm_source=email` built by src/lib/email.ts from `toParams`. The page renders the same plan as the e-mail from those URL params, with **no database lookup** and **no innerHTML anywhere** (`createElement` + `textContent` / `append(string)` only; the reviewer greps the file and the built JS).
+- Reuse: `parseSelection(new URLSearchParams(location.search), US_TICKERS)` (allow-list + clamps, decisions §6a rule 1), `buildPlan(sel, FX)`, formatters in `src/lib/data.ts` (`fmtTer`, `fmtCzk`, `fmtCzkRange`, `fmtDate`, …), `roundK`. The e-mail renderer `src/lib/email.ts` already builds a `Block[]` model (headings, paragraphs, tables) that feeds both its HTML and text parts — read it: if it exposes (or can expose with a one-line `export`) a function that returns that block list for `(plan, sel, siteUrl, sentOn)`, render those blocks into DOM nodes on /plan so the page and the e-mail cannot drift. That export is the only change allowed in email.ts; its tests must stay green. If the block model is not reusable without restructuring, stop and report NEEDS_CONTEXT instead of duplicating the e-mail copy.
+- Page-only adjustments: no "Dobrý den" greeting, no "Otevřít plán online" link and no e-mail footer sentence "Plán vám přišel, protože…" / the art. 21(4) paragraph (those are e-mail-only); keep the disclaimers, sources and "Toto není doporučení". If the block model can't distinguish these, filter by a simple block marker you add in email.ts (minimal) — say what you did.
+- Layout: `Base.astro` with `noindex`, title "Váš ETF plán | ETF Dvojče", the existing global.css (tables, `.num`, `.ticker` only for uppercase tickers), header link back to `/`, the `Footer` component. A `<noscript>`/`no-js` message for visitors without JS: "Plán se zobrazí jen se zapnutým JavaScriptem. Celý ho máte i v e-mailu." plus a link to the home page (controller-approved microcopy, not in page.md).
+- Analytics (`magnet_opened`) is Phase 4 — no tracking now.
+- Verification: `npx astro build`; grep `dist/plan/index.html` and the JS it loads for `innerHTML` (must be absent); a node test is only needed if you add a helper with logic. Without a browser, run a small node script that imports your block→DOM-free part (if any) or `buildPlan` with `t=<img src=x onerror=alert(1)>,VOO&m=9e9` and show the selection is `['VOO']` / 30000 (brief's manual check, done at the logic level). Report the JS gzip size added to /plan.
+
+## What the Implementer Claims They Built
+
+Read the implementer's report: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/task-12-report.md
+
+## Diff Under Review
+
+**Base:** d97292f
+**Head:** c638fdc
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-d97292f..c638fdc.diff
+
+Read the diff file once — it contains the commit list, a stat summary,
+and the full diff with surrounding context, and it is your view of the
+change. The diff's context lines ARE the changed files: do not Read a
+changed file separately unless a hunk you must judge is cut off
+mid-function — and say so in your report. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat d97292f..c638fdc` and `git diff d97292f..c638fdc`.
+Do not crawl the broader codebase. Inspect code outside the diff only
+to evaluate a concrete risk you can name — one focused check per named
+risk, and name both the risk and what you checked in your report.
+Cross-cutting changes are legitimate named risks: if the diff changes
+lock ordering, a function or API contract, or shared mutable state,
+checking the call sites is the right method.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Do Not Trust the Report
+
+Treat the implementer's report as unverified claims about the code. It
+may be incomplete, inaccurate, or optimistic. Verify the claims against
+the diff. Design rationales in the report are claims too: "left it per
+YAGNI," "kept it simple deliberately," or any other justification is the
+implementer grading their own work. Judge the code on its merits — a
+stated rationale never downgrades a finding's severity.
+
+## Tests
+
+The implementer already ran the tests and reported results with TDD
+evidence for exactly this code. Do not re-run the suite to confirm their
+report. Run a test only when reading the code raises a specific doubt
+that no existing run answers — and then a focused test, never a
+package-wide suite, race detector run, or repeated/high-count loop. If
+heavy validation seems warranted, recommend it in your report instead of
+running it. If you cannot run commands in this environment, name the
+test you would run.
+
+Warnings or other noise in the implementer's reported test output are
+findings — test output should be pristine.
+
+Evidence you cannot see is not evidence that doesn't exist. If the
+report or its test evidence looks truncated, or you cannot locate the
+results it claims, re-read the file at its stated path — and if it is
+genuinely missing or garbled, report that as a gap for the controller.
+Re-running the suite to regenerate what you failed to read is not
+verification; illegibility of the evidence is not invalidation of it.
+
+## Part 1: Spec Compliance
+
+Compare the diff against What Was Requested:
+
+- **Missing:** requirements they skipped, missed, or claimed without
+  implementing
+- **Extra:** features that weren't requested, over-engineering, unneeded
+  "nice to haves"
+- **Misunderstood:** right feature built the wrong way, wrong problem
+  solved
+
+If the brief lists several files each with its own change (a batched
+dispatch), check the diff against that list file by file: every listed
+file must have its corresponding hunk. A listed file the diff never
+touches is a Missing finding, no matter how clean the rest of the
+batch looks.
+
+If a requirement cannot be verified from this diff alone (it lives in
+unchanged code or spans tasks), report it as a ⚠️ item instead of
+broadening your search.
+
+## Part 2: Code Quality
+
+**Code quality:**
+- Clean separation of concerns?
+- Proper error handling?
+- DRY without premature abstraction?
+- Edge cases handled?
+
+**Tests:**
+- Do the new and changed tests verify real behavior, not mocks?
+- Are the task's edge cases covered?
+
+**Structure:**
+- Does each file have one clear responsibility with a well-defined interface?
+- Are units decomposed so they can be understood and tested independently?
+- Is the implementation following the file structure from the plan?
+- Did this change create new files that are already large, or
+  significantly grow existing files? (Don't flag pre-existing file
+  sizes — focus on what this change contributed.)
+
+Your report should point at evidence: file:line references for every
+finding and for any check you would otherwise answer with a bare
+"yes." A tight report that cites lines gives the controller everything
+it needs.
+
+Your final message is the report itself: begin directly with the
+spec-compliance verdict. Every line is a verdict, a finding with
+file:line, or a check you ran — no preamble, no process narration,
+no closing summary.
+
+## Calibration
+
+Categorize issues by actual severity. Not everything is Critical.
+Important means this task cannot be trusted until it is fixed: incorrect
+or fragile behavior, a missed requirement, or maintainability damage you
+would block a merge over — verbatim duplication of a logic block,
+swallowed errors, tests that assert nothing. "Coverage could be broader"
+and polish suggestions are Minor.
+If the plan or brief explicitly mandates something this rubric calls a
+defect (a test that asserts nothing, verbatim duplication of a logic
+block), that IS a finding — report it as Important, labeled
+plan-mandated. The plan's authorship does not grade its own work; the
+human decides.
+Acknowledge what was done well before listing issues — accurate praise
+helps the implementer trust the rest of the feedback.
+
+## Output Format
+
+### Spec Compliance
+
+- ✅ Spec compliant | ❌ Issues found: [what's missing/extra/misunderstood,
+  with file:line references]
+- ⚠️ Cannot verify from diff: [requirements you could not verify from the
+  diff alone, and what the controller should check — report alongside the
+  ✅/❌ verdict for everything you could verify]
+
+### Strengths
+[What's well done? Be specific.]
+
+### Issues
+
+#### Critical (Must Fix)
+#### Important (Should Fix)
+#### Minor (Nice to Have)
+
+For each issue: file:line, what's wrong, why it matters, how to fix
+(if not obvious).
+
+### Assessment
+
+**Task quality:** [Approved | Needs fixes]
+
+**Reasoning:** [1-2 sentence technical assessment]
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Final whole-branch reviewer (model: opus)</summary>
+
+````text
+You are a Senior Code Reviewer with expertise in software architecture,
+design patterns, and best practices. Your job is to review completed work
+against its plan or requirements and identify issues before they cascade.
+
+## What Was Implemented
+
+Phase 3 (Build) of ETF Dvojče: Astro static landing page + vanilla-TS tool island, tested fee calculator (src/lib/fees.ts), input allow-list (selection.ts), plan model + e-mail renderer (plan.ts, email.ts), /api/lead Vercel function with Brevo client and dry-run (api/lead.ts, src/lib/brevo.ts), /plan page, privacy/thank-you/error pages, no-JS fallback, ČNB FX build fetch, JS size script. 13 tasks, each reviewed; see the ledger for deferred minors and rulings.
+
+The whole branch diff with context is in one file: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-e5b81c4..5fc1352.diff (read it instead of re-running git diff; package-lock.json and woff2 binaries can be skipped).
+
+Ledger with every deferred minor and every ruling (triage which must be fixed before the Phase 3 checkpoint): D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/progress.md
+
+## Requirements / Plan
+
+Plan: D:/etf_landing_page/docs/superpowers/plans/2026-10-15-phase3-build.md (Global Constraints + Review Focus sections are binding). Spec: docs/decisions.md (§3–6a, §8, §10–12, §14, §15), content/page.md and content/email.md (approved copy, verbatim), content/calc-examples.mjs (fee oracle), data/sources.md §7–9, CLAUDE.md. Not in scope: analytics (Phase 4), deploy/accounts/Lighthouse/real-browser checks (Phase 5; no browser exists on this machine). Concentrate on: correctness of the fee maths and the plan model against data, the /api/lead trust boundary (decisions §6a), escaping/no-innerHTML on /plan and in the e-mail, copy fidelity to page.md/email.md, a11y basics, cross-task integration (tool.ts ↔ forms.ts ↔ LeadForm hidden fields ↔ api).
+
+## Git Range to Review
+
+**Base:** e5b81c4
+**Head:** 5fc1352
+
+```bash
+git diff --stat e5b81c4..5fc1352
+git diff e5b81c4..5fc1352
+```
+
+## The spec is a vision document
+
+The spec says what the software must do. It does not enumerate every
+input, environment, or condition the software will meet. For behavior
+the spec is silent on, judge by what a reasonable person using this
+software would expect: a reasonable person's expectation is a
+requirement, and a spec's silence is not permission. Grade such
+findings by their effect on that person, not by whether the spec
+mentions the trigger.
+
+## Declined to judge
+
+Before your verdict, list every behavior you considered and set aside
+as outside the plan or spec, one line each, with the reason. The
+executor rules on each line; nothing you set aside is dropped
+silently. An empty list means you set nothing aside.
+
+## Read-Only Review
+
+Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way. Use tools like `git show`, `git diff`, and `git log` to inspect history. If you need a working copy of a different revision, check it out into a separate temporary directory (e.g. `git worktree add /tmp/review-5fc1352 5fc1352`) — never move HEAD on this checkout.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## What to Check
+
+**Plan alignment:**
+- Does the implementation match the plan / requirements?
+- Are deviations justified improvements, or problematic departures?
+- Is all planned functionality present?
+
+**Code quality:**
+- Clean separation of concerns?
+- Proper error handling?
+- Type safety where applicable?
+- DRY without premature abstraction?
+- Edge cases handled?
+
+**Architecture:**
+- Sound design decisions?
+- Reasonable scalability and performance?
+- Security concerns?
+- Integrates cleanly with surrounding code?
+
+**Testing:**
+- Tests verify real behavior, not mocks?
+- Edge cases covered?
+- Integration tests where they matter?
+- All tests passing?
+
+**Production readiness:**
+- Migration strategy if schema changed?
+- Backward compatibility considered?
+- Documentation complete?
+- No obvious bugs?
+
+## Calibration
+
+Categorize issues by actual severity. Not everything is Critical.
+Acknowledge what was done well before listing issues — accurate praise
+helps the implementer trust the rest of the feedback.
+
+If you find significant deviations from the plan, flag them specifically
+so the implementer can confirm whether the deviation was intentional.
+If you find issues with the plan itself rather than the implementation,
+say so.
+
+## Output Format
+
+### Strengths
+[What's well done? Be specific.]
+
+### Issues
+
+#### Critical (Must Fix)
+[Bugs, security issues, data loss risks, broken functionality]
+
+#### Important (Should Fix)
+[Architecture problems, missing features, poor error handling, test gaps]
+
+#### Minor (Nice to Have)
+[Code style, optimization opportunities, documentation polish]
+
+For each issue:
+- File:line reference
+- What's wrong
+- Why it matters
+- How to fix (if not obvious)
+
+### Recommendations
+[Improvements for code quality, architecture, or process]
+
+### Assessment
+
+**Ready to merge?** [Yes | No | With fixes]
+
+**Reasoning:** [1-2 sentence technical assessment]
+
+## Critical Rules
+
+**DO:**
+- Categorize by actual severity
+- Be specific (file:line, not vague)
+- Explain WHY each issue matters
+- Acknowledge strengths
+- Give a clear verdict
+
+**DON'T:**
+- Say "looks good" without checking
+- Mark nitpicks as Critical
+- Give feedback on code you didn't actually read
+- Be vague ("improve error handling")
+- Avoid giving a clear verdict
+```
+
+**Placeholders:**
+- `Phase 3 (Build) of ETF Dvojče: Astro static landing page + vanilla-TS tool island, tested fee calculator (src/lib/fees.ts), input allow-list (selection.ts), plan model + e-mail renderer (plan.ts, email.ts), /api/lead Vercel function with Brevo client and dry-run (api/lead.ts, src/lib/brevo.ts), /plan page, privacy/thank-you/error pages, no-JS fallback, ČNB FX build fetch, JS size script. 13 tasks, each reviewed; see the ledger for deferred minors and rulings.
+
+The whole branch diff with context is in one file: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-e5b81c4..5fc1352.diff (read it instead of re-running git diff; package-lock.json and woff2 binaries can be skipped).
+
+Ledger with every deferred minor and every ruling (triage which must be fixed before the Phase 3 checkpoint): D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/progress.md` — brief summary of what was built
+- `Plan: D:/etf_landing_page/docs/superpowers/plans/2026-10-15-phase3-build.md (Global Constraints + Review Focus sections are binding). Spec: docs/decisions.md (§3–6a, §8, §10–12, §14, §15), content/page.md and content/email.md (approved copy, verbatim), content/calc-examples.mjs (fee oracle), data/sources.md §7–9, CLAUDE.md. Not in scope: analytics (Phase 4), deploy/accounts/Lighthouse/real-browser checks (Phase 5; no browser exists on this machine). Concentrate on: correctness of the fee maths and the plan model against data, the /api/lead trust boundary (decisions §6a), escaping/no-innerHTML on /plan and in the e-mail, copy fidelity to page.md/email.md, a11y basics, cross-task integration (tool.ts ↔ forms.ts ↔ LeadForm hidden fields ↔ api).` — what it should do (plan file path, task text, or requirements)
+- `e5b81c4` — starting commit
+- `5fc1352` — ending commit
+
+**Reviewer returns:** Strengths, Issues (Critical / Important / Minor), Recommendations, Assessment
+
+## Example Output
+
+```
+### Strengths
+- Clean database schema with proper migrations (db.ts:15-42)
+- Comprehensive test coverage (18 tests, all edge cases)
+- Good error handling with fallbacks (summarizer.ts:85-92)
+
+### Issues
+
+#### Important
+1. **Missing help text in CLI wrapper**
+   - File: index-conversations:1-31
+   - Issue: No --help flag, users won't discover --concurrency
+   - Fix: Add --help case with usage examples
+
+2. **Date validation missing**
+   - File: search.ts:25-27
+   - Issue: Invalid dates silently return no results
+   - Fix: Validate ISO format, throw error with example
+
+#### Minor
+1. **Progress indicators**
+   - File: indexer.ts:130
+   - Issue: No "X of Y" counter for long operations
+   - Impact: Users don't know how long to wait
+
+### Recommendations
+- Add progress reporting for user experience
+- Consider config file for excluded projects (portability)
+
+### Assessment
+
+**Ready to merge: With fixes**
+
+**Reasoning:** Core implementation is solid with good architecture and tests. Important issues (help text, date validation) are easily fixed and don't affect core functionality.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Final review fix wave (model: sonnet)</summary>
+
+````text
+You are fixing the findings of the final whole-branch review of Phase 3 (Build) of "ETF Dvojče" (Czech landing page; Astro static + vanilla TS + one Vercel function). Repo D:\etf_landing_page, Windows, Git Bash/PowerShell, Node 26 (runs .ts natively; erasable TS syntax only), npm 11, NO Python. Branch master, commit directly. Only dependency: astro. Read D:\etf_landing_page\CLAUDE.md first. Copy rule: content/page.md and content/email.md are approved copy, verbatim. Never add analytics. Never remove a11y attributes, consent text, honeypot, server validation, source/date labels. Do not dispatch subagents.
+
+Fix all of these, with a test where the item says so (TDD: show the failing test first). Run `npm test` at the end, and `npx astro build` (if `data/fx.json` changes as a side effect, `git checkout data/fx.json` — don't commit it). Small commits, English messages ending with `Co-Authored-By:` your model line.
+
+1. **Unsubscribe placeholder (controller ruling):** email.ts renders the literal "[Odhlásit se]". The mechanism depends on the Brevo account (Phase 5). Render it as a marked placeholder in both HTML and text parts: `[DOPLNIT: odkaz pro odhlášení]`, styled like the other `[DOPLNIT …]` placeholders in the e-mail, so it lands on the README must-fill list. Test: the output contains `[DOPLNIT: odkaz pro odhlášení]` and not `[Odhlásit se]`.
+2. **Broker names in the genitive case in the e-mail** (email.ts ~73, ~76): "nakupujete u {brokera}" and the ETF line must read e.g. "u České spořitelny", "u Fio", "u XTB", "u Trading 212"; "Nevím" keeps email.md's `„nevím"` wording for the first line (read email.md §3: "nakupujete u {brokera / „nevím"}"). Add a genitive map in src/lib/data.ts next to the existing short-name map (`{ xtb: 'XTB', t212: 'Trading 212', fio: 'Fio', cs: 'České spořitelny' }`, fallback `b.name`). Also make the ETF line verbatim with email.md: "ETF: TER {…} ročně, poplatek za obchod a směna měny u {brokera} ({ceník, datum})." — no colon after "směna měny". Tests for ČS and Fio renders.
+3. **forms.ts throws on /chyba-formulare/ and /chyba-odeslani/** (no `#lead-inline`, `[data-result]`, `[data-sticky]` there): guard the inline/sticky/tool:result wiring so only the parts whose elements exist are set up; submit handling for every `.lead-form` must still attach.
+4. **"Poslat plán" CTA in "Co vám přijde e-mailem"** (PlanContents.astro, `data-cta="plan"`): page.md §4 says it scrolls to the inline form if the result is shown, otherwise to Step A (`#nastroj`). Add that click handler in forms.ts (where the sticky bar's scroll-to-form already lives); keep the plain `href` as the no-JS fallback. Focus the e-mail field when going to the form.
+5. **One ad-variant rule:** decisions §7 says `ad_a_*` → a, `ad_b_*` → b. Make `adVariant` in selection.ts strict (`/^ad_([ab])_/`) and add tests that bare `ad_a` / `ad_b` → `unknown`; the Base.astro head script already requires the `ad_b_` prefix — confirm they now agree.
+6. **UTM sanitising order** (selection.ts `sanitizeUtm`): strip control chars, then trim, then slice(0, 100). Test: 150 leading spaces + "instagram" → "instagram".
+7. **`SITE_URL` trailing slash:** normalise once in `POST()` in api/lead.ts (strip trailing `/` after the existing URL validation). Test via `handleLead` or a small exported helper.
+8. **Dry-run on Vercel:** in src/lib/brevo.ts dry-run, skip writing `.dev/last-email.html` when `process.env.VERCEL` is set (log only), so a preview without `BREVO_API_KEY` doesn't 502 on a read-only filesystem. Also add a comment line to .env.example: `# SITE_URL without a trailing slash` is no longer needed after item 7 — instead note there that a preview deploy without BREVO_API_KEY runs in dry-run and sends nothing.
+
+Not in scope (do not touch): README, analytics, the twin-list live region, `/plan-preview.png`, rate limiting.
+
+Write your report to D:\etf_landing_page\.superpowers\sdd\2026-10-15-phase3-build\final-fix-report.md (per item: change, test, command + output). Reply with ONLY: Status, commits (short SHA + subject), one-line test summary, concerns, report path.
+````
+
+</details>
+
+<details><summary>2026-10-15 — subagent prompt: Final fix-wave re-review (model: sonnet)</summary>
+
+````text
+You are re-reviewing one task's fix round. A previous review produced
+findings; an implementer has attempted to fix them. Your job is to
+verdict each finding and inspect the fix diff — nothing else.
+
+## The Task
+
+Read the task brief: D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/final-fix.md
+
+## The Findings Under Verification
+
+The 8 numbered items in D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/final-fix.md (the brief is the findings list).
+
+## The Fix
+
+Read the implementer's report (fix reports are appended at the end):
+D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/final-fix-report.md
+
+**Fix base:** 5fc1352 (the head the previous review saw)
+**Head:** c7d990d
+**Diff file:** D:/etf_landing_page/.superpowers/sdd/2026-10-15-phase3-build/review-5fc1352..c7d990d.diff
+
+Read the diff file once — it contains the fix commits, a stat summary,
+and the fix diff with surrounding context. Do not re-run git commands.
+If the diff file is missing, fetch the diff yourself:
+`git diff --stat 5fc1352..c7d990d` and
+`git diff 5fc1352..c7d990d`.
+
+Your review is read-only on this checkout. Do not mutate the working
+tree, the index, HEAD, or branch state in any way.
+
+## You Do Not Dispatch Subagents
+
+Do all of this review yourself. Never spawn a subagent to review part
+of the diff, and never spawn another reviewer for a second opinion.
+This process already provides every review seat the work gets; a
+reviewer you spawn duplicates one of them at full cost, and its
+verdict counts for nothing. If the diff feels too large for one
+pass, review it in passes yourself and say so in your report.
+
+## Scope
+
+Your scope is the findings list and the fix diff. Verdict every finding.
+Inspect the fix diff for new problems the fix itself introduced. Do NOT
+re-review code the fix did not touch: if you notice an issue entirely
+outside the fix diff, report it under Out-of-Scope Observations — it
+does not block this task and does not extend the loop. A broad
+whole-branch review happens after all tasks are complete.
+
+## Tests
+
+The implementer re-ran the tests covering the amended code and appended
+the results to the report file. Treat the report as unverified claims:
+confirm the fix report names the covering tests and shows their output,
+and verify the claims against the diff. Do not re-run the suite to
+confirm their report. Run a test only when reading the code raises a
+specific doubt that no existing run answers — and then a focused test,
+never a package-wide suite.
+
+## Output Format
+
+Your final message is the report itself: begin directly with the first
+finding's verdict. Every line is a verdict, a finding with file:line,
+or a check you ran — no preamble, no process narration.
+
+### Finding Verdicts
+
+For each finding in The Findings Under Verification, in order:
+- **[finding one-liner]** — ADDRESSED | NOT ADDRESSED, with file:line
+  evidence. "Attempted" is not addressed: the specific defect must no
+  longer exist.
+
+### New Breakage in the Fix Diff
+
+Anything the fix itself broke or introduced, with severity
+(Critical/Important/Minor) and file:line. "None" if clean.
+
+### Out-of-Scope Observations
+
+Issues you noticed entirely outside the fix diff. Non-blocking; the
+controller ledgers these for the final review. "None" if none.
+
+### Verdict
+
+**Fix round:** [All findings addressed, no new Critical/Important
+breakage | Findings remain open] — list the open ones.
+````
+
+</details>
+
+## 2026-10-15 — Phase 3 build: result, checks, mistakes caught
+
+**How it ran:** `superpowers:subagent-driven-development`. 10 implementer dispatches (Tasks 1, 3, 5–12; models: Haiku for
+fully specified code, Sonnet for prose-specified logic, Opus for the page design and the tool island), each followed
+by a task reviewer (Sonnet; Opus for `/api/lead`, the page and the island), fix rounds where needed, then one Opus
+whole-branch review, one fix wave and a scoped re-review. Tasks 2 (GDPR research → `data/sources.md` §9) and 4
+(broker fields) were done by the lead agent. Every prompt is logged verbatim above. The lead agent also checked each
+review's "cannot verify" items itself and ran the final end-to-end check (dev server, JSON and no-JS POST, e-mail text).
+
+**Verified by the lead agent:** `npm test` 61/61 · `node data/validate.mjs` OK · `astro build` 6 pages, no `{…}`,
+`undefined`, `NaN` or `innerHTML` in any page or JS · first-load JS 13.8 kB gz (budget 60) · default fees reproduce
+`content/calc-examples.mjs` (22 000 Kč vs 272 000–339 000 Kč) · local POST → `{"ok":true}` and a rendered e-mail.
+**Not verified:** anything in a real browser (no Chrome/Edge on this machine, the built-in browser can't open
+localhost): layout, first-screen fit, animation, focus, screen readers, CLS.
+
+**Mistakes and defects caught (by whom)**
+1. Lead agent's own: appending `.superpowers/` to `.gitignore` without a newline glued it to `*.pdf`, un-ignoring the
+   third-party PDFs (Task 1 reviewer).
+2. Lead agent's own: the Task 7 dispatch said "first in displayed order" for the TER tie-break, contradicting
+   decisions §15 #2; the implementer followed the spec and flagged it.
+3. Lead agent's own: the first `size.mjs` missed the shared chunk imported by both page scripts (8 kB of 13.7 kB);
+   fixed to follow static imports before reporting the number.
+4. Fonts: the width axis came only with 176 kB of variable fonts; split into wght-only body files + a 4 kB
+   "Archivo Wide" A–Z0–9 instance (72 kB total).
+5. Without JS both heroes showed (no default `data-variant`).
+6. E-mail copy drift: a dropped word ("ho"), an invented parenthetical, an added sentence (Task 7 reviewer);
+   a literal "[Odhlásit se]" with no link and broker names in the wrong case ("u Česká spořitelna") (final review).
+7. A SCHD-only plan priced the ETF side with SCHD's own US TER (lead agent) → always a UCITS fund now.
+8. `/api/lead` swallowed error causes, so every 502 would have looked the same on launch day (Opus reviewer).
+9. No-JS server errors landed on the "your e-mail looks wrong" page → new `/chyba-odeslani/`.
+10. TER rendered "0,3 %" instead of page.md's "0,30 %".
+11. "Zadat znovu" restored a form whose button stayed disabled ("Posíláme…").
+12. `forms.ts` would throw on the error pages; client and server disagreed on bare `ad_b` (attribution skew).
+13. Subagents signed commits with their own model name instead of the dispatch's trailer; kept as more accurate.
