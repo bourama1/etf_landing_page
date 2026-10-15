@@ -78,6 +78,8 @@ a { color: var(--ink); text-underline-offset: 0.15em; }
 .page, .footer { max-width: 36rem; margin: 0 auto; padding-inline: 16px; }
 .page > section + section { margin-top: 3.5rem; }
 .page > section:first-child { padding-top: 0.75rem; }
+/* The tool belongs to the first screen (decisions §8): no section gap after the hero. */
+.page > section[data-section="tool"] { margin-top: 1.25rem; }
 
 h1, h2, h3 { margin: 0 0 0.75rem; text-wrap: balance; }
 h1 { font-size: clamp(1.6rem, 7vw, 2.25rem); line-height: 1.08; font-weight: 800; letter-spacing: -0.015em; margin-bottom: 0.5rem; }
